@@ -1,4 +1,8 @@
-# RecklessDrivin
+# Reckless Drivin'
+
+This is an attempt to port Reckless Drivin' from Macintosh to openGL on Linux.
+
+---
 
 This is the original source code for the mac shareware game "Reckless Drivin'", originally released in 2000.
 
