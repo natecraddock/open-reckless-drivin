@@ -2,7 +2,7 @@
 #define __INTERFACE
 
 extern int gExit;
-extern short gLevelResFile,gAppResFile;
+extern short gLevelResFile, gAppResFile;
 extern Str63 gLevelFileName;
 
 void SaveFlushEvents();
