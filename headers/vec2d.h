@@ -49,10 +49,11 @@ inline float VEC2D_Value(t2DPoint v) { return sqrt(v.x * v.x + v.y * v.y); }
 
 inline t2DPoint VEC2D_Norm(t2DPoint v) {
   float val = VEC2D_Value(v);
-  if (val)
+  if (val) {
     return VEC2D_Scale(v, 1 / val);
-  else
+  } else {
     return P2D(0, 0);
+  }
 }
 
 #endif
