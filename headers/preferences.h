@@ -6,7 +6,7 @@
 #include "defines.h"
 #include "input.h"
 
-#define kNumHighScoreEntrys 10
+#define kNumHighScoreEntries 10
 #define kPrefsVersion 4
 
 typedef struct {
@@ -22,7 +22,7 @@ typedef struct {
   uint8_t lineSkip, motionBlur, hiColor;
   uint8_t hidElements[kNumElements];
   uint8_t unused[11];
-  tScoreRecord high[kNumHighScoreEntrys];
+  tScoreRecord high[kNumHighScoreEntries];
   float lapRecords[10];
   Str255 name, code;
   uint8_t keyCodes[kNumElements];
