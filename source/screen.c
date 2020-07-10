@@ -5,6 +5,8 @@
 #define CALL_NOT_IN_CARBON 1
 #include <DrawSprocket.h>
 #undef CALL_NOT_IN_CARBON
+
+#include "defines.h"
 #include "error.h"
 #include "preferences.h"
 #include "screen.h"

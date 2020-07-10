@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include "defines.h"
 #include "error.h"
 #include "gameinitexit.h"
 #include "gamesounds.h"

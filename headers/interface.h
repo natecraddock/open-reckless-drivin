@@ -1,6 +1,8 @@
 #ifndef __INTERFACE
 #define __INTERFACE
 
+#include "defines.h"
+
 extern int gExit;
 extern short gLevelResFile, gAppResFile;
 extern Str63 gLevelFileName;

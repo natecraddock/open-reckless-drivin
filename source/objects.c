@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "defines.h"
 #include "gamesounds.h"
 #include "input.h"
 #include "objectcontrol.h"

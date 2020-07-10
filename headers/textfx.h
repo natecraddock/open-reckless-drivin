@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "defines.h"
+
 enum {
   kEffectExplode = 1 << 0,
   kEffectSinLines = 1 << 2,

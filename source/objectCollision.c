@@ -1,3 +1,4 @@
+#include "defines.h"
 #include "gamesounds.h"
 #include "input.h"
 #include "objects.h"

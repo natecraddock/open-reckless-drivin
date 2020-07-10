@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+#include "defines.h"
 #include "error.h"
 #include "gameframe.h"
 #include "input.h"

@@ -1,6 +1,7 @@
 #include <stdint.h>
 
 #include "InternetConfig.h"
+#include "defines.h"
 #include "error.h"
 #include "initexit.h"
 #include "interface.h"

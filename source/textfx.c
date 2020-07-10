@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "defines.h"
 #include "objects.h"
 #include "packs.h"
 #include "preferences.h"

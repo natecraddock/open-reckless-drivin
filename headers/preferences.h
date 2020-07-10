@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+#include "defines.h"
 #include "input.h"
 
 #define kNumHighScoreEntrys 10
