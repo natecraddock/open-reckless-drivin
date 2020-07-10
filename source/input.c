@@ -12,7 +12,7 @@
 #include <iShockXForceAPI.h>
 #include <math.h>
 
-#define kCreator 'Råç2'
+#define kCreator 'RÔøΩÔøΩ2'
 #define kMinSwitchDelay                                                        \
   15 // Minimum Delay between siwtching reverse gears in frames.
 
