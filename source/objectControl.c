@@ -217,7 +217,8 @@ void CopFollow(tObject *theObj, tInputData *input) {
         target.velo = kFinalChaseSpeed + VEC2D_Value(gPlayerObj->velo);
       }
       ObjectFollow(theObj, &target, input);
-    } else {
+    }
+    else {
       target = gTrackUp->track[theObj->target];
       target.velo = 0;
       ObjectFollow(theObj, &target, input);
@@ -252,8 +253,9 @@ void ObjectControl(tObject *theObj, tInputData *input) {
       theObj->input.handbrake = 1;
       theObj->input.throttle = 0;
     }
-  } else if (!((*theObj->type).flags2 & kObjectDamageble) ||
-             theObj->damage < (*theObj->type).maxDamage)
+  }
+  else if (!((*theObj->type).flags2 & kObjectDamageble) ||
+           theObj->damage < (*theObj->type).maxDamage)
     switch (theObj->control) {
     case kObjectNoInput:
       theObj->input.brake = 0;

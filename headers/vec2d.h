@@ -35,7 +35,9 @@ inline t2DPoint P2D(float x, float y) {
   return result;
 }
 
-inline t2DPoint VEC2D_CP(t2DPoint v) { return P2D(v.y, -v.x); }
+inline t2DPoint VEC2D_CP(t2DPoint v) {
+  return P2D(v.y, -v.x);
+}
 
 inline float VEC2D_DotProduct(t2DPoint v1, t2DPoint v2) {
   return (v1.x * v2.x + v1.y * v2.y);
@@ -45,13 +47,16 @@ inline float VEC2D_CrossProduct(t2DPoint v1, t2DPoint v2) {
   return (v1.x * v2.y - v1.y * v2.x);
 }
 
-inline float VEC2D_Value(t2DPoint v) { return sqrt(v.x * v.x + v.y * v.y); }
+inline float VEC2D_Value(t2DPoint v) {
+  return sqrt(v.x * v.x + v.y * v.y);
+}
 
 inline t2DPoint VEC2D_Norm(t2DPoint v) {
   float val = VEC2D_Value(v);
   if (val) {
     return VEC2D_Scale(v, 1 / val);
-  } else {
+  }
+  else {
     return P2D(0, 0);
   }
 }

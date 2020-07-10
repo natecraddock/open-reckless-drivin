@@ -30,9 +30,13 @@ void InitFrameCount() {
   gStartMS = GetMSTime();
 }
 
-void PauseFrameCount() { gPauseMS = GetMSTime(); }
+void PauseFrameCount() {
+  gPauseMS = GetMSTime();
+}
 
-void ResumeFrameCount() { gStartMS += GetMSTime() - gPauseMS; }
+void ResumeFrameCount() {
+  gStartMS += GetMSTime() - gPauseMS;
+}
 
 inline Boolean CheckFrameTime() {
   unsigned long optFrameCount;
@@ -96,7 +100,8 @@ void ResurrectPlayer() {
       else
         gPlayerObj->dir = 0;
     }
-  } else {
+  }
+  else {
     gPlayerObj->pos.x = gLevelData->xStartPos;
     gPlayerObj->pos.y = 500;
     gPlayerObj->target = 1;
@@ -123,7 +128,8 @@ void PlayerHandling() {
     }
     SetCarSound(-1, 0, 0, 0);
     FFBDirect(0, 0);
-  } else {
+  }
+  else {
     if (!gCameraObj->jumpHeight) {
       float lMag = (gPlayerSlide[0] + gPlayerSlide[2]) * 0.1;
       float rMag = (gPlayerSlide[1] + gPlayerSlide[3]) * 0.1;
@@ -138,7 +144,8 @@ void PlayerHandling() {
         FFBDirect(lMag > 0.3 ? 0.3 : lMag, rMag > 0.3 ? 0.3 : rMag);
       else
         FFBDirect(0, 0);
-    } else {
+    }
+    else {
       SetCarSound(fabs(gCameraObj->throttle) +
                       (gRoadInfo->water ? gCameraObj->input.brake : 0),
                   0, 0, fabs(gCameraObj->input.throttle) * 71);
@@ -214,7 +221,8 @@ void PlayerHandling() {
     gZoomVelo -= kZoomAcceleration * kFrameDuration;
     if (gZoomVelo < VEC2D_Value(gPlayerObj->velo))
       gZoomVelo = VEC2D_Value(gPlayerObj->velo);
-  } else {
+  }
+  else {
     gZoomVelo += kZoomAcceleration * kFrameDuration;
     if (gZoomVelo > VEC2D_Value(gPlayerObj->velo))
       gZoomVelo = VEC2D_Value(gPlayerObj->velo);
@@ -232,7 +240,8 @@ void PlayerHandling() {
     gSpikeObj->jumpHeight = gPlayerObj->jumpHeight;
     gSpikeObj->frame =
         gSpikeObj->type->frame + (int)gSpikeFrame % gSpikeObj->type->numFrames;
-  } else if (gSpikeObj) {
+  }
+  else if (gSpikeObj) {
     KillObject(gSpikeObj);
     gSpikeObj = nil;
   }

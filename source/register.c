@@ -113,7 +113,8 @@ void EnterCode() {
               GetRegionBounds(GetGrayRgn(), &rgnBBox);
               DragWindow(win, event.where, &rgnBBox);
             }
-        } else {
+        }
+        else {
           unsigned long ticks;
           GetDialogItem(regDlg, hit, &type, &item, &box);
           HiliteControl(item, 1);
@@ -219,7 +220,8 @@ void Register(int fullscreen) {
       EnterCode();
       break;
     }
-  } else {
+  }
+  else {
     DoError(StandardAlert(kAlertNoteAlert,
                           "\pYou have already registered this game.",
                           "\pThank you once again!", &alertParam, &alertHit));

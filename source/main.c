@@ -3,12 +3,17 @@
 #include "initexit.h"
 #include "interface.h"
 
-void main() {
+int main(void) {
   Init();
-  while (!gExit)
-    if (gGameOn)
+  while (!gExit) {
+    if (gGameOn) {
       GameFrame();
-    else
+    }
+    else {
       Eventloop();
+    }
+  }
   Exit();
+
+  return 0;
 }

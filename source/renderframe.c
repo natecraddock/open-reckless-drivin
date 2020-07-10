@@ -146,7 +146,8 @@ int DrawComplCount() {
             (int)floor((timeDiff - timeDiff * bonusPerc) * 10), 1);
     DrawNum(kTimeBonusX, kTimeBonusY, bonus * bonusPerc, 5);
     gPlayerScore = gNoBonusScore + bonus * bonusPerc;
-  } else if (gFinishDelay >= kShowBonusTimeDelay) {
+  }
+  else if (gFinishDelay >= kShowBonusTimeDelay) {
     DrawNum(kTimeLeftX + kTimeMinuteOffs, kTimeLeftY, floor(timeDiff) / 60, 2);
     DrawNumZeroed(kTimeLeftX, kTimeLeftY, (int)floor(timeDiff) % 60, 2);
     DrawNum(kTimeLeftX + kTimeDecimalOffs, kTimeLeftY,
@@ -328,7 +329,8 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
             u += dudy;
             v += fixZoom;
           }
-        } else {
+        }
+        else {
           int x;
           if (x2 < 0)
             x2 = 0;
@@ -343,7 +345,8 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
             for (x = x1; x < x2; x++)
               DrawTextureBlockClipped(x, y1, size, fixZoom, u += fixZoom, v1,
                                       texture);
-          } else {
+          }
+          else {
             int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
@@ -416,7 +419,8 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
             u += dudy;
             v += fixZoom;
           }
-        } else {
+        }
+        else {
           int x;
           if (x2 < 0)
             x2 = 0;
@@ -431,7 +435,8 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
             for (x = x1; x < x2; x++)
               DrawTextureBlockClipped(x, y1, size, fixZoom, u += fixZoom, v1,
                                       texture);
-          } else {
+          }
+          else {
             int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
@@ -554,7 +559,8 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
             u += dudy;
             v += fixZoom;
           }
-        } else {
+        }
+        else {
           int x;
           if (x2 < 0)
             x2 = 0;
@@ -569,7 +575,8 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
             for (x = x1; x < x2; x++)
               DrawTextureBlockClipped16(x, y1, size, fixZoom, u += fixZoom, v1,
                                         texture);
-          } else {
+          }
+          else {
             int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
@@ -643,7 +650,8 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
             u += dudy;
             v += fixZoom;
           }
-        } else {
+        }
+        else {
           int x;
           if (x2 < 0)
             x2 = 0;
@@ -658,7 +666,8 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
             for (x = x1; x < x2; x++)
               DrawTextureBlockClipped16(x, y1, size, fixZoom, u += fixZoom, v1,
                                         texture);
-          } else {
+          }
+          else {
             int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
@@ -764,7 +773,8 @@ void RenderFrame() {
     DrawRoadZoomed16(xDrawStart, yDrawStart, zoom);
     DrawMarksZoomed16(xDrawStart, yDrawStart, zoom);
     DrawTracksZoomed16(xDrawStart, yDrawStart, zoom);
-  } else {
+  }
+  else {
     DrawRoadZoomed(xDrawStart, yDrawStart, zoom);
     DrawMarksZoomed(xDrawStart, yDrawStart, zoom);
     DrawTracksZoomed(xDrawStart, yDrawStart, zoom);

@@ -591,7 +591,8 @@ int XDistortSprite(int id, int startY, int endY, int startX, int endX, int dir,
     DoError(MemError());
     sprite = (tSpriteHeader *)*(gSprites[newID]);
     id = newID + 128;
-  } else
+  }
+  else
     sprite = (tSpriteHeader *)*(gSprites[id - 128]);
   if (sprite->drawMode & kDrawModeDoubleSize) {
     startY *= 2;
@@ -750,7 +751,8 @@ int YDistortSprite(int id, int startX, int endX, int startY, int endY, int dir,
     DoError(MemError());
     sprite = (tSpriteHeader *)*(gSprites[newID]);
     id = newID + 128;
-  } else
+  }
+  else
     sprite = (tSpriteHeader *)*(gSprites[id - 128]);
   if (sprite->drawMode & kDrawModeDoubleSize) {
     startY *= 2;
@@ -911,13 +913,15 @@ int BulletHitSprite(int id, int x, int y) {
     HandToHand(&gSprites[newID]);
     sprite = (tSpriteHeader *)*(gSprites[newID]);
     id = newID + 128;
-  } else
+  }
+  else
     sprite = (tSpriteHeader *)*(gSprites[id - 128]);
   if (sprite->drawMode & kDrawModeDoubleSize) {
     x *= 2;
     y *= 2;
     size = 2;
-  } else
+  }
+  else
     size = 1;
   x += sprite->xSize / 2;
   y -= sprite->ySize / 2;

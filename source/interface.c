@@ -73,7 +73,8 @@ void ShowPicScreenNoFade(int id) {
 void UpdateButtonRgn() {
   if (gButtonLocation != kNoButton) {
     RectRgn(gButtonRgn, (*gButtonList) + gButtonLocation);
-  } else {
+  }
+  else {
     int i;
     RgnHandle screenRgn = NewRgn();
     SetRectRgn(screenRgn, 0, 0, 640, 480);
@@ -113,7 +114,8 @@ void DrawScreen(int button, GWorldPtr src) {
       Move(-StringWidth(gPrefs.name), 0);
       DrawString("\pRegistered To: ");
       DrawString(gPrefs.name);
-    } else {
+    }
+    else {
       Move(-StringWidth("\p��� This Copy is not Registered! ���"), 0);
       DrawString("\p��� This Copy is not Registered! ���");
     }
@@ -235,7 +237,8 @@ int GetButtonClick(Point mPos) {
       if (clicked = PtInRect(mPos, (*gButtonList) + button)) {
         if (clicked != oldclicked)
           DrawScreen(button, gSelectedGW);
-      } else
+      }
+      else
         DrawScreen(button, gMainScreenGW);
       oldclicked = clicked;
     }
@@ -243,7 +246,8 @@ int GetButtonClick(Point mPos) {
   if (clicked) {
     DrawScreen(button, gHilitGW);
     return button;
-  } else
+  }
+  else
     return kNoButton;
 }
 

@@ -8,7 +8,8 @@ MyOpenFile(FSSpec *myFSS) {
       CloseResFile(gLevelResFile);
     gLevelResFile = FSpOpenResFile(myFSS, fsRdPerm);
     BlockMove(myFSS->name, gLevelFileName, myFSS->name[0] + 1);
-  } else {
+  }
+  else {
     AlertStdAlertParamRec alertParam = {false,
                                         false,
                                         nil,

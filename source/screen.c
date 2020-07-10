@@ -209,7 +209,8 @@ void SetScreenClut(int id) {
         gLightningTab[bright][color] = bestIndex;
       }
     DisposeCTable(ct);
-  } else {
+  }
+  else {
     if (g16BitClut)
       ReleaseResource(g16BitClut);
     g16BitClut = GetResource('Cl16', id);
@@ -279,7 +280,8 @@ void CopyBits_Interlaced(BitMap *srcPixMapP, BitMap *destPixMapP,
 
     // if ((destRect.bottom - destRect.top) & 1)
     //     destRect.bottom--;
-  } else {
+  }
+  else {
     //  Adjust the blit Rect sizes to eliminate rounding errors that
     //  can be introduced if the Rect height is odd. For the even
     //  scanline pass we force the adjusted Rect height to be ceiling'ed.
@@ -305,7 +307,8 @@ void CopyBits_Interlaced(BitMap *srcPixMapP, BitMap *destPixMapP,
 
     if ((destRect.bottom - destRect.top) & 1)
       destRect.bottom--;
-  } else {
+  }
+  else {
     //  Adjust the blit Rect sizes to eliminate rounding errors that
     //  can be introduced if the Rect height is odd. For the even
     //  scanline pass we force the adjusted Rect height to be ceiling'ed.
@@ -377,7 +380,8 @@ void Blit2Screen() {
   if (gScreenBlitSpecial) {
     gScreenBlitSpecial = false;
     ShiftInPicture();
-  } else if (gPrefs.lineSkip) {
+  }
+  else if (gPrefs.lineSkip) {
     DoError(
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     DoError(DSpContext_GetFrontBuffer(gDrawContext, &screenGW));
@@ -388,14 +392,16 @@ void Blit2Screen() {
     if (gFlickerMode)
       gOddLines = !gOddLines;
     SetGWorld(gameGW, nil);
-  } else if (gOSX) {
+  }
+  else if (gOSX) {
     DoError(
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     DoError(DSpContext_GetFrontBuffer(gDrawContext, &screenGW));
     CopyBits(GetPortBitMapForCopyBits(gameGW),
              GetPortBitMapForCopyBits(screenGW), &rec, &rec, nil, srcCopy);
     SetGWorld(gameGW, nil);
-  } else {
+  }
+  else {
     DoError(DSpContext_InvalBackBufferRect(gDrawContext, &rec));
     DoError(DSpContext_SwapBuffers(gDrawContext, nil, 0));
     DoError(

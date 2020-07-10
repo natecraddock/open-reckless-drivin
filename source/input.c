@@ -79,7 +79,8 @@ void InputMode(int mode) {
       DoError(ISpStop());
       break;
     }
-  } else {
+  }
+  else {
     int i;
     for (i = 0; i < kNumElements; i++)
       gLastScan[i] = false;
@@ -190,7 +191,8 @@ float ThrottleReset(float throttle) {
     throttle -= 2 * kFrameDuration;
     if (throttle < 0)
       throttle = 0;
-  } else if (throttle < 0) {
+  }
+  else if (throttle < 0) {
     throttle += 2 * kFrameDuration;
     if (throttle > 0)
       throttle = 0;
@@ -214,7 +216,8 @@ int GetElement(int element) {
     uint32_t tempInput;
     ISpElement_GetSimpleState(gVirtualElements[element], &tempInput);
     return tempInput;
-  } else if (IsPressed(gPrefs.keyCodes[element]))
+  }
+  else if (IsPressed(gPrefs.keyCodes[element]))
     return true;
   if (gInputHID && element <= kMissile)
     if (gPrefs.hidElements[element] < gNumHIDElements)
@@ -253,9 +256,11 @@ int GetEvent(int *element, int *data) {
       *element = event.refCon;
       *data = event.data;
       return true;
-    } else
+    }
+    else
       return false;
-  } else {
+  }
+  else {
     int i;
     for (i = 0; i < kNumElements; i++) {
       int scan = GetElement(i);
@@ -300,7 +305,8 @@ void Input(tInputData **data) {
         switchRequest = true;
         gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
       }
-    } else {
+    }
+    else {
       gInputData.brake += kFrameDuration * 6;
       if (gInputData.brake > 1)
         gInputData.brake = 1;
@@ -323,7 +329,8 @@ void Input(tInputData **data) {
         switchRequest = true;
         gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
       }
-    } else {
+    }
+    else {
       gInputData.brake += kFrameDuration * 6;
       if (gInputData.brake > 1)
         gInputData.brake = 1;
@@ -370,7 +377,8 @@ void Input(tInputData **data) {
       gInputData.steering -= 8 * kFrameDuration;
       if (gInputData.steering < 0)
         gInputData.steering = 0;
-    } else {
+    }
+    else {
       gInputData.steering += 8 * kFrameDuration;
       if (gInputData.steering > 0)
         gInputData.steering = 0;
@@ -420,7 +428,8 @@ uint64_t GetMSTime() {
     uint64_t tMS;
     DoError(ISpTimeToMicroseconds(&t, (UnsignedWide *)&tMS));
     return tMS;
-  } else {
+  }
+  else {
     Nanoseconds nWide = AbsoluteToNanoseconds(UpTime());
     uint64_t n = *((uint64_t *)&nWide);
     uint64_t tMS = n / 1000;
@@ -450,7 +459,8 @@ void GetKeyPress(int element, DialogPtr keyDlg, uint8_t *elements) {
         GetIndString(text, 128, i + 1);
         SetDialogItemText(item, text);
         pressed = true;
-      } else if (Button())
+      }
+      else if (Button())
         pressed = true;
   SaveFlushEvents();
 }
@@ -476,7 +486,8 @@ void GetHIDPress(int element, DialogPtr keyDlg, uint8_t *elements) {
           SetDialogItemText(item, text);
           pressed = true;
         }
-      } else if (Button())
+      }
+      else if (Button())
         pressed = true;
 }
 
@@ -510,7 +521,8 @@ void ConfigureHID() {
       for (i = 0; i < 8; i++)
         gPrefs.hidElements[i] = elements[i];
     DisposeDialog(keyDlg);
-  } else {
+  }
+  else {
     int hit;
     AlertStdAlertParamRec alertParam = {false,
                                         false,

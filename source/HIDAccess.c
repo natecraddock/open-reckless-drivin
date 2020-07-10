@@ -126,7 +126,7 @@ CFBundleRef gBundle = NULL;
 
 OSStatus SetupHIDCFM(void) {
   Boolean didLoad = false; //	Flag that indicates the status returned when
-                           //attempting to load a bundle's executable code.
+                           // attempting to load a bundle's executable code.
   CFBundleRef refMainBundle = NULL;
   CFURLRef refMainBundleURL = NULL, refPathBundleURL = NULL;
 
@@ -264,18 +264,26 @@ unsigned char HIDBuildDeviceList(unsigned long usagePage, unsigned long usage) {
   return (*fpHIDBuildDeviceList)(usagePage, usage);
 }
 
-void HIDReleaseDeviceList(void) { (*fpHIDReleaseDeviceList)(); }
+void HIDReleaseDeviceList(void) {
+  (*fpHIDReleaseDeviceList)();
+}
 
-unsigned char HIDHaveDeviceList(void) { return (*fpHIDHaveDeviceList)(); }
+unsigned char HIDHaveDeviceList(void) {
+  return (*fpHIDHaveDeviceList)();
+}
 
-unsigned long HIDCountDevices(void) { return (*fpHIDCountDevices)(); }
+unsigned long HIDCountDevices(void) {
+  return (*fpHIDCountDevices)();
+}
 
 unsigned long HIDCountDeviceElements(pRecDevice pDevice,
                                      HIDElementTypeMask typeMask) {
   return (*fpHIDCountDeviceElements)(pDevice, typeMask);
 }
 
-pRecDevice HIDGetFirstDevice(void) { return (*fpHIDGetFirstDevice)(); }
+pRecDevice HIDGetFirstDevice(void) {
+  return (*fpHIDGetFirstDevice)();
+}
 
 pRecDevice HIDGetNextDevice(pRecDevice pDevice) {
   return (*fpHIDGetNextDevice)(pDevice);

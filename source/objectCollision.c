@@ -83,7 +83,9 @@ t2DPoint SectPoint(t2DPoint *l1p1, t2DPoint *l1p2, t2DPoint *l2p1,
   return P2D(x, y);
 }
 
-inline float sqr(float x) { return x * x; }
+inline float sqr(float x) {
+  return x * x;
+}
 
 int TestCollision(tObject *obj1, tObject *obj2, float sqDist) {
   t2DPoint obj1Pts[4], obj2Pts[4];
@@ -247,7 +249,8 @@ void DamageObj(tObject *theObj, float damage, t2DPoint diff) {
         theObj->damageFlags |= damagePos;
       else
         return;
-    } else
+    }
+    else
       theObj->damageFlags |= damagePos;
     switch (damagePos) {
     case kFrontBumper:
@@ -492,7 +495,8 @@ void BonusObject(tObject *theObj) {
       } break;
       }
     } while (!ok);
-  } else
+  }
+  else
     gPlayerBonus = theObj->frame - (*objType).frame + 2;
   KillObject(theObj);
 }
@@ -512,7 +516,8 @@ void HandleCollision(tObject *posObj) {
               posObj->jumpHeight = 0;
               posObj->jumpVelo = 0;
               KillObject(theObj);
-            } else
+            }
+            else
               BounceObjects(theObj, posObj);
           }
           if (VEC2D_Value(posObj->velo) > kMinJumpVelo) {
@@ -548,7 +553,8 @@ void HandleCollision(tObject *posObj) {
           if (posObj == gPlayerObj) {
             if ((*theObj->type).flags & kObjectBonusFlag)
               BonusObject(theObj);
-          } else if (theObj == gSpikeObj)
+          }
+          else if (theObj == gSpikeObj)
             if (posObj->type->flags2 & kObjectDamageble) {
               DamageObj(posObj,
                         VEC2D_Value(gPlayerObj->velo) * kLowFrameDuration * 9,

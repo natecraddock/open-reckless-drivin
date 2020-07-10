@@ -44,7 +44,9 @@ void InitTrig() {
     gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
 }
 
-uint32_t U32Version(NumVersion v) { return *((uint32_t *)(&v)); }
+uint32_t U32Version(NumVersion v) {
+  return *((uint32_t *)(&v));
+}
 
 int ReqCheck() {
   int hit;
@@ -105,7 +107,8 @@ void Init() {
     LoadPack(kPacksR16);
     LoadPack(kPackcR16);
     LoadPack(kPackTx16);
-  } else {
+  }
+  else {
     LoadPack(kPacksRLE);
     LoadPack(kPackcRLE);
     LoadPack(kPackTxtR);

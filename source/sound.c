@@ -160,7 +160,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
       velo /= kMaxNoiseVelo;
       if (gearVelo > 2)
         gearVelo = 2;
-    } else {
+    }
+    else {
       velo /= kMaxNoiseVelo;
       gearVelo = (engine + velo) / 2;
     }
@@ -191,7 +192,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
       cmd.param2 =
           0x00016000 * (0.2 + 0.3 * engine + 0.2 * velo + 0.3 * gearVelo);
       DoError(SndDoImmediate(gEngineChannel, &cmd));
-    } else {
+    }
+    else {
       cmd.cmd = rateMultiplierCmd;
       cmd.param2 =
           0x0000b000 * (0.2 + 0.3 * engine + 0.2 * velo + 0.3 * gearVelo);
@@ -235,7 +237,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
       else
         cmd.param2 = 0;
       DoError(SndDoImmediate(gSkidChannel, &cmd));
-    } else {
+    }
+    else {
       cmd.cmd = rateMultiplierCmd;
       if (skidL + skidR)
         cmd.param2 =
@@ -303,7 +306,8 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
     if (sound->flags & kSoundPriorityHigher) {
       if (priority >= sound->priority)
         return;
-    } else if (priority > sound->priority)
+    }
+    else if (priority > sound->priority)
       return;
     dist = 1 - VEC2D_Value(VEC2D_Difference(pos, gCameraObj->pos)) *
                    (1 / kMaxListenDist);
@@ -343,7 +347,8 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
       cmd.cmd = rateCmd;
       cmd.param2 = rate * freq;
       DoError(SndDoImmediate(chan, &cmd));
-    } else {
+    }
+    else {
       cmd.cmd = rateMultiplierCmd;
       cmd.param2 = 0x00010000 * freq;
       DoError(SndDoImmediate(gEngineChannel, &cmd));
@@ -370,7 +375,8 @@ void SimplePlaySound(int id) {
     if (sound->flags & kSoundPriorityHigher) {
       if (priority >= sound->priority)
         return;
-    } else if (priority > sound->priority)
+    }
+    else if (priority > sound->priority)
       return;
     cmd.param1 = 0;
     cmd.param2 = 0;

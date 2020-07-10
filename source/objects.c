@@ -23,7 +23,9 @@
 
 void ObjectPhysics(tObject *);
 
-int abs(int x) { return x >= 0 ? x : -x; }
+int abs(int x) {
+  return x >= 0 ? x : -x;
+}
 
 void Explosion(t2DPoint pos, t2DPoint velo, int offs, float mass, int sound) {
   if (fabs(pos.y - gCameraObj->pos.y) < kVisDist) {
@@ -101,7 +103,8 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
                 (gTrackUp->track[target].y - gTrackUp->track[target - 1].y) *
                 (pos.y - gTrackUp->track[target - 1].y);
         *dir = kObjectDriveUp;
-      } else {
+      }
+      else {
         for (target = 1; (target < gTrackDown->num) &&
                          (gTrackDown->track[target].y > pos.y);
              target++)
@@ -116,7 +119,8 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
       }
       GetCloseObj(pos, nil, &sqdist);
       ok = (sqdist > kScale * kScale * kMinCarDist * kMinCarDist);
-    } else {
+    }
+    else {
       int border = RanInt(0, 4);
       if ((*roadData)[1] == (*roadData)[2])
         switch (border) {
@@ -165,7 +169,8 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
         *objDir = PI + atan((pos.x - targetPos.x) / (pos.y - targetPos.y));
     else
       *objDir = (*dir == kObjectDriveUp) ? 0 : PI;
-  } else
+  }
+  else
     *objDir = RanFl(-*objDir, *objDir);
   return pos;
 }
@@ -233,7 +238,8 @@ void RemoveObject(tObject *theObj) {
   if (theObj == gPlayerObj) {
     theObj->frame = 0;
     theObj->type = (tObjectTypePtr)GetUnsortedPackEntry(kPackObTy, 2000, 0);
-  } else {
+  }
+  else {
     if (theObj == gFirstVisObj)
       gFirstVisObj = (tObject *)gFirstVisObj->next;
     if (theObj == gLastVisObj)
@@ -273,7 +279,8 @@ void KillObject(tObject *theObj) {
         gPlayerAddOns = 0;
         gNumMines = 0;
         gNumMissiles = 0;
-      } else
+      }
+      else
         gPlayerAddOns ^= kAddOnLock;
       gPlayerDeathDelay = kPlayerDeathDelay;
     }
@@ -283,7 +290,8 @@ void KillObject(tObject *theObj) {
     gPlayerSlide[2] = 0;
     gPlayerSlide[3] = 0;
     theObj->throttle = 0;
-  } else if ((*objType).score) {
+  }
+  else if ((*objType).score) {
     tTextEffect fx;
     Str31 str;
     gPlayerScore += (*objType).score;
@@ -350,7 +358,8 @@ void SortObjects() {
       if (nextObj->pos.y < theObj->pos.y) {
         ChangeObjs(theObj, nextObj);
         change = true;
-      } else
+      }
+      else
         theObj = nextObj;
     }
     if (change) {
@@ -400,7 +409,8 @@ inline void MoveObject(tObject *theObj) {
       if (theObj->control == kObjectDriveUp)
         theObj->target = 0;
       RepairObj(theObj);
-    } else if (theObj->pos.y < 0) {
+    }
+    else if (theObj->pos.y < 0) {
       theObj->pos = P2D(gTrackDown->track[0].x, *gRoadLenght * 2 - 100);
       if (theObj->control == kObjectDriveDown)
         theObj->target = 0;
@@ -459,7 +469,8 @@ inline void AnimateObject(tObject *theObj) {
               (*objType).frame + ((*objType).numFrames & 0x00ff) - 1)) {
       KillObject(theObj);
       return;
-    } else {
+    }
+    else {
       theObj->frameRepeation++;
       theObj->frame = (*objType).frame;
       if (theObj->frameRepeation == ((*objType).numFrames >> 8) - 1 ||
@@ -498,7 +509,8 @@ void MoveObjects() {
         MoveObject(theObj);
         AnimateObject(theObj);
       }
-    } else {
+    }
+    else {
       MoveObject(theObj);
       AnimateObject(theObj);
     }

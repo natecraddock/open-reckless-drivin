@@ -406,4 +406,6 @@ void SimpleDrawText(Str255 text, int xPos, int yPos) {
   }
 }
 
-void ClearTextFX() { gFXCount = 0; }
+void ClearTextFX() {
+  gFXCount = 0;
+}

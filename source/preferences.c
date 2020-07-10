@@ -39,7 +39,8 @@ short GetPrefsFile(FSSpec *spec) {
   if (err == fnfErr) {
     DoError(FSpCreate(spec, '????', 'pref', smSystemScript));
     WritePrefs(true);
-  } else
+  }
+  else
     DoError(err);
 }
 
@@ -59,7 +60,8 @@ void ReInitGraphics() {
     LoadPack(kPacksR16);
     LoadPack(kPackcR16);
     LoadPack(kPackTx16);
-  } else {
+  }
+  else {
     LoadPack(kPacksRLE);
     LoadPack(kPackcRLE);
     LoadPack(kPackTxtR);
@@ -96,12 +98,14 @@ void LoadPrefs() {
     DoError(FSClose(refNum));
     if (gPrefs.version != kPrefsVersion)
       WritePrefs(true);
-  } else if (eof < count) {
+  }
+  else if (eof < count) {
     FirstRun();
     DoError(FSRead(refNum, &eof, &gPrefs));
     gPrefs.version = kPrefsVersion;
     DoError(FSClose(refNum));
-  } else {
+  }
+  else {
     DoError(FSClose(refNum));
     WritePrefs(true);
   }
@@ -221,7 +225,8 @@ void Preferences() {
     gPrefs.hiColor = GetControlValue(cnt);
     WritePrefs(false);
     InitChannels();
-  } else
+  }
+  else
     gPrefs.sound = soundOn;
   SetGameVolume(-1);
   DisposeDialog(prefDlg);

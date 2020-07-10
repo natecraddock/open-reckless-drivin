@@ -112,7 +112,8 @@ void AddTrack(t2DPoint p1, t2DPoint p2, float intensity) {
   if (p1.y > p2.y) {
     gTracks[gTrackCount].p1 = p1;
     gTracks[gTrackCount].p2 = p2;
-  } else {
+  }
+  else {
     gTracks[gTrackCount].p1 = p2;
     gTracks[gTrackCount].p2 = p1;
   }
@@ -128,7 +129,8 @@ void CalcSteeringPlayer(tObject *theObj, float velo) {
         kFrameDuration / (theObj->steering > 0 ? steerTime : kJustTime);
     if (theObj->input.steering * maxSteering < theObj->steering)
       theObj->steering = theObj->input.steering * maxSteering;
-  } else if (theObj->input.steering * maxSteering < theObj->steering) {
+  }
+  else if (theObj->input.steering * maxSteering < theObj->steering) {
     theObj->steering -=
         kFrameDuration / (theObj->steering < 0 ? steerTime : kJustTime);
     if (theObj->input.steering * maxSteering > theObj->steering)
@@ -157,7 +159,8 @@ float CalcPower(tObject *theObj, float velo) {
     theObj->throttle += kFrameDuration / kMotorRunTime;
     if (theObj->throttle > theObj->input.throttle)
       theObj->throttle = theObj->input.throttle;
-  } else if (theObj->input.throttle < theObj->throttle) {
+  }
+  else if (theObj->input.throttle < theObj->throttle) {
     theObj->throttle -= kFrameDuration / kMotorRunTime;
     if (theObj->throttle < theObj->input.throttle)
       theObj->throttle = theObj->input.throttle;
@@ -172,7 +175,8 @@ inline float SlideFriction(float slide) {
     if (slide > 1)
       slide = 1;
     return 1 - slide * (*gRoadInfo).slideFriction;
-  } else
+  }
+  else
     return 1;
 }
 
@@ -411,7 +415,8 @@ void SolidObject(tObject *theObj) {
   if (aFriction < velo) {
     t2DPoint aVFriction = VEC2D_Scale(theObj->velo, -aFriction / velo);
     theObj->velo = VEC2D_Sum(theObj->velo, aVFriction);
-  } else
+  }
+  else
     theObj->velo = P2D(0, 0);
   aFriction *= 0.05;
   if (theObj->rotVelo) {
@@ -462,7 +467,8 @@ void ObjectPhysics(tObject *theObj) {
           ControlWheelObjectPlayer(theObj);
         else if (CheckObjectMotion(theObj))
           ControlWheelObject(theObj);
-      } else
+      }
+      else
         ControlWheelObjectFast(theObj);
     else if (theObj->type->flags & kObjectSolidFrictionFlag)
       SolidObject(theObj);
@@ -471,12 +477,14 @@ void ObjectPhysics(tObject *theObj) {
     if (theObj->type->flags2 & kObjectMissile) {
       if (theObj->jumpHeight == 0 && theObj->jumpVelo == 0)
         KillObject(theObj);
-    } else if (fabs(theObj->pos.y - gCameraObj->pos.y) < kVisDist) {
+    }
+    else if (fabs(theObj->pos.y - gCameraObj->pos.y) < kVisDist) {
       if (theObj->type->flags & kObjectBackCollFlag ||
           theObj->type->flags2 & kObjectSink && (*gRoadInfo).deathOffs) {
         if (CalcBackCollision(theObj->pos) == 2)
           KillObject(theObj);
-      } else if (theObj->type->flags2 & kObjectFrontCollFlag) {
+      }
+      else if (theObj->type->flags2 & kObjectFrontCollFlag) {
         if (CalcBackCollision(theObj->pos) == 0)
           KillObject(theObj);
       }
@@ -495,7 +503,8 @@ void ObjectPhysics(tObject *theObj) {
             if (gPlayerObj->pos.y > theObj->pos.y + kStartChaseDist * kScale)
               ObjectStartChase(theObj, kStartChaseDist * kScale,
                                kStartChaseSpeed);
-          } else if (theObj->control == kObjectCopControl)
+          }
+          else if (theObj->control == kObjectCopControl)
             if (theObj->type->weaponObj)
               if (VEC2D_DotProduct(dirVec, normDiffVec) > 0.9)
                 if (VEC2D_Value(
@@ -517,8 +526,10 @@ void ObjectPhysics(tObject *theObj) {
             KillObject(theObj);
         }
       }
-    } else if (theObj->type->flags2 & kObjectDieWhenOutOfScreen)
+    }
+    else if (theObj->type->flags2 & kObjectDieWhenOutOfScreen)
       RemoveObject(theObj);
-  } else if (theObj->type->flags2 & kObjectMissile)
+  }
+  else if (theObj->type->flags2 & kObjectMissile)
     HandleCollision(theObj);
 }

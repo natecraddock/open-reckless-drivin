@@ -1,0 +1,15 @@
+
+BasedOnStyle: LLVM
+
+AlignTrailingComments: true
+
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+BreakBeforeBraces: Custom
+BraceWrapping:
+  BeforeElse: true
+
+

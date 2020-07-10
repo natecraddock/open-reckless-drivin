@@ -9,7 +9,9 @@
 #include "screenfx.h"
 #include <DrawSprocket.h>
 
-int HandleMouseDownPause(EventRecord *event) { return true; }
+int HandleMouseDownPause(EventRecord *event) {
+  return true;
+}
 
 void PauseGame() {
   EventRecord event;

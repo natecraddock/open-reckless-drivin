@@ -110,7 +110,8 @@ Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
       else
         *size = (found + 1)->offs - offs;
     return (Ptr)pack + offs;
-  } else
+  }
+  else
     return 0;
 }
 
