@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include "defines.h"
+
 enum { kScreenSuspended, kScreenRunning, kScreenStopped, kScreenPaused };
 
 #define kXOrigin (gXSize / 2)
