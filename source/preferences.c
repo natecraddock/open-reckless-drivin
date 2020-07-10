@@ -1,9 +1,11 @@
-#include "preferences.h"
+#include <stdint.h>
+
 #include "error.h"
 #include "gamesounds.h"
 #include "input.h"
 #include "interface.h"
 #include "packs.h"
+#include "preferences.h"
 #include "screen.h"
 #include "sprites.h"
 
@@ -69,12 +71,12 @@ void ReInitGraphics() {
 
 void FirstRun() {
   Handle prefDefault;
-  SInt32 cpuSpeed;
+  int32_t cpuSpeed;
   OSErr err;
   err = Gestalt(gestaltProcClkSpeed, &cpuSpeed);
-  if (((UInt32)cpuSpeed < 120000000) || err)
+  if (((uint32_t)cpuSpeed < 120000000) || err)
     prefDefault = GetResource('Pref', 128);
-  else if ((UInt32)cpuSpeed < 250000000)
+  else if ((uint32_t)cpuSpeed < 250000000)
     prefDefault = GetResource('Pref', 129);
   else
     prefDefault = GetResource('Pref', 130);
@@ -121,7 +123,7 @@ void WritePrefs(int reset) {
 }
 
 void DeactivateSubControls(ControlHandle cnt) {
-  UInt16 i, max;
+  uint16_t i, max;
   DoError(CountSubControls(cnt, &max));
   for (i = 1; i <= max; i++) {
     ControlHandle subCnt;
@@ -131,7 +133,7 @@ void DeactivateSubControls(ControlHandle cnt) {
 }
 
 void ActivateSubControls(ControlHandle cnt) {
-  UInt16 i, max;
+  uint16_t i, max;
   DoError(CountSubControls(cnt, &max));
   for (i = 1; i <= max; i++) {
     ControlHandle subCnt;
@@ -144,7 +146,7 @@ void Preferences() {
   DialogPtr prefDlg;
   short hit;
   int modeSwitch = false;
-  UInt8 soundOn = gPrefs.sound;
+  uint8_t soundOn = gPrefs.sound;
   ControlHandle cnt;
   FadeScreen(1);
   ScreenMode(kScreenSuspended);

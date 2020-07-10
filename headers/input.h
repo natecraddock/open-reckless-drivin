@@ -1,6 +1,8 @@
 #ifndef __INPUT
 #define __INPUT
 
+#include <stdint.h>
+
 typedef struct {
   float steering, throttle, brake, handbrake;
   int reverse, kickdown;
@@ -28,7 +30,7 @@ void InputMode(int);
 void InitInput();
 void Input(tInputData **);
 void ConfigureInput();
-UInt64 GetMSTime();
+uint64_t GetMSTime();
 void FlushInput();
 void FFBJolt(float lMag, float rMag, float duration);
 void FFBDirect(float lMag, float rMag);

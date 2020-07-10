@@ -1,4 +1,5 @@
-#include "renderframe.h"
+#include <stdint.h>
+
 #include "gameinitexit.h"
 #include "gamesounds.h"
 #include "interface.h"
@@ -6,6 +7,7 @@
 #include "packs.h"
 #include "particlefx.h"
 #include "preferences.h"
+#include "renderframe.h"
 #include "rle.h"
 #include "screen.h"
 #include "sprites.h"
@@ -220,12 +222,12 @@ int DrawPanel() {
   return true;
 }
 
-void DrawTextureBlock(int x, int y, int size, UInt32 zoom, UInt32 u, UInt32 v,
-                      UInt8 *texture) {
+void DrawTextureBlock(int x, int y, int size, uint32_t zoom, uint32_t u,
+                      uint32_t v, uint8_t *texture) {
   int line, pix;
-  UInt8 *dst = gBaseAddr + y * gRowBytes + x;
+  uint8_t *dst = gBaseAddr + y * gRowBytes + x;
   for (line = 0; line < size; line++) {
-    UInt8 *data = texture + ((v >> 9) & 0x3f80);
+    uint8_t *data = texture + ((v >> 9) & 0x3f80);
     for (pix = 0; pix < size; pix++) {
       u += zoom;
       *dst = data[(u >> 16) & 0x7f];
@@ -236,11 +238,11 @@ void DrawTextureBlock(int x, int y, int size, UInt32 zoom, UInt32 u, UInt32 v,
   }
 }
 
-void DrawTextureBlockClipped(int x, int y, int size, UInt32 zoom, UInt32 u,
-                             UInt32 v, UInt8 *texture) {
+void DrawTextureBlockClipped(int x, int y, int size, uint32_t zoom, uint32_t u,
+                             uint32_t v, uint8_t *texture) {
   int line, pix;
   int xSize = size, ySize = size;
-  UInt8 *dst;
+  uint8_t *dst;
   if (x < 0) {
     xSize += x;
     x = 0;
@@ -255,7 +257,7 @@ void DrawTextureBlockClipped(int x, int y, int size, UInt32 zoom, UInt32 u,
     ySize += gYSize - y - size;
   dst = gBaseAddr + y * gRowBytes + x;
   for (line = 0; line < ySize; line++) {
-    UInt8 *data = texture + ((v >> 9) & 0x3f80);
+    uint8_t *data = texture + ((v >> 9) & 0x3f80);
     for (pix = 0; pix < xSize; pix++) {
       u += zoom;
       *dst = data[(u >> 16) & 0x7f];
@@ -271,12 +273,12 @@ void DrawTextureBlockClipped(int x, int y, int size, UInt32 zoom, UInt32 u,
 
 void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   float invZoom = 1 / zoom;
-  SInt32 fixZoom = zoom * 65536.0;
+  int32_t fixZoom = zoom * 65536.0;
   int size = kTrackSize * invZoom;
-  UInt32 shiftClip = gXSize - size << 16;
+  uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  UInt8 *textures = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).tracks, 0);
+  uint8_t *textures = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).tracks, 0);
   for (i = 0; i < gTrackCount; i++) {
     if (gTracks[i].p2.y <= yDrawStart + size && gTracks[i].p1.y > y1Clip &&
         gTracks[i].time + kTrackLifeTime + kTrackDeathDuration > gFrameCount) {
@@ -288,28 +290,28 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
                ? 1
                : 1 - (gFrameCount - gTracks[i].time - kTrackLifeTime) /
                          kTrackDeathDuration);
-      UInt8 *texture = textures + (int)intensity * 128 * 128;
+      uint8_t *texture = textures + (int)intensity * 128 * 128;
       if ((x1 > -size || x2 > -size) && (x1 < gXSize || x2 < gXSize)) {
         float y1 = (yDrawStart - gTracks[i].p1.y) * invZoom - size / 2;
         float y2 = (yDrawStart - gTracks[i].p2.y) * invZoom - size / 2;
-        UInt32 v1 = (int)gTracks[i].p1.y << 16;
-        SInt32 u1 = (int)gTracks[i].p1.x << 16;
-        UInt32 v2 = (int)gTracks[i].p2.y << 16;
-        SInt32 u2 = (int)gTracks[i].p2.x << 16;
+        uint32_t v1 = (int)gTracks[i].p1.y << 16;
+        int32_t u1 = (int)gTracks[i].p1.x << 16;
+        uint32_t v2 = (int)gTracks[i].p2.y << 16;
+        int32_t u2 = (int)gTracks[i].p2.x << 16;
         int dy = y2 - y1;
         if (dy) {
           int y;
-          SInt32 dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
-          SInt32 dudy = (u2 - u1) / (y2 - y1);
-          SInt32 x = x1 * 65536.0;
-          SInt32 u = u1, v = v1;
+          int32_t dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
+          int32_t dudy = (u2 - u1) / (y2 - y1);
+          int32_t x = x1 * 65536.0;
+          int32_t u = u1, v = v1;
           int numBlocks = ceil(fabs(((x2 - x1) / (y2 - y1))) - size);
           if (numBlocks < 0)
             numBlocks = 0;
           numBlocks++;
           for (y = y1; y < y2; y++) {
-            SInt32 blockU = u;
-            SInt32 blockX = x >> 16;
+            int32_t blockU = u;
+            int32_t blockX = x >> 16;
             int i;
             for (i = 0; i < numBlocks; i++) {
               if (blockX >= 0 && blockX < gXSize - size && y >= 0 &&
@@ -332,7 +334,7 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
           if (x1 > gXSize - size)
             x1 = gXSize - size;
           if (x1 < x2) {
-            SInt32 u = u1;
+            int32_t u = u1;
             if (x1 < 0)
               x1 = 0;
             if (x2 > gXSize - size)
@@ -341,7 +343,7 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
               DrawTextureBlockClipped(x, y1, size, fixZoom, u += fixZoom, v1,
                                       texture);
           } else {
-            SInt32 u = u2;
+            int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
             if (x1 > gXSize - size)
@@ -358,12 +360,12 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
 
 void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   float invZoom = 1 / zoom;
-  SInt32 fixZoom = zoom * 65536.0;
+  int32_t fixZoom = zoom * 65536.0;
   int size = 4.2 * invZoom;
-  UInt32 shiftClip = gXSize - size << 16;
+  uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  UInt8 *texture = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).marks, 0);
+  uint8_t *texture = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).marks, 0);
   int l = 0, r = gMarkSize;
   while (r - 1 > l)
     if (gMarks[(l + r) / 2].p1.y + gMarks[(l + r) / 2].p2.y >
@@ -380,24 +382,24 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
       if ((x1 > -size || x2 > -size) && (x1 < gXSize || x2 < gXSize)) {
         float y1 = (yDrawStart - gMarks[i].p1.y) * invZoom - size / 2;
         float y2 = (yDrawStart - gMarks[i].p2.y) * invZoom - size / 2;
-        UInt32 v1 = (int)gMarks[i].p1.y << 16;
-        SInt32 u1 = (int)gMarks[i].p1.x << 16;
-        UInt32 v2 = (int)gMarks[i].p2.y << 16;
-        SInt32 u2 = (int)gMarks[i].p2.x << 16;
+        uint32_t v1 = (int)gMarks[i].p1.y << 16;
+        int32_t u1 = (int)gMarks[i].p1.x << 16;
+        uint32_t v2 = (int)gMarks[i].p2.y << 16;
+        int32_t u2 = (int)gMarks[i].p2.x << 16;
         int dy = y2 - y1;
         if (dy) {
           int y;
-          SInt32 dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
-          SInt32 dudy = (u2 - u1) / (y2 - y1);
-          SInt32 x = x1 * 65536.0;
-          SInt32 u = u1, v = v1;
+          int32_t dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
+          int32_t dudy = (u2 - u1) / (y2 - y1);
+          int32_t x = x1 * 65536.0;
+          int32_t u = u1, v = v1;
           int numBlocks = ceil(fabs(((x2 - x1) / (y2 - y1))) - size);
           if (numBlocks < 0)
             numBlocks = 0;
           numBlocks++;
           for (y = y1; y < y2; y++) {
-            SInt32 blockU = u;
-            SInt32 blockX = x >> 16;
+            int32_t blockU = u;
+            int32_t blockX = x >> 16;
             int i;
             for (i = 0; i < numBlocks; i++) {
               if (blockX >= 0 && blockX < gXSize - size && y >= 0 &&
@@ -420,7 +422,7 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
           if (x1 > gXSize - size)
             x1 = gXSize - size;
           if (x1 < x2) {
-            SInt32 u = u1;
+            int32_t u = u1;
             if (x1 < 0)
               x1 = 0;
             if (x2 > gXSize - size)
@@ -429,7 +431,7 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
               DrawTextureBlockClipped(x, y1, size, fixZoom, u += fixZoom, v1,
                                       texture);
           } else {
-            SInt32 u = u2;
+            int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
             if (x1 > gXSize - size)
@@ -446,12 +448,12 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
 
 #pragma global_optimizer default
 
-void DrawTextureBlock16(UInt32 x, UInt32 y, int size, UInt32 zoom, UInt32 u,
-                        UInt32 v, UInt16 *texture) {
+void DrawTextureBlock16(uint32_t x, uint32_t y, int size, uint32_t zoom,
+                        uint32_t u, uint32_t v, uint16_t *texture) {
   int line, pix;
-  UInt16 *dst = gBaseAddr + y * gRowBytes + x * 2;
+  uint16_t *dst = gBaseAddr + y * gRowBytes + x * 2;
   for (line = 0; line < size; line++) {
-    UInt16 *data = texture + ((v >> 9) & 0x3f80);
+    uint16_t *data = texture + ((v >> 9) & 0x3f80);
     for (pix = 0; pix < size; pix++) {
       u += zoom;
       *dst = data[(u >> 16) & 0x7f];
@@ -462,11 +464,11 @@ void DrawTextureBlock16(UInt32 x, UInt32 y, int size, UInt32 zoom, UInt32 u,
   }
 }
 
-void DrawTextureBlockClipped16(int x, int y, int size, UInt32 zoom, UInt32 u,
-                               UInt32 v, UInt16 *texture) {
+void DrawTextureBlockClipped16(int x, int y, int size, uint32_t zoom,
+                               uint32_t u, uint32_t v, uint16_t *texture) {
   int line, pix;
   int xSize = size, ySize = size;
-  UInt16 *dst;
+  uint16_t *dst;
   if (x < 0) {
     xSize += x;
     x = 0;
@@ -481,7 +483,7 @@ void DrawTextureBlockClipped16(int x, int y, int size, UInt32 zoom, UInt32 u,
     ySize += gYSize - y - size;
   dst = gBaseAddr + y * gRowBytes + x * 2;
   for (line = 0; line < ySize; line++) {
-    UInt16 *data = texture + ((v >> 9) & 0x3f80);
+    uint16_t *data = texture + ((v >> 9) & 0x3f80);
     for (pix = 0; pix < xSize; pix++) {
       u += zoom;
       *dst = data[(u >> 16) & 0x7f];
@@ -496,12 +498,12 @@ void DrawTextureBlockClipped16(int x, int y, int size, UInt32 zoom, UInt32 u,
 
 void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   float invZoom = 1 / zoom;
-  SInt32 fixZoom = zoom * 65536.0;
+  int32_t fixZoom = zoom * 65536.0;
   int size = kTrackSize * invZoom;
-  UInt32 shiftClip = gXSize - size << 16;
+  uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  UInt16 *textures = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).tracks, 0);
+  uint16_t *textures = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).tracks, 0);
   for (i = 0; i < gTrackCount; i++) {
     if (gTracks[i].p2.y <= yDrawStart + size && gTracks[i].p1.y > y1Clip &&
         gTracks[i].time + kTrackLifeTime + kTrackDeathDuration > gFrameCount) {
@@ -513,28 +515,28 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
                ? 1
                : 1 - (gFrameCount - gTracks[i].time - kTrackLifeTime) /
                          kTrackDeathDuration);
-      UInt16 *texture = textures + (int)intensity * 128 * 128;
+      uint16_t *texture = textures + (int)intensity * 128 * 128;
       if ((x1 > -size || x2 > -size) && (x1 < gXSize || x2 < gXSize)) {
         float y1 = (yDrawStart - gTracks[i].p1.y) * invZoom - size / 2;
         float y2 = (yDrawStart - gTracks[i].p2.y) * invZoom - size / 2;
-        UInt32 v1 = (int)gTracks[i].p1.y << 16;
-        SInt32 u1 = (int)gTracks[i].p1.x << 16;
-        UInt32 v2 = (int)gTracks[i].p2.y << 16;
-        SInt32 u2 = (int)gTracks[i].p2.x << 16;
+        uint32_t v1 = (int)gTracks[i].p1.y << 16;
+        int32_t u1 = (int)gTracks[i].p1.x << 16;
+        uint32_t v2 = (int)gTracks[i].p2.y << 16;
+        int32_t u2 = (int)gTracks[i].p2.x << 16;
         int dy = y2 - y1;
         if (dy) {
           int y;
-          SInt32 dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
-          SInt32 dudy = (u2 - u1) / (y2 - y1);
-          SInt32 x = x1 * 65536.0;
-          SInt32 u = u1, v = v1;
+          int32_t dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
+          int32_t dudy = (u2 - u1) / (y2 - y1);
+          int32_t x = x1 * 65536.0;
+          int32_t u = u1, v = v1;
           int numBlocks = ceil(fabs(((x2 - x1) / (y2 - y1))) - size);
           if (numBlocks < 0)
             numBlocks = 0;
           numBlocks++;
           for (y = y1; y < y2; y++) {
-            SInt32 blockU = u;
-            SInt32 blockX = x >> 16;
+            int32_t blockU = u;
+            int32_t blockX = x >> 16;
             int i;
             for (i = 0; i < numBlocks; i++) {
               if (blockX >= 0 && blockX < gXSize - size && y >= 0 &&
@@ -558,7 +560,7 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
           if (x1 > gXSize - size)
             x1 = gXSize - size;
           if (x1 < x2) {
-            SInt32 u = u1;
+            int32_t u = u1;
             if (x1 < 0)
               x1 = 0;
             if (x2 > gXSize - size)
@@ -567,7 +569,7 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
               DrawTextureBlockClipped16(x, y1, size, fixZoom, u += fixZoom, v1,
                                         texture);
           } else {
-            SInt32 u = u2;
+            int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
             if (x1 > gXSize - size)
@@ -584,12 +586,12 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
 
 void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   float invZoom = 1 / zoom;
-  SInt32 fixZoom = zoom * 65536.0;
+  int32_t fixZoom = zoom * 65536.0;
   int size = 4.2 * invZoom;
-  UInt32 shiftClip = gXSize - size << 16;
+  uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  UInt16 *texture = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).marks, 0);
+  uint16_t *texture = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).marks, 0);
   int l = 0, r = gMarkSize;
   while (r - 1 > l)
     if (gMarks[(l + r) / 2].p1.y + gMarks[(l + r) / 2].p2.y >
@@ -606,24 +608,24 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
       if ((x1 > -size || x2 > -size) && (x1 < gXSize || x2 < gXSize)) {
         float y1 = (yDrawStart - gMarks[i].p1.y) * invZoom - size / 2;
         float y2 = (yDrawStart - gMarks[i].p2.y) * invZoom - size / 2;
-        UInt32 v1 = (int)gMarks[i].p1.y << 16;
-        SInt32 u1 = (int)gMarks[i].p1.x << 16;
-        UInt32 v2 = (int)gMarks[i].p2.y << 16;
-        SInt32 u2 = (int)gMarks[i].p2.x << 16;
+        uint32_t v1 = (int)gMarks[i].p1.y << 16;
+        int32_t u1 = (int)gMarks[i].p1.x << 16;
+        uint32_t v2 = (int)gMarks[i].p2.y << 16;
+        int32_t u2 = (int)gMarks[i].p2.x << 16;
         int dy = y2 - y1;
         if (dy) {
           int y;
-          SInt32 dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
-          SInt32 dudy = (u2 - u1) / (y2 - y1);
-          SInt32 x = x1 * 65536.0;
-          SInt32 u = u1, v = v1;
+          int32_t dxdy = ((x2 - x1) / (y2 - y1) * 65536.0);
+          int32_t dudy = (u2 - u1) / (y2 - y1);
+          int32_t x = x1 * 65536.0;
+          int32_t u = u1, v = v1;
           int numBlocks = ceil(fabs(((x2 - x1) / (y2 - y1))) - size);
           if (numBlocks < 0)
             numBlocks = 0;
           numBlocks++;
           for (y = y1; y < y2; y++) {
-            SInt32 blockU = u;
-            SInt32 blockX = x >> 16;
+            int32_t blockU = u;
+            int32_t blockX = x >> 16;
             int i;
             for (i = 0; i < numBlocks; i++) {
               if (blockX >= 0 && blockX < gXSize - size && y >= 0 &&
@@ -647,7 +649,7 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
           if (x1 > gXSize - size)
             x1 = gXSize - size;
           if (x1 < x2) {
-            SInt32 u = u1;
+            int32_t u = u1;
             if (x1 < 0)
               x1 = 0;
             if (x2 > gXSize - size)
@@ -656,7 +658,7 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
               DrawTextureBlockClipped16(x, y1, size, fixZoom, u += fixZoom, v1,
                                         texture);
           } else {
-            SInt32 u = u2;
+            int32_t u = u2;
             if (x2 < 0)
               x2 = 0;
             if (x1 > gXSize - size)

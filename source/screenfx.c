@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "gameframe.h"
 #include "input.h"
 #include "preferences.h"
@@ -38,10 +40,10 @@ void ShiftInPictureFrame8(float per) {
   int skip = gPrefs.lineSkip ? 4 : 2;
   GWorldPtr screenGW = GetScreenGW();
   short screenRowBytes = (**GetGWorldPixMap(screenGW)).rowBytes & 0x3fff;
-  UInt8 *screenBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
+  uint8_t *screenBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
   for (y = 0; y < gYSize; y += skip) {
     float relY = y / (float)gYSize;
-    UInt8 *screen, *gw;
+    uint8_t *screen, *gw;
     int x = (4 / (relY * relY + 2 * relY + 1) - 4 / (relY + 1) - 1) *
             (1 - per) * gXSize;
     int pixCount;
@@ -51,9 +53,9 @@ void ShiftInPictureFrame8(float per) {
     gw = y * gRowBytes + gBaseAddr - x;
     x += gXSize;
     pixCount = 0;
-    while (pixCount < x - (int)sizeof(UInt32)) {
-      *(UInt32 *)(screen + pixCount) = *(UInt32 *)(gw + pixCount);
-      pixCount += sizeof(UInt32);
+    while (pixCount < x - (int)sizeof(uint32_t)) {
+      *(uint32_t *)(screen + pixCount) = *(uint32_t *)(gw + pixCount);
+      pixCount += sizeof(uint32_t);
     }
     while (pixCount < x) {
       *(screen + pixCount) = *(gw + pixCount);
@@ -62,7 +64,7 @@ void ShiftInPictureFrame8(float per) {
   }
   for (y = gPrefs.lineSkip ? 2 : 1; y < gYSize; y += skip) {
     float relY = 1 - (y / (float)gYSize);
-    UInt8 *screen, *gw;
+    uint8_t *screen, *gw;
     int x = (-4 / (relY * relY + 2 * relY + 1) + 4 / (relY + 1) + 1) *
             (1 - per) * gXSize;
     int pixCount;
@@ -72,9 +74,9 @@ void ShiftInPictureFrame8(float per) {
     gw = y * gRowBytes + gBaseAddr;
     x = gXSize - x;
     pixCount = 0;
-    while (pixCount < x - (int)sizeof(UInt32)) {
-      *(UInt32 *)(screen + pixCount) = *(UInt32 *)(gw + pixCount);
-      pixCount += sizeof(UInt32);
+    while (pixCount < x - (int)sizeof(uint32_t)) {
+      *(uint32_t *)(screen + pixCount) = *(uint32_t *)(gw + pixCount);
+      pixCount += sizeof(uint32_t);
     }
     while (pixCount < x) {
       *(screen + pixCount) = *(gw + pixCount);
@@ -88,10 +90,10 @@ void ShiftInPictureFrame16(float per) {
   int skip = gPrefs.lineSkip ? 4 : 2;
   GWorldPtr screenGW = GetScreenGW();
   short screenRowBytes = (**GetGWorldPixMap(screenGW)).rowBytes & 0x3fff;
-  UInt8 *screenBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
+  uint8_t *screenBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
   for (y = 0; y < gYSize; y += skip) {
     float relY = y / (float)gYSize;
-    UInt16 *screen, *gw;
+    uint16_t *screen, *gw;
     int x = (4 / (relY * relY + 2 * relY + 1) - 4 / (relY + 1) - 1) *
             (1 - per) * gXSize;
     int pixCount;
@@ -102,7 +104,7 @@ void ShiftInPictureFrame16(float per) {
     x += gXSize;
     pixCount = 0;
     while (pixCount < x - 2) {
-      *(UInt32 *)(screen + pixCount) = *(UInt32 *)(gw + pixCount);
+      *(uint32_t *)(screen + pixCount) = *(uint32_t *)(gw + pixCount);
       pixCount += 2;
     }
     while (pixCount < x) {
@@ -112,7 +114,7 @@ void ShiftInPictureFrame16(float per) {
   }
   for (y = gPrefs.lineSkip ? 2 : 1; y < gYSize; y += skip) {
     float relY = 1 - (y / (float)gYSize);
-    UInt16 *screen, *gw;
+    uint16_t *screen, *gw;
     int x = (-4 / (relY * relY + 2 * relY + 1) + 4 / (relY + 1) + 1) *
             (1 - per) * gXSize;
     int pixCount;
@@ -123,7 +125,7 @@ void ShiftInPictureFrame16(float per) {
     x = gXSize - x;
     pixCount = 0;
     while (pixCount < x - 2) {
-      *(UInt32 *)(screen + pixCount) = *(UInt32 *)(gw + pixCount);
+      *(uint32_t *)(screen + pixCount) = *(uint32_t *)(gw + pixCount);
       pixCount += 2;
     }
     while (pixCount < x) {
@@ -134,12 +136,12 @@ void ShiftInPictureFrame16(float per) {
 }
 
 void ShiftInPicture() {
-  UInt64 animStart;
+  uint64_t animStart;
   float t;
   PauseFrameCount();
   animStart = GetMSTime();
   do {
-    UInt64 msTime = GetMSTime();
+    uint64_t msTime = GetMSTime();
     float size, xPos, yPos, dir;
     msTime -= animStart;
     t = msTime / 1000000.0;
@@ -155,10 +157,10 @@ void ShiftInPicture() {
 {
         GWorldPtr screenGW=GetScreenGW();
         short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
-        UInt8 *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
-        UInt8 *row=baseAddr+(gYSize-1)*rowBytes;
-        UInt8 *upperRow=row-rowBytes;
-        UInt8 *trTab=*gTranslucenceTab;
+        uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
+        uint8_t *row=baseAddr+(gYSize-1)*rowBytes;
+        uint8_t *upperRow=row-rowBytes;
+        uint8_t *trTab=*gTranslucenceTab;
         int x,y;
         for(y=gYSize;y>0;y--)
         {
@@ -180,9 +182,9 @@ void BlurScreen16()
 {
         GWorldPtr screenGW=GetScreenGW();
         short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
-        UInt8 *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
-        UInt16 *row=baseAddr+(gYSize-1)*rowBytes;
-        UInt16 *upperRow=row-rowBytes;
+        uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
+        uint16_t *row=baseAddr+(gYSize-1)*rowBytes;
+        uint16_t *upperRow=row-rowBytes;
         int x,y;
         for(y=gYSize;y>0;y--)
         {
@@ -206,7 +208,7 @@ void GameOverAnim() {
   GWorldPtr screenGW = GetScreenGW();
   int type = RanInt(0, kNumGameOverTypes);
   int side = RanProb(0.5);
-  UInt64 animStart;
+  uint64_t animStart;
   float t;
   gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
   gRowBytes = (**GetGWorldPixMap(screenGW)).rowBytes & 0x3fff;
@@ -214,7 +216,7 @@ void GameOverAnim() {
           DrawSprite(kGameOverSprite,gXSize/2,gYSize/2,0,2);
 */ animStart = GetMSTime();
   do {
-    UInt64 msTime = GetMSTime();
+    uint64_t msTime = GetMSTime();
     float size, xPos, yPos, dir;
     msTime -= animStart;
     t = msTime / 1000000.0;

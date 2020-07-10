@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "gameinitexit.h"
 #include "gamesounds.h"
 #include "input.h"
@@ -19,7 +21,7 @@
 #define kPenaltyTime 0 // penalty seconds for loosing a life.
 #define kMinCopDist                                                            \
   1200 // minumum distance resurrecting player has from cops in pixels
-UInt64 gStartMS, gPauseMS, gLastGraphFrameMS[kGraphFrameCount];
+uint64_t gStartMS, gPauseMS, gLastGraphFrameMS[kGraphFrameCount];
 unsigned long gFrameCount, gGraphFrameCount;
 int gEndGame;
 
@@ -34,7 +36,7 @@ void ResumeFrameCount() { gStartMS += GetMSTime() - gPauseMS; }
 
 inline Boolean CheckFrameTime() {
   unsigned long optFrameCount;
-  UInt64 curMS;
+  uint64_t curMS;
 
   curMS = GetMSTime() - gStartMS;
   optFrameCount = curMS * kCalcFPMS;
@@ -42,7 +44,7 @@ inline Boolean CheckFrameTime() {
     // AddFloatToMessageBuffer("\pFPS:
     // ",(float)1000000/((curMS-gLastGraphFrameMS[0])/kGraphFrameCount));
     BlockMoveData(gLastGraphFrameMS + 1, gLastGraphFrameMS,
-                  sizeof(UInt64) * (kGraphFrameCount)-1);
+                  sizeof(uint64_t) * (kGraphFrameCount)-1);
     gLastGraphFrameMS[kGraphFrameCount - 1] = curMS;
     return true;
   }
@@ -51,14 +53,15 @@ inline Boolean CheckFrameTime() {
 
 inline CheckTimeSkip() {
   unsigned long optFrameCount;
-  UInt64 curMS;
+  uint64_t curMS;
   do {
     curMS = GetMSTime() - gStartMS;
     optFrameCount = curMS * kCalcFPMS;
   } while (gFrameCount > optFrameCount);
 }
 
-t2DPoint GetUniquePos(SInt16 minOffs, SInt16 maxOffs, float *objDir, int *dir);
+t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
+                      int *dir);
 
 void CopClear() {
   tObject *theObj = (tObject *)(gFirstObj->next);

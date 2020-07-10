@@ -1,7 +1,9 @@
 #ifndef __PARTICLEFX
 #define __PARTICLEFX
 
-void NewParticleFX(t2DPoint, t2DPoint, int, UInt8, int, float);
+#include <stdint.h>
+
+void NewParticleFX(t2DPoint, t2DPoint, int, uint8_t, int, float);
 void DrawParticleFXZoomed(float, float, float, int);
 
 #endif

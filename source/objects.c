@@ -1,7 +1,9 @@
-#include "objects.h"
+#include <stdint.h>
+
 #include "gamesounds.h"
 #include "input.h"
 #include "objectcontrol.h"
+#include "objects.h"
 #include "packs.h"
 #include "random.h"
 #include "roads.h"
@@ -76,7 +78,8 @@ tObject *GetCloseObj(t2DPoint pos, tObject *posObj, float *dist) {
   return closeObj;
 }
 
-t2DPoint GetUniquePos(SInt16 minOffs, SInt16 maxOffs, float *objDir, int *dir) {
+t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
+                      int *dir) {
   t2DPoint pos;
   int ok;
   int target;
@@ -200,7 +203,7 @@ void InsertObjectGroup(tObjectGroupReference groupRef) {
   }
 }
 
-tObject *NewObject(tObject *prev, SInt16 typeRes) {
+tObject *NewObject(tObject *prev, int16_t typeRes) {
   tObject *theObj = (tObject *)NewPtrClear(sizeof(tObject));
   theObj->next = prev->next;
   theObj->prev = prev;

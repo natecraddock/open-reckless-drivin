@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "gamesounds.h"
 #include "interface.h"
@@ -40,7 +42,7 @@ void ShowHighScores(int hilite) {
 
 extern int gOSX;
 
-void SetHighScoreEntry(int index, UInt32 score) {
+void SetHighScoreEntry(int index, uint32_t score) {
   DialogPtr highDlg;
   short type;
   Rect box;
@@ -66,7 +68,7 @@ void SetHighScoreEntry(int index, UInt32 score) {
   DisposeDialog(highDlg);
   if (text[0] > 15) {
     text[0] = 15;
-    text[15] = 'É';
+    text[15] = 'ï¿½';
   }
   BlockMove(text, gPrefs.high[index].name, text[0] + 1);
   gPrefs.high[index].score = score;
@@ -79,7 +81,7 @@ void SetHighScoreEntry(int index, UInt32 score) {
   }
 }
 
-void CheckHighScore(UInt32 score) {
+void CheckHighScore(uint32_t score) {
   int i;
   if (gLevelResFile)
     return;

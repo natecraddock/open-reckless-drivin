@@ -1,7 +1,9 @@
 #ifndef __REGISTER
 #define __REGISTER
 
-extern UInt32 gKey;
+#include <stdint.h>
+
+extern uint32_t gKey;
 extern int gRegistered;
 
 void Register(int fullscreen);

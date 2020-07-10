@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "objects.h"
 #include "packs.h"
@@ -19,21 +21,21 @@ enum {
 };
 
 typedef struct {
-  UInt16 xSize, ySize;
-  UInt8 log2xSize;
-  UInt8 filler1;
-  UInt8 drawMode;
-  UInt8 filler2;
-  UInt8 data[1];
+  uint16_t xSize, ySize;
+  uint8_t log2xSize;
+  uint8_t filler1;
+  uint8_t drawMode;
+  uint8_t filler2;
+  uint8_t data[1];
 } tSpriteHeader;
 
 typedef struct {
-  UInt16 xSize, ySize;
-  UInt8 log2xSize;
-  UInt8 filler1;
-  UInt8 drawMode;
-  UInt8 filler2;
-  UInt16 data[1];
+  uint16_t xSize, ySize;
+  uint8_t log2xSize;
+  uint8_t filler1;
+  uint8_t drawMode;
+  uint8_t filler2;
+  uint16_t data[1];
 } tSpriteHeader16;
 
 typedef struct {
@@ -167,13 +169,13 @@ void DrawSpriteRotatedClippedTranslucent(tSpriteHeader *sprite, int dudx,
                                          int dvdx, int y, int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt8 mask = sprite->data[0];
-  UInt8 *trTab = *gTranslucenceTab;
+  uint8_t mask = sprite->data[0];
+  uint8_t *trTab = *gTranslucenceTab;
   for (; y < y2; y++) {
     int x = gSlope[y].x2 >> 16;
     int endX = gSlope[y].x1 >> 16;
-    UInt8 *dst = gBaseAddr + y * gRowBytes;
-    UInt8 *endDst;
+    uint8_t *dst = gBaseAddr + y * gRowBytes;
+    uint8_t *endDst;
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     if (x >= gXSize)
@@ -190,7 +192,7 @@ void DrawSpriteRotatedClippedTranslucent(tSpriteHeader *sprite, int dudx,
     endDst = dst + endX;
     dst += x;
     while (dst < endDst) {
-      UInt8 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint8_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = trTab[(color << 8) + *dst];
       u += dudx;
@@ -204,12 +206,12 @@ void DrawSpriteRotatedClippedTranslucent16(tSpriteHeader16 *sprite, int dudx,
                                            int dvdx, int y, int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt16 mask = sprite->data[0];
+  uint16_t mask = sprite->data[0];
   for (; y < y2; y++) {
     int x = gSlope[y].x2 >> 16;
     int endX = gSlope[y].x1 >> 16;
-    UInt16 *dst = gBaseAddr + y * gRowBytes;
-    UInt16 *endDst;
+    uint16_t *dst = gBaseAddr + y * gRowBytes;
+    uint16_t *endDst;
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     if (x >= gXSize)
@@ -226,7 +228,7 @@ void DrawSpriteRotatedClippedTranslucent16(tSpriteHeader16 *sprite, int dudx,
     endDst = dst + endX;
     dst += x;
     while (dst < endDst) {
-      UInt16 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint16_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = BlendRGB16(color, *dst);
       u += dudx;
@@ -240,12 +242,12 @@ void DrawSpriteRotatedClipped(tSpriteHeader *sprite, int dudx, int dvdx, int y,
                               int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt8 mask = sprite->data[0];
+  uint8_t mask = sprite->data[0];
   for (; y < y2; y++) {
     int x = gSlope[y].x2 >> 16;
     int endX = gSlope[y].x1 >> 16;
-    UInt8 *dst = gBaseAddr + y * gRowBytes;
-    UInt8 *endDst;
+    uint8_t *dst = gBaseAddr + y * gRowBytes;
+    uint8_t *endDst;
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     if (x >= gXSize)
@@ -262,7 +264,7 @@ void DrawSpriteRotatedClipped(tSpriteHeader *sprite, int dudx, int dvdx, int y,
     endDst = dst + endX;
     dst += x;
     while (dst < endDst) {
-      UInt8 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint8_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = color;
       u += dudx;
@@ -276,12 +278,12 @@ void DrawSpriteRotatedClipped16(tSpriteHeader16 *sprite, int dudx, int dvdx,
                                 int y, int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt16 mask = sprite->data[0];
+  uint16_t mask = sprite->data[0];
   for (; y < y2; y++) {
     int x = gSlope[y].x2 >> 16;
     int endX = gSlope[y].x1 >> 16;
-    UInt16 *dst = gBaseAddr + y * gRowBytes;
-    UInt16 *endDst;
+    uint16_t *dst = gBaseAddr + y * gRowBytes;
+    uint16_t *endDst;
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     if (x >= gXSize)
@@ -298,7 +300,7 @@ void DrawSpriteRotatedClipped16(tSpriteHeader16 *sprite, int dudx, int dvdx,
     endDst = dst + endX;
     dst += x;
     while (dst < endDst) {
-      UInt16 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint16_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = color;
       u += dudx;
@@ -312,15 +314,15 @@ void DrawSpriteRotatedTranslucent(tSpriteHeader *sprite, int dudx, int dvdx,
                                   int y, int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt8 mask = sprite->data[0];
-  UInt8 *trTab = *gTranslucenceTab;
+  uint8_t mask = sprite->data[0];
+  uint8_t *trTab = *gTranslucenceTab;
   for (; y < y2; y++) {
-    UInt8 *dst = gBaseAddr + y * gRowBytes + (gSlope[y].x2 >> 16);
-    UInt8 *endDst = gBaseAddr + y * gRowBytes + (gSlope[y].x1 >> 16);
+    uint8_t *dst = gBaseAddr + y * gRowBytes + (gSlope[y].x2 >> 16);
+    uint8_t *endDst = gBaseAddr + y * gRowBytes + (gSlope[y].x1 >> 16);
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     while (dst < endDst) {
-      UInt8 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint8_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = trTab[(color << 8) + *dst];
       u += dudx;
@@ -334,16 +336,16 @@ void DrawSpriteRotatedTranslucent16(tSpriteHeader16 *sprite, int dudx, int dvdx,
                                     int y, int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt16 mask = sprite->data[0];
+  uint16_t mask = sprite->data[0];
   for (; y < y2; y++) {
-    UInt16 *dst =
+    uint16_t *dst =
         gBaseAddr + y * gRowBytes + ((gSlope[y].x2 >> 15) & 0xfffffffe);
-    UInt16 *endDst =
+    uint16_t *endDst =
         gBaseAddr + y * gRowBytes + ((gSlope[y].x1 >> 15) & 0xfffffffe);
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     while (dst < endDst) {
-      UInt16 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint16_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = BlendRGB16(color, *dst);
       u += dudx;
@@ -357,15 +359,15 @@ void DrawSpriteRotated(tSpriteHeader *sprite, int dudx, int dvdx, int y,
                        int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt8 mask = sprite->data[0];
+  uint8_t mask = sprite->data[0];
   for (; y < y2; y++) // no clip, no translucence
   {
-    UInt8 *dst = gBaseAddr + y * gRowBytes + (gSlope[y].x2 >> 16);
-    UInt8 *endDst = gBaseAddr + y * gRowBytes + (gSlope[y].x1 >> 16);
+    uint8_t *dst = gBaseAddr + y * gRowBytes + (gSlope[y].x2 >> 16);
+    uint8_t *endDst = gBaseAddr + y * gRowBytes + (gSlope[y].x1 >> 16);
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     while (dst < endDst) {
-      UInt8 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint8_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = color;
       u += dudx;
@@ -379,17 +381,17 @@ void DrawSpriteRotated16(tSpriteHeader16 *sprite, int dudx, int dvdx, int y,
                          int y2) {
   int vMask = sprite->ySize - 1 << 8;
   int vShift = 8 - sprite->log2xSize;
-  UInt16 mask = sprite->data[0];
+  uint16_t mask = sprite->data[0];
   for (; y < y2; y++) // no clip, no translucence
   {
-    UInt16 *dst =
+    uint16_t *dst =
         gBaseAddr + y * gRowBytes + ((gSlope[y].x2 >> 15) & 0xfffffffe);
-    UInt16 *endDst =
+    uint16_t *endDst =
         gBaseAddr + y * gRowBytes + ((gSlope[y].x1 >> 15) & 0xfffffffe);
     int u = gSlope[y].u;
     int v = gSlope[y].v;
     while (dst < endDst) {
-      UInt16 color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
+      uint16_t color = sprite->data[(u >> 8) + ((v & vMask) >> vShift)];
       if (color != mask)
         *dst = color;
       u += dudx;
@@ -469,7 +471,7 @@ int GetUniqueSpriteNum() {
 
 void XDistortSprite8(tSpriteHeader *sprite, int startY, int endY, int startX,
                      int endX, int dir, float damage) {
-  UInt8 *lineStart;
+  uint8_t *lineStart;
   int line;
   lineStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
@@ -485,7 +487,7 @@ void XDistortSprite8(tSpriteHeader *sprite, int startY, int endY, int startX,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endX - crunch);
         for (i = endX; i > (int)crunch; i--) {
-          UInt8 pixelValue =
+          uint8_t pixelValue =
               lineStart[(int)(endX - ((endX - i) * crunchFactor))];
           if (pixelValue != sprite->data[0]) {
             int shade =
@@ -509,7 +511,7 @@ void XDistortSprite8(tSpriteHeader *sprite, int startY, int endY, int startX,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endX - crunch);
         for (i = 0; i < endX - (int)crunch; i++) {
-          UInt8 pixelValue = lineStart[(int)(i * crunchFactor)];
+          uint8_t pixelValue = lineStart[(int)(i * crunchFactor)];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
             lineStart[i] = gLightningTab[shade][pixelValue];
@@ -524,7 +526,7 @@ void XDistortSprite8(tSpriteHeader *sprite, int startY, int endY, int startX,
 
 void XDistortSprite16(tSpriteHeader16 *sprite, int startY, int endY, int startX,
                       int endX, int dir, float damage) {
-  UInt16 *lineStart;
+  uint16_t *lineStart;
   int line;
   lineStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
@@ -540,7 +542,7 @@ void XDistortSprite16(tSpriteHeader16 *sprite, int startY, int endY, int startX,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endX - crunch);
         for (i = endX; i > (int)crunch; i--) {
-          UInt16 pixelValue =
+          uint16_t pixelValue =
               lineStart[(int)(endX - ((endX - i) * crunchFactor))];
           if (pixelValue != sprite->data[0]) {
             int shade =
@@ -564,7 +566,7 @@ void XDistortSprite16(tSpriteHeader16 *sprite, int startY, int endY, int startX,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endX - crunch);
         for (i = 0; i < endX - (int)crunch; i++) {
-          UInt16 pixelValue = lineStart[(int)(i * crunchFactor)];
+          uint16_t pixelValue = lineStart[(int)(i * crunchFactor)];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
             lineStart[i] = ShadeRGB16(shade, pixelValue);
@@ -624,7 +626,7 @@ int XDistortSprite(int id, int startY, int endY, int startX, int endX, int dir,
 
 void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
                      int endY, int dir, float damage) {
-  UInt8 *collumStart;
+  uint8_t *collumStart;
   int collum;
   collumStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
@@ -640,7 +642,7 @@ void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endY - crunch);
         for (i = endY; i > (int)crunch; i--) {
-          UInt8 pixelValue =
+          uint8_t pixelValue =
               collumStart[(int)(endY - ((endY - i) * crunchFactor)) *
                           sprite->xSize];
           if (pixelValue != sprite->data[0]) {
@@ -665,7 +667,7 @@ void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endY - crunch);
         for (i = 0; i < endY - (int)crunch; i++) {
-          UInt8 pixelValue =
+          uint8_t pixelValue =
               collumStart[(int)(i * crunchFactor) * sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
@@ -681,7 +683,7 @@ void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
 
 void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
                       int endY, int dir, float damage) {
-  UInt16 *collumStart;
+  uint16_t *collumStart;
   int collum;
   collumStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
@@ -697,7 +699,7 @@ void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endY - crunch);
         for (i = endY; i > (int)crunch; i--) {
-          UInt16 pixelValue =
+          uint16_t pixelValue =
               collumStart[(int)(endY - ((endY - i) * crunchFactor)) *
                           sprite->xSize];
           if (pixelValue != sprite->data[0]) {
@@ -722,7 +724,7 @@ void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
         float maxShade = (kLightValues - 1) * (1 - invCrunchFac);
         float crunchLength = (endY - crunch);
         for (i = 0; i < endY - (int)crunch; i++) {
-          UInt16 pixelValue =
+          uint16_t pixelValue =
               collumStart[(int)(i * crunchFactor) * sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
@@ -957,17 +959,17 @@ void DrawLifeBar8(int cy, int cx, int shift) {
   int y = cy - sprite->ySize / 2;
   int x = cx - sprite->xSize / 2 - shift;
   int vShift = sprite->log2xSize;
-  UInt8 mask = sprite->data[0];
+  uint8_t mask = sprite->data[0];
   int v = 0;
   int endU = sprite->xSize;
   int startU = shift;
   int endV = sprite->ySize;
-  UInt8 *dst = gBaseAddr + y * gRowBytes + x;
-  UInt8 *trTab = *gTranslucenceTab;
+  uint8_t *dst = gBaseAddr + y * gRowBytes + x;
+  uint8_t *trTab = *gTranslucenceTab;
   for (; v < endV; v++) {
     int u = startU;
     for (; u < endU; u++) {
-      UInt8 color = sprite->data[u + (v << vShift)];
+      uint8_t color = sprite->data[u + (v << vShift)];
       if (color != mask)
         *(dst + u) = trTab[(color << 8) + *(dst + u)];
     }
@@ -980,16 +982,16 @@ void DrawLifeBar16(int cy, int cx, int shift) {
   int y = cy - sprite->ySize / 2;
   int x = cx - sprite->xSize / 2 - shift;
   int vShift = sprite->log2xSize;
-  UInt16 mask = sprite->data[0];
+  uint16_t mask = sprite->data[0];
   int v = 0;
   int endU = sprite->xSize;
   int startU = shift;
   int endV = sprite->ySize;
-  UInt16 *dst = gBaseAddr + y * gRowBytes + 2 * x;
+  uint16_t *dst = gBaseAddr + y * gRowBytes + 2 * x;
   for (; v < endV; v++) {
     int u = startU;
     for (; u < endU; u++) {
-      UInt16 color = sprite->data[u + (v << vShift)];
+      uint16_t color = sprite->data[u + (v << vShift)];
       if (color != mask)
         *(dst + u) = BlendRGB16(color, *(dst + u));
     }

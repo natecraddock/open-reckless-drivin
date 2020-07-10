@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "InternetConfig.h"
 #include "error.h"
 #include "initexit.h"
@@ -7,9 +9,9 @@
 #include "screen.h"
 #include <math.h>
 
-#define kCreator 'Råç2'
+#define kCreator 'RÔøΩÔøΩ2'
 
-UInt32 gKey;
+uint32_t gKey;
 int gRegistered = false;
 
 enum { kRegAppButton = 1, kOnlineButton, kCodeButton, kCancelButton };
@@ -23,9 +25,9 @@ char Hex2Num(char hex) {
     return hex - 'A' + 10;
 }
 
-UInt32 CodeStr2Long(Str255 code) {
-  UInt32 codeNum = 0;
-  UInt32 seed = 0;
+uint32_t CodeStr2Long(Str255 code) {
+  uint32_t codeNum = 0;
+  uint32_t seed = 0;
   int digi;
   if (code[0] != 10)
     return 0;
@@ -53,7 +55,7 @@ void StripSpaces(Str255 str) {
 }
 
 int CheckRegi() {
-  UInt32 *nameNum, codeNum;
+  uint32_t *nameNum, codeNum;
   Str255 upName;
   Handle check;
 
@@ -64,7 +66,7 @@ int CheckRegi() {
   codeNum = CodeStr2Long(gPrefs.code);
   gKey = codeNum ^ *nameNum;
   check = GetResource('Chck', 128);
-  gRegistered = CheckPack(kEncryptedPack, **((UInt32 **)check));
+  gRegistered = CheckPack(kEncryptedPack, **((uint32_t **)check));
   ReleaseResource(check);
   return gRegistered;
 }

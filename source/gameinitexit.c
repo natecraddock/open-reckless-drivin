@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "gameframe.h"
 #include "gamesounds.h"
@@ -17,7 +19,7 @@
 #include "trig.h"
 
 tRoad gRoadData;
-UInt32 *gRoadLenght;
+uint32_t *gRoadLenght;
 tRoadInfo *gRoadInfo;
 tLevelData *gLevelData;
 tTrackInfo *gTrackUp, *gTrackDown;
@@ -33,7 +35,7 @@ int gNumMissiles, gNumMines;
 float gPlayerDeathDelay, gFinishDelay;
 int gPlayerScore, gDisplayScore;
 int gPlayerBonus;
-UInt32 gPlayerAddOns;
+uint32_t gPlayerAddOns;
 float gGameTime;
 float gXDriftPos, gYDriftPos, gXFrontDriftPos, gYFrontDriftPos, gZoomVelo;
 int gGameOn;
@@ -47,14 +49,14 @@ void CopClear();
 
 Ptr LoadObjs(Ptr dataPos) {
   int i;
-  tObjectPos *objs = (tObjectPos *)(dataPos + sizeof(UInt32));
-  for (i = 0; i < *(UInt32 *)dataPos; i++) {
+  tObjectPos *objs = (tObjectPos *)(dataPos + sizeof(uint32_t));
+  for (i = 0; i < *(uint32_t *)dataPos; i++) {
     tObject *theObj = NewObject(gFirstObj, objs[i].typeRes);
     theObj->dir = objs[i].dir;
     theObj->pos.x = objs[i].x;
     theObj->pos.y = objs[i].y;
   }
-  return (Ptr)(objs + *(UInt32 *)dataPos);
+  return (Ptr)(objs + *(uint32_t *)dataPos);
 }
 
 int NumLevels() {
@@ -100,10 +102,10 @@ int LoadLevel() {
   (Ptr) gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, nil);
   (Ptr) gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
   (Ptr) gTrackDown =
-      (Ptr)gTrackUp + sizeof(UInt32) + gTrackUp->num * sizeof(tTrackInfoSeg);
-  (Ptr) gRoadLenght = LoadObjs((Ptr)gTrackDown + sizeof(UInt32) +
+      (Ptr)gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
+  (Ptr) gRoadLenght = LoadObjs((Ptr)gTrackDown + sizeof(uint32_t) +
                                gTrackDown->num * sizeof(tTrackInfoSeg));
-  (Ptr) gRoadData = (Ptr)gRoadLenght + sizeof(UInt32);
+  (Ptr) gRoadData = (Ptr)gRoadLenght + sizeof(uint32_t);
 
   for (i = 0; i < 9; i++)
     if ((*gLevelData).objGrps[i].resID)
@@ -118,7 +120,7 @@ int LoadLevel() {
   gCameraObj = gPlayerObj;
   gPlayerBonus = 1;
   //	gPlayerObj=nil; //	Uncomment this line to make the player car ai
-  //controlled
+  // controlled
   gSpikeObj = nil;
   gBrakeObj = nil;
   CopClear();

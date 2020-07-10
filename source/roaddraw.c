@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "objects.h"
 #include "packs.h"
@@ -147,8 +149,8 @@ for(y=yDrawStart;y>yDrawStart-gYSize+(gFinishDelay?0:kInvLines);y--)
 
 Ptr DrawLineZoomed(Ptr drawPos, int xDrawStart, int x1, int x2, int y,
                    int xDrift, int yDrift, Ptr data, float zoom) {
-  UInt32 u, v;
-  UInt32 dudx;
+  uint32_t u, v;
+  uint32_t dudx;
   if (x1 < 0)
     x1 = 0;
   if (x2 > gXSize)
@@ -170,9 +172,9 @@ Ptr DrawLineZoomed(Ptr drawPos, int xDrawStart, int x1, int x2, int y,
 
 Ptr DrawBorderZoomed(Ptr drawPos, int xDrawStart, int x1, int x2, int y,
                      Ptr data, float zoom) {
-  UInt32 dudx;
-  UInt32 v = (-y & 0x007f) << 4;
-  UInt32 u = 0;
+  uint32_t dudx;
+  uint32_t v = (-y & 0x007f) << 4;
+  uint32_t u = 0;
   if (x2 < 0)
     return drawPos;
   if (x1 < 0) {
@@ -290,10 +292,10 @@ void DrawRoadZoomed(float xDrawStart, float yDrawStart, float zoom) {
     DoError(paramErr);
 }
 
-Ptr DrawLineZoomed16(UInt16 *drawPos, int xDrawStart, int x1, int x2, int y,
-                     int xDrift, int yDrift, UInt16 *data, float zoom) {
-  UInt32 u, v;
-  UInt32 dudx;
+Ptr DrawLineZoomed16(uint16_t *drawPos, int xDrawStart, int x1, int x2, int y,
+                     int xDrift, int yDrift, uint16_t *data, float zoom) {
+  uint32_t u, v;
+  uint32_t dudx;
   if (x1 < 0)
     x1 = 0;
   if (x2 > gXSize)
@@ -313,11 +315,11 @@ Ptr DrawLineZoomed16(UInt16 *drawPos, int xDrawStart, int x1, int x2, int y,
   return drawPos;
 }
 
-Ptr DrawBorderZoomed16(UInt16 *drawPos, int xDrawStart, int x1, int x2, int y,
-                       UInt16 *data, float zoom) {
-  UInt32 dudx;
-  UInt32 v = (-y & 0x007f) << 4;
-  UInt32 u = 0;
+Ptr DrawBorderZoomed16(uint16_t *drawPos, int xDrawStart, int x1, int x2, int y,
+                       uint16_t *data, float zoom) {
+  uint32_t dudx;
+  uint32_t v = (-y & 0x007f) << 4;
+  uint32_t u = 0;
   if (x2 < 0)
     return drawPos;
   if (x1 < 0) {

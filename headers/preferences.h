@@ -1,6 +1,8 @@
 #ifndef __PREFERENCES
 #define __PREFERENCES
 
+#include <stdint.h>
+
 #include "input.h"
 
 #define kNumHighScoreEntrys 10
@@ -8,21 +10,21 @@
 
 typedef struct {
   Str15 name;
-  UInt32 time;
-  UInt32 score;
+  uint32_t time;
+  uint32_t score;
 } tScoreRecord;
 
 typedef struct {
-  UInt16 version;
-  UInt16 volume;
-  UInt8 sound, engineSound, hqSound, unused1;
-  UInt8 lineSkip, motionBlur, hiColor;
-  UInt8 hidElements[kNumElements];
-  UInt8 unused[11];
+  uint16_t version;
+  uint16_t volume;
+  uint8_t sound, engineSound, hqSound, unused1;
+  uint8_t lineSkip, motionBlur, hiColor;
+  uint8_t hidElements[kNumElements];
+  uint8_t unused[11];
   tScoreRecord high[kNumHighScoreEntrys];
   float lapRecords[10];
   Str255 name, code;
-  UInt8 keyCodes[kNumElements];
+  uint8_t keyCodes[kNumElements];
   Str255 lastName;
 } tPrefs;
 

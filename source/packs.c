@@ -1,21 +1,23 @@
-#include "packs.h"
+#include <stdint.h>
+
 #include "interface.h"
 #include "lzrwHandleInterface.h"
+#include "packs.h"
 #include "register.h"
 #include <stdlib.h>
 
 typedef struct {
-  SInt16 id;
-  SInt16 placeHolder;
-  UInt32 offs;
+  int16_t id;
+  int16_t placeHolder;
+  uint32_t offs;
 } tPackHeader;
 typedef tPackHeader **tPackHandle;
 
 Handle gPacks[kNumPacks];
 #define kUnCryptedHeader 256
 
-UInt32 CryptData(UInt32 *data, UInt32 len) {
-  UInt32 check = 0;
+uint32_t CryptData(uint32_t *data, uint32_t len) {
+  uint32_t check = 0;
   data += kUnCryptedHeader / 4;
   len -= kUnCryptedHeader;
   while (len >= 4) {
@@ -25,22 +27,22 @@ UInt32 CryptData(UInt32 *data, UInt32 len) {
     len -= 4;
   }
   if (len) {
-    *((UInt8 *)data) ^= gKey >> 24;
-    check += (*((UInt8 *)data)++) << 24;
+    *((uint8_t *)data) ^= gKey >> 24;
+    check += (*((uint8_t *)data)++) << 24;
     if (len > 1) {
-      *((UInt8 *)data) ^= (gKey >> 16) & 0xff;
-      check += (*((UInt8 *)data)++) << 16;
+      *((uint8_t *)data) ^= (gKey >> 16) & 0xff;
+      check += (*((uint8_t *)data)++) << 16;
       if (len > 2) {
-        *((UInt8 *)data) ^= (gKey >> 8) & 0xff;
-        check += (*((UInt8 *)data)++) << 8;
+        *((uint8_t *)data) ^= (gKey >> 8) & 0xff;
+        check += (*((uint8_t *)data)++) << 8;
       }
     }
   }
   return check;
 }
 
-UInt32 LoadPack(int num) {
-  UInt32 check = 0;
+uint32_t LoadPack(int num) {
+  uint32_t check = 0;
   if (!gPacks[num]) {
     gPacks[num] = GetResource('Pack', num + 128);
     if (gPacks[num]) {
@@ -53,7 +55,7 @@ UInt32 LoadPack(int num) {
   return check;
 }
 
-int CheckPack(int num, UInt32 check) {
+int CheckPack(int num, uint32_t check) {
   int ok = false;
   UseResFile(gAppResFile);
   if (!gPacks[num]) {
@@ -80,7 +82,7 @@ void UnloadPack(int num) {
 Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
   tPackHeader *pack = (tPackHeader *)*gPacks[packNum];
   int startId = pack[1].id;
-  UInt32 offs = pack[entryID - startId + 1].offs;
+  uint32_t offs = pack[entryID - startId + 1].offs;
   if (size)
     if (entryID - startId + 1 == pack->id)
       *size = GetHandleSize(gPacks[packNum]) - offs;
@@ -96,7 +98,7 @@ int ComparePackHeaders(const tPackHeader *p1, const tPackHeader *p2) {
 Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
   tPackHeader *pack = (tPackHeader *)*gPacks[packNum];
   tPackHeader key, *found;
-  UInt32 offs;
+  uint32_t offs;
   key.id = entryID;
   found = bsearch(&key, pack + 1, pack->id, sizeof(tPackHeader),
                   ComparePackHeaders);

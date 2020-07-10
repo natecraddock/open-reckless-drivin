@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "objects.h"
 #include "packs.h"
@@ -28,10 +30,10 @@
 enum { kSoundPriorityHigher = 1 << 0 };
 
 typedef struct {
-  UInt32 numSamples;
-  UInt32 priority;
-  UInt32 flags;
-  UInt32 offsets[1];
+  uint32_t numSamples;
+  uint32_t priority;
+  uint32_t flags;
+  uint32_t offsets[1];
 } tSound;
 
 SndChannelPtr gChannels[kNumHQChannels];
@@ -43,7 +45,7 @@ int gGear;
 int gBuggySoundManager;
 UniversalProcPtr gSoundCallBack = nil;
 
-UInt32 U32Version(NumVersion v);
+uint32_t U32Version(NumVersion v);
 
 void SetGameVolume(int volume) {
   ComponentDescription theDesc = {kSoundOutputDeviceType, 0, 0, 0, 0};
@@ -172,7 +174,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
       tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, nil);
       gEngineChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
-      cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+      cmd.param2 =
+          (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
       DoError(SndDoCommand(gEngineChannel, &cmd, false));
       cmd.cmd = callBackCmd;
       cmd.param1 = 1;
@@ -211,7 +214,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
           (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, nil);
       gSkidChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
-      cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+      cmd.param2 =
+          (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
       DoError(SndDoCommand(gSkidChannel, &cmd, false));
       cmd.cmd = callBackCmd;
       cmd.param1 = 1;
@@ -261,7 +265,8 @@ void StartCarChannels() {
       tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, nil);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
-      cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+      cmd.param2 =
+          (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
       DoError(SndDoCommand(gEngineChannel, &cmd, false));
       cmd.cmd = callBackCmd;
       cmd.param1 = 1;
@@ -271,7 +276,8 @@ void StartCarChannels() {
           (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, nil);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
-      cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+      cmd.param2 =
+          (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
       DoError(SndDoCommand(gSkidChannel, &cmd, false));
       cmd.cmd = callBackCmd;
       cmd.param1 = 1;
@@ -288,7 +294,7 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
     SndCommand cmd;
     int i;
     float pan, dist;
-    UInt32 priority = 0xffffffff;
+    uint32_t priority = 0xffffffff;
     for (i = 0; i < (gPrefs.hqSound ? kNumHQChannels : kNumChannels); i++)
       if (priority > gChannels[i]->userInfo) {
         priority = gChannels[i]->userInfo;
@@ -323,16 +329,16 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
     cmd.cmd = quietCmd;
     DoError(SndDoImmediate(chan, &cmd));
     cmd.cmd = bufferCmd;
-    cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+    cmd.param2 = (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
     DoError(SndDoImmediate(chan, &cmd));
     cmd.cmd = volumeCmd;
     cmd.param2 = ((int)(0x0100 * vol * dist * (1 - pan)) & 0xffff) |
                  ((int)(0x0100 * vol * dist * (1 + pan)) << 16);
     DoError(SndDoImmediate(chan, &cmd));
     if (gBuggySoundManager) {
-      UInt32 rate;
+      uint32_t rate;
       cmd.cmd = getRateCmd;
-      cmd.param2 = (SInt32)&rate;
+      cmd.param2 = (int32_t)&rate;
       DoError(SndDoImmediate(chan, &cmd));
       cmd.cmd = rateCmd;
       cmd.param2 = rate * freq;
@@ -355,7 +361,7 @@ void SimplePlaySound(int id) {
     SndCommand cmd;
     int i;
     float pan, dist;
-    UInt32 priority = 0xffffffff;
+    uint32_t priority = 0xffffffff;
     for (i = 0; i < (gPrefs.hqSound ? kNumHQChannels : kNumChannels); i++)
       if (priority > gChannels[i]->userInfo) {
         priority = gChannels[i]->userInfo;
@@ -373,7 +379,7 @@ void SimplePlaySound(int id) {
     cmd.cmd = quietCmd;
     DoError(SndDoImmediate(chan, &cmd));
     cmd.cmd = bufferCmd;
-    cmd.param2 = (SInt32)sound + sound->offsets[RanInt(0, sound->numSamples)];
+    cmd.param2 = (int32_t)sound + sound->offsets[RanInt(0, sound->numSamples)];
     DoError(SndDoImmediate(chan, &cmd));
     cmd.cmd = volumeCmd;
     cmd.param2 =

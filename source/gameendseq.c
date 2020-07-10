@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "error.h"
 #include "gameframe.h"
 #include "gamesounds.h"
@@ -22,7 +24,7 @@ void GameEndSequence() {
   GWorldPtr screenGW = GetScreenGW();
   GWorldPtr oldGW;
   GDHandle oldGD;
-  UInt64 startMS;
+  uint64_t startMS;
   PicHandle pic = (PicHandle)GetResource('PPic', 1009);
   Rect picSize, draw;
   PauseFrameCount();

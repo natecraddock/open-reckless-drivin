@@ -1,5 +1,7 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
 
+#include <stdint.h>
+
 #include "error.h"
 #include "gameinitexit.h"
 #include "gamesounds.h"
@@ -111,8 +113,8 @@ void DrawScreen(int button, GWorldPtr src) {
       DrawString("\pRegistered To: ");
       DrawString(gPrefs.name);
     } else {
-      Move(-StringWidth("\p¥¥¥ This Copy is not Registered! ¥¥¥"), 0);
-      DrawString("\p¥¥¥ This Copy is not Registered! ¥¥¥");
+      Move(-StringWidth("\pï¿½ï¿½ï¿½ This Copy is not Registered! ï¿½ï¿½ï¿½"), 0);
+      DrawString("\pï¿½ï¿½ï¿½ This Copy is not Registered! ï¿½ï¿½ï¿½");
     }
     MoveTo(10, 15);
     if (gLevelResFile) {
@@ -277,7 +279,7 @@ int GetKeyClick(long key) {
 }
 
 int KeyClick(long key) {
-  UInt32 ticks;
+  uint32_t ticks;
   int button = GetKeyClick(key);
   if (button == kNoButton)
     return kNoButton;

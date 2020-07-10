@@ -1,6 +1,8 @@
 #ifndef __TEXTFX
 #define __TEXTFX
 
+#include <stdint.h>
+
 enum {
   kEffectExplode = 1 << 0,
   kEffectSinLines = 1 << 2,
@@ -13,9 +15,9 @@ enum {
 };
 
 typedef struct {
-  SInt32 x, y;
-  UInt32 effectFlags;
-  UInt32 fxStartFrame;
+  int32_t x, y;
+  uint32_t effectFlags;
+  uint32_t fxStartFrame;
   Str31 text;
 } tTextEffect;
 

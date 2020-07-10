@@ -1,5 +1,7 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
 
+#include <stdint.h>
+
 #include "error.h"
 #include "gameinitexit.h"
 #include "gamesounds.h"
@@ -42,7 +44,7 @@ void InitTrig() {
     gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
 }
 
-UInt32 U32Version(NumVersion v) { return *((UInt32 *)(&v)); }
+uint32_t U32Version(NumVersion v) { return *((uint32_t *)(&v)); }
 
 int ReqCheck() {
   int hit;

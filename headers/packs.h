@@ -1,6 +1,8 @@
 #ifndef __PACKS
 #define __PACKS
 
+#include <stdint.h>
+
 enum {
   kPackObTy,
   kPackSprt,
@@ -29,12 +31,12 @@ enum {
 
 #define kEncryptedPack kPackLevel4
 
-UInt32 LoadPack(int);
+uint32_t LoadPack(int);
 void UnloadPack(int);
 Ptr GetSortedPackEntry(int, int, int *);
 Ptr GetUnsortedPackEntry(int, int, int *);
 int NumPackEntries(int);
-int CheckPack(int num, UInt32 check);
-UInt32 BlockChecksum(UInt32 *data, UInt32 len);
+int CheckPack(int num, uint32_t check);
+uint32_t BlockChecksum(uint32_t *data, uint32_t len);
 
 #endif

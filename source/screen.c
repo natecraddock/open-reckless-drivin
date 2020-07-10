@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include <QDOffscreen.h>
 #undef CALL_NOT_IN_CARBON
 #define CALL_NOT_IN_CARBON 1
@@ -21,7 +23,7 @@ short gXSize, gYSize;
 int gFlickerMode = false;
 int gOddLines;
 Handle gTranslucenceTab = nil, g16BitClut = nil;
-UInt8 gLightningTab[kLightValues][256];
+uint8_t gLightningTab[kLightValues][256];
 int gScreenMode;
 int gScreenBlitSpecial = false;
 int abs(int);
@@ -79,7 +81,7 @@ void FlushMessageBuffer() {
 
 void InitScreen() {
   DSpContextAttributes inDesiredAttributes;
-  SInt32 cpuSpeed;
+  int32_t cpuSpeed;
   OSErr err;
   err = Gestalt(gestaltProcClkSpeed, &cpuSpeed);
   gXSize = 640;
@@ -107,7 +109,7 @@ void InitScreen() {
   DoError(DSpStartup());
   DoError(DSpFindBestContext(&inDesiredAttributes, &gDrawContext));
   inDesiredAttributes.contextOptions =
-      kDSpContextOption_PageFlip + (((UInt32)cpuSpeed < 150000000) || err)
+      kDSpContextOption_PageFlip + (((uint32_t)cpuSpeed < 150000000) || err)
           ? 0
           : kDSpContextOption_DontSyncVBL;
   inDesiredAttributes.pageCount = 3;
@@ -213,11 +215,11 @@ void SetScreenClut(int id) {
 }
 
 void CopyBits_Interlaced(BitMap *srcPixMapP, BitMap *destPixMapP,
-                         Rect *srcRectP, Rect *destRectP, UInt32 sourceOdd,
-                         UInt32 destOdd) {
+                         Rect *srcRectP, Rect *destRectP, uint32_t sourceOdd,
+                         uint32_t destOdd) {
   Rect srcRect, destRect;
   PixMap srcMap, destMap;
-  SInt32 destTopShift, sourceTopShift;
+  int32_t destTopShift, sourceTopShift;
 
   //  Make local copies of the whole structs; this way, no values need to
   //  be restored. Since this routine only works with PixMaps, assume that

@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include "objects.h"
 #include "preferences.h"
 #include "random.h"
@@ -13,17 +15,17 @@ typedef struct {
   int active;
   int numParticles;
   int layer;
-  UInt32 fxStartFrame;
-  UInt16 color16;
-  UInt8 color;
+  uint32_t fxStartFrame;
+  uint16_t color16;
+  uint8_t color;
   t2DPoint pos;
   t2DPoint p[kMaxParticles * 4];
 } tParticleFX;
 
 tParticleFX gParticleFX[kMaxPFX];
 
-void NewParticleFX(t2DPoint pos, t2DPoint velo, int num, UInt8 color, int layer,
-                   float spread) {
+void NewParticleFX(t2DPoint pos, t2DPoint velo, int num, uint8_t color,
+                   int layer, float spread) {
   int numFX;
   for (numFX = 0; numFX < kMaxPFX && gParticleFX[numFX].active; numFX++)
     ;
@@ -36,7 +38,7 @@ void NewParticleFX(t2DPoint pos, t2DPoint velo, int num, UInt8 color, int layer,
     fx->fxStartFrame = gFrameCount;
     fx->pos = pos;
     if (gPrefs.hiColor)
-      fx->color16 = ((UInt16 *)*g16BitClut)[color];
+      fx->color16 = ((uint16_t *)*g16BitClut)[color];
     else
       fx->color = color;
     num *= 4;
@@ -71,7 +73,8 @@ void DrawParticleFXZoomed(float xDrawStart, float yDrawStart, float zoom,
                 y = (yDrawStart - pos.y) * invZoom;
             if (x > 0 && y > 0)
               if (x < gXSize && y < gYSize)
-                *((UInt16 *)(gBaseAddr + y * gRowBytes + x * 2)) = fx->color16;
+                *((uint16_t *)(gBaseAddr + y * gRowBytes + x * 2)) =
+                    fx->color16;
           }
         else
           for (i = 0; i < numDrawParticles; i++) {

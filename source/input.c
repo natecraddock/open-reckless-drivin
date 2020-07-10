@@ -1,7 +1,10 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
-#include "input.h"
+
+#include <stdint.h>
+
 #include "error.h"
 #include "gameframe.h"
+#include "input.h"
 #include "interface.h"
 #include "objects.h"
 #include "preferences.h"
@@ -130,7 +133,7 @@ void InitHID() {
     TearDownHIDCFM();
 }
 
-UInt32 U32Version(NumVersion v);
+uint32_t U32Version(NumVersion v);
 
 void InitInput() {
   if ((Ptr)ISpGetVersion != (Ptr)kUnresolvedCFragSymbolAddress) {
@@ -207,7 +210,7 @@ short IsPressed(unsigned short k)
 
 int GetElement(int element) {
   if (gInputISp) {
-    UInt32 tempInput;
+    uint32_t tempInput;
     ISpElement_GetSimpleState(gVirtualElements[element], &tempInput);
     return tempInput;
   } else if (IsPressed(gPrefs.keyCodes[element]))
@@ -410,16 +413,16 @@ void Input(tInputData **data) {
   *data = &gInputData;
 }
 
-UInt64 GetMSTime() {
+uint64_t GetMSTime() {
   if (gInputISp) {
     AbsoluteTime t = ISpUptime();
-    UInt64 tMS;
+    uint64_t tMS;
     DoError(ISpTimeToMicroseconds(&t, (UnsignedWide *)&tMS));
     return tMS;
   } else {
     Nanoseconds nWide = AbsoluteToNanoseconds(UpTime());
-    UInt64 n = *((UInt64 *)&nWide);
-    UInt64 tMS = n / 1000;
+    uint64_t n = *((uint64_t *)&nWide);
+    uint64_t tMS = n / 1000;
     return tMS;
   }
 }
@@ -429,7 +432,7 @@ void FlushInput() {
     DoError(ISpElementList_Flush(gEventElements));
 }
 
-void GetKeyPress(int element, DialogPtr keyDlg, UInt8 *elements) {
+void GetKeyPress(int element, DialogPtr keyDlg, uint8_t *elements) {
   int i, pressed = false;
   short type;
   Rect box;
@@ -451,7 +454,7 @@ void GetKeyPress(int element, DialogPtr keyDlg, UInt8 *elements) {
   SaveFlushEvents();
 }
 
-void GetHIDPress(int element, DialogPtr keyDlg, UInt8 *elements) {
+void GetHIDPress(int element, DialogPtr keyDlg, uint8_t *elements) {
   int i, pressed = false;
   short type;
   Rect box;
@@ -484,7 +487,7 @@ void ConfigureHID() {
     Rect box;
     Handle item;
     int i;
-    UInt8 elements[8];
+    uint8_t elements[8];
     DoError(SetDialogDefaultItem(keyDlg, 2));
     DoError(SetDialogCancelItem(keyDlg, 3));
     for (i = 0; i < 8; i++) {
@@ -535,7 +538,7 @@ void ConfigureInput() {
     Handle item;
     Str255 text;
     int i;
-    UInt8 elements[8];
+    uint8_t elements[8];
     DoError(SetDialogDefaultItem(keyDlg, 2));
     DoError(SetDialogCancelItem(keyDlg, 3));
     for (i = 0; i < 8; i++) {

@@ -1,7 +1,9 @@
 #ifndef __HIGH
 #define __HIGH
 
-void CheckHighScore(UInt32 score);
+#include <stdint.h>
+
+void CheckHighScore(uint32_t score);
 void ClearHighScores();
 void ShowHighScores(int hilite);
 

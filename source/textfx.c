@@ -1,9 +1,11 @@
-#include "textfx.h"
+#include <stdint.h>
+
 #include "objects.h"
 #include "packs.h"
 #include "preferences.h"
 #include "renderframe.h"
 #include "screen.h"
+#include "textfx.h"
 #include "trig.h"
 
 #define kMaxFX 10
@@ -37,9 +39,9 @@ void MakeFXStringFromNumStr(Str31 numStr, Str31 fxStr) {
   fxStr[0] = numStr[0];
 }
 
-void DrawZoomedCharLine8(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
-  UInt8 *spritePos = *data;
-  UInt8 *lineBase = gBaseAddr + y * gRowBytes;
+void DrawZoomedCharLine8(uint8_t **data, int32_t x, int32_t y, uint32_t zoom) {
+  uint8_t *spritePos = *data;
+  uint8_t *lineBase = gBaseAddr + y * gRowBytes;
   int stop = 0;
   if ((y < 0) || (y >= gYSize - kInvLines))
     goto noDrawZoomed;
@@ -48,14 +50,14 @@ void DrawZoomedCharLine8(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
   if (((x >> 16) < 0) || ((x >> 16) + (zoom >> 11) >= gXSize))
     goto noDrawZoomed;
   while (!stop) {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int i = 0;
-      UInt8 *src = spritePos + 4;
+      uint8_t *src = spritePos + 4;
       spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
       while (tokenData > i) {
-        UInt8 *dst = lineBase + (x >> 16);
+        uint8_t *dst = lineBase + (x >> 16);
         *dst = *(src + i);
         i++;
         x += zoom;
@@ -73,7 +75,7 @@ void DrawZoomedCharLine8(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
   }
 noDrawZoomed:
   while (!stop) {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken:
       spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
@@ -91,9 +93,9 @@ noDrawZoomed:
   *data = spritePos + 4;
 }
 
-void DrawCharLine8(UInt8 **data, SInt32 x, SInt32 y) {
-  UInt8 *spritePos = *data;
-  UInt8 *dst = gBaseAddr + x + y * gRowBytes;
+void DrawCharLine8(uint8_t **data, int32_t x, int32_t y) {
+  uint8_t *spritePos = *data;
+  uint8_t *dst = gBaseAddr + x + y * gRowBytes;
   int stop = 0;
   if ((y < 0) || (y >= gYSize - kInvLines))
     goto noDraw;
@@ -102,11 +104,11 @@ void DrawCharLine8(UInt8 **data, SInt32 x, SInt32 y) {
   if ((x < 0) || (x + kCharSize >= gXSize))
     goto noDraw;
   do {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int i = 0;
-      UInt8 *src = spritePos + 4;
+      uint8_t *src = spritePos + 4;
       spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
       while (tokenData - (int)sizeof(long) >= i) {
         *((long *)(dst + i)) = *((long *)(src + i));
@@ -132,7 +134,7 @@ void DrawCharLine8(UInt8 **data, SInt32 x, SInt32 y) {
   } while (!stop);
 noDraw:
   do {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken:
       spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
@@ -149,9 +151,9 @@ noDraw:
   *data = spritePos + 4;
 }
 
-void DrawZoomedCharLine16(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
-  UInt8 *spritePos = *data;
-  UInt8 *lineBase = gBaseAddr + y * gRowBytes;
+void DrawZoomedCharLine16(uint8_t **data, int32_t x, int32_t y, uint32_t zoom) {
+  uint8_t *spritePos = *data;
+  uint8_t *lineBase = gBaseAddr + y * gRowBytes;
   int stop = 0;
   if ((y < 0) || (y >= gYSize - kInvLines))
     goto noDrawZoomed;
@@ -160,15 +162,15 @@ void DrawZoomedCharLine16(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
   if (((x >> 16) < 0) || ((x >> 16) + (zoom >> 11) >= gXSize))
     goto noDrawZoomed;
   while (!stop) {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int i = 0;
-      UInt16 *src = spritePos + 4;
+      uint16_t *src = spritePos + 4;
       int tokenSize = tokenData * 2;
       spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
       while (tokenData > i) {
-        UInt16 *dst = lineBase + ((x >> 15) & 0xfffe);
+        uint16_t *dst = lineBase + ((x >> 15) & 0xfffe);
         *dst = *(src + i);
         i++;
         x += zoom;
@@ -186,7 +188,7 @@ void DrawZoomedCharLine16(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
   }
 noDrawZoomed:
   while (!stop) {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int tokenSize = tokenData * 2;
@@ -204,9 +206,9 @@ noDrawZoomed:
   *data = spritePos + 4;
 }
 
-void DrawCharLine16(UInt8 **data, SInt32 x, SInt32 y) {
-  UInt8 *spritePos = *data;
-  UInt16 *dst = gBaseAddr + 2 * x + y * gRowBytes;
+void DrawCharLine16(uint8_t **data, int32_t x, int32_t y) {
+  uint8_t *spritePos = *data;
+  uint16_t *dst = gBaseAddr + 2 * x + y * gRowBytes;
   int stop = 0;
   if ((y < 0) || (y >= gYSize - kInvLines))
     goto noDraw;
@@ -215,11 +217,11 @@ void DrawCharLine16(UInt8 **data, SInt32 x, SInt32 y) {
   if ((x < 0) || (x + kCharSize >= gXSize))
     goto noDraw;
   do {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int i = 0;
-      UInt16 *src = spritePos + 4;
+      uint16_t *src = spritePos + 4;
       int tokenSize = tokenData * 2;
       spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
       while (tokenData - 2 >= i) {
@@ -242,7 +244,7 @@ void DrawCharLine16(UInt8 **data, SInt32 x, SInt32 y) {
   } while (!stop);
 noDraw:
   do {
-    SInt32 tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
+    int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
     case kDrawPixelsToken: {
       int tokenSize = tokenData * 2;
@@ -260,14 +262,15 @@ noDraw:
   *data = spritePos + 4;
 }
 
-inline void DrawZoomedCharLine(UInt8 **data, SInt32 x, SInt32 y, UInt32 zoom) {
+inline void DrawZoomedCharLine(uint8_t **data, int32_t x, int32_t y,
+                               uint32_t zoom) {
   if (gPrefs.hiColor)
     DrawZoomedCharLine16(data, x, y, zoom);
   else
     DrawZoomedCharLine8(data, x, y, zoom);
 }
 
-inline void DrawCharLine(UInt8 **data, SInt32 x, SInt32 y) {
+inline void DrawCharLine(uint8_t **data, int32_t x, int32_t y) {
   if (gPrefs.hiColor)
     DrawCharLine16(data, x, y);
   else
@@ -313,10 +316,10 @@ void DrawTextFX(int xDrawStart, int yDrawStart) {
                                kEffectSinAmp * exploZoom
                          : 0);
         if (exploZoom != 1)
-          DrawZoomedCharLine(&theCH, (SInt32)(x * 65536.0), y,
-                             (SInt32)(exploZoom * 65536.0));
+          DrawZoomedCharLine(&theCH, (int32_t)(x * 65536.0), y,
+                             (int32_t)(exploZoom * 65536.0));
         else
-          DrawCharLine(&theCH, (SInt32)(x), (SInt32)(y));
+          DrawCharLine(&theCH, (int32_t)(x), (int32_t)(y));
         y += exploZoom;
       }
       baseX += exploZoom * kCharSize;
@@ -369,10 +372,10 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
                                kEffectSinAmp * exploZoom
                          : 0);
         if (exploZoom != 1)
-          DrawZoomedCharLine(&theCH, (SInt32)(x * 65536.0), y,
-                             (SInt32)(exploZoom * 65536.0));
+          DrawZoomedCharLine(&theCH, (int32_t)(x * 65536.0), y,
+                             (int32_t)(exploZoom * 65536.0));
         else
-          DrawCharLine(&theCH, (SInt32)(x), (SInt32)(y));
+          DrawCharLine(&theCH, (int32_t)(x), (int32_t)(y));
         y += exploZoom;
       }
       baseX += exploZoom * kCharSize;

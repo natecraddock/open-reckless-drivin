@@ -1,6 +1,8 @@
 #ifndef __OBJECTS
 #define __OBJECTS
 
+#include <stdint.h>
+
 #include "input.h"
 #include "roads.h"
 
@@ -70,20 +72,20 @@ typedef struct {
   float mass;
   float maxEngineForce, maxNegEngineForce;
   float friction;
-  UInt16 flags;
-  SInt16 deathObj;
-  SInt16 frame;
-  UInt16 numFrames;
+  uint16_t flags;
+  int16_t deathObj;
+  int16_t frame;
+  uint16_t numFrames;
   float frameDuration;
   float wheelWidth, wheelLength;
   float steering;
   float width, length;
-  UInt16 score;
-  UInt16 flags2;
-  SInt16 creationSound, otherSound;
+  uint16_t score;
+  uint16_t flags2;
+  int16_t creationSound, otherSound;
   float maxDamage;
-  SInt16 weaponObj;
-  SInt16 weaponInfo;
+  int16_t weaponObj;
+  int16_t weaponInfo;
 } tObjectType;
 typedef tObjectType *tObjectTypePtr;
 
@@ -135,7 +137,7 @@ extern int gPlayerLives, gExtraLives;
 extern float gPlayerDeathDelay, gFinishDelay;
 extern int gPlayerScore, gDisplayScore;
 extern int gPlayerBonus;
-extern UInt32 gPlayerAddOns;
+extern uint32_t gPlayerAddOns;
 extern float gGameTime;
 extern tObject *gHeliObj;
 extern unsigned long gFrameCount, gGraphFrameCount;
@@ -146,7 +148,7 @@ extern float gXDriftPos, gYDriftPos, gXFrontDriftPos, gYFrontDriftPos,
 extern float gSpikeFrame;
 
 void MoveObjects();
-tObject *NewObject(tObject *, SInt16);
+tObject *NewObject(tObject *, int16_t);
 void RemoveObject(tObject *);
 void InsertObjectGroup(tObjectGroupReference);
 void KillObject(tObject *);
