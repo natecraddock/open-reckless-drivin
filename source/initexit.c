@@ -40,8 +40,9 @@ void InitToolbox() {
 #undef sin
 void InitTrig() {
   int i;
-  for (i = 0; i < kSinTabSize; i++)
+  for (i = 0; i < kSinTabSize; i++) {
     gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
+  }
 }
 
 uint32_t U32Version(NumVersion v) {
@@ -87,16 +88,18 @@ void InitAE();
 
 void Init() {
   InitToolbox();
-  if (!ReqCheck())
+  if (!ReqCheck()) {
     ExitToShell();
+  }
   InitAE();
   gAppResFile = CurResFile();
   // DoError(RegisterAppearanceClient());
   Randomize();
   LoadPrefs();
   CheckRegi();
-  if (!gRegistered)
+  if (!gRegistered) {
     Register(false);
+  }
   InitScreen(0);
   ShowPicScreen(1003);
   LoadPack(kPackSnds);

@@ -63,11 +63,12 @@ Ptr LoadObjs(Ptr dataPos) {
 int NumLevels() {
   int i = kPackLevel1;
   SetResLoad(false);
-  for (i = 140; Get1Resource('Pack', i); i++)
-    ;
+  for (i = 140; Get1Resource('Pack', i); i++) {
+  }
   SetResLoad(true);
-  if (i == 140)
+  if (i == 140) {
     i = 150;
+  }
   return i - 140;
 }
 
@@ -75,7 +76,7 @@ void GameEndSequence();
 
 int LoadLevel() {
   int i, sound;
-  if (gLevelID >= kEncryptedPack - kPackLevel1 || gLevelResFile)
+  if (gLevelID >= kEncryptedPack - kPackLevel1 || gLevelResFile) {
     if (!gRegistered) {
       ShowPicScreen(1005);
       WaitForPress();
@@ -86,7 +87,7 @@ int LoadLevel() {
         CheckHighScore(gPlayerScore);
       return false;
     }
-
+  }
   (Ptr) gFirstObj = NewPtrClear(sizeof(tObject));
   gFirstObj->next = gFirstObj;
   gFirstObj->prev = gFirstObj;
@@ -108,9 +109,11 @@ int LoadLevel() {
                                gTrackDown->num * sizeof(tTrackInfoSeg));
   (Ptr) gRoadData = (Ptr)gRoadLenght + sizeof(uint32_t);
 
-  for (i = 0; i < 9; i++)
-    if ((*gLevelData).objGrps[i].resID)
+  for (i = 0; i < 9; i++) {
+    if ((*gLevelData).objGrps[i].resID) {
       InsertObjectGroup((*gLevelData).objGrps[i]);
+    }
+  }
 
   gPlayerObj = NewObject(gFirstObj,
                          gRoadInfo->water ? kNormalPlayerBoatID : gPlayerCarID);
@@ -171,15 +174,16 @@ void GetLevelNumber() {
   }
   cheatDlg = GetNewDialog(129, nil, (WindowPtr)-1);
   DoError(SetDialogDefaultItem(cheatDlg, 1));
-  do
+  do {
     ModalDialog(nil, &hit);
-  while (hit != 1);
+  } while (hit != 1);
   GetDialogItem(cheatDlg, 2, &type, &item, &box);
   GetDialogItemText(item, text);
   StringToNum(text, &num);
   gLevelID = num - 1;
-  if (gLevelID >= NumLevels())
+  if (gLevelID >= NumLevels()) {
     gLevelID = 0;
+  }
   GetDialogItem(cheatDlg, 5, &type, &item, &box);
   GetDialogItemText(item, text);
   StringToNum(text, &num);
@@ -206,8 +210,9 @@ void StartGame(int lcheat) {
   gNumMines = 0;
   gGameOn = true;
   gEndGame = false;
-  if (lcheat)
+  if (lcheat) {
     GetLevelNumber();
+  }
   gLCheat = lcheat;
   FadeScreen(1);
   HideCursor();
@@ -230,6 +235,7 @@ void EndGame() {
   GameOverAnim();
   InitInterface();
   ShowCursor();
-  if (!gLCheat)
+  if (!gLCheat) {
     CheckHighScore(gPlayerScore);
+  }
 }
