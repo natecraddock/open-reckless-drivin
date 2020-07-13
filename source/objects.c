@@ -248,7 +248,7 @@ void RemoveObject(tObject *theObj) {
       gLastVisObj = (tObject *)gLastVisObj->next;
     ((tObject *)theObj->prev)->next = theObj->next;
     ((tObject *)theObj->next)->prev = theObj->prev;
-    DisposePtr((Ptr)theObj);
+    DisposePtr(theObj);
   }
 }
 

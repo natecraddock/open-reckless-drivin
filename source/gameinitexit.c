@@ -59,7 +59,7 @@ Ptr LoadObjs(Ptr dataPos) {
     theObj->pos.x = objs[i].x;
     theObj->pos.y = objs[i].y;
   }
-  return (Ptr)(objs + *(uint32_t *)dataPos);
+  return (objs + *(uint32_t *)dataPos);
 }
 
 int NumLevels() {
@@ -90,7 +90,7 @@ int LoadLevel() {
       return false;
     }
   }
-  (Ptr) gFirstObj = NewPtrClear(sizeof(tObject));
+  gFirstObj = NewPtrClear(sizeof(tObject));
   gFirstObj->next = gFirstObj;
   gFirstObj->prev = gFirstObj;
 
@@ -100,16 +100,16 @@ int LoadLevel() {
   }
 
   LoadPack(kPackLevel1 + gLevelID);
-  (Ptr) gLevelData = GetSortedPackEntry(kPackLevel1 + gLevelID, 1, NULL);
-  (Ptr) gMarks = GetSortedPackEntry(kPackLevel1 + gLevelID, 2, &gMarkSize);
+  gLevelData = GetSortedPackEntry(kPackLevel1 + gLevelID, 1, NULL);
+  gMarks = GetSortedPackEntry(kPackLevel1 + gLevelID, 2, &gMarkSize);
   gMarkSize /= sizeof(tMarkSeg);
-  (Ptr) gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
-  (Ptr) gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
-  (Ptr) gTrackDown =
-      (Ptr)gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
-  (Ptr) gRoadLenght = LoadObjs((Ptr)gTrackDown + sizeof(uint32_t) +
+  gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
+  gTrackUp = gLevelData + sizeof(tLevelData);
+  gTrackDown =
+      gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
+  gRoadLenght = LoadObjs(gTrackDown + sizeof(uint32_t) +
                                gTrackDown->num * sizeof(tTrackInfoSeg));
-  (Ptr) gRoadData = (Ptr)gRoadLenght + sizeof(uint32_t);
+  gRoadData = gRoadLenght + sizeof(uint32_t);
 
   for (i = 0; i < 9; i++) {
     if ((*gLevelData).objGrps[i].resID) {
@@ -156,7 +156,7 @@ void DisposeLevel() {
     SpriteUnused((*(tObject *)gFirstObj->next).frame);
     RemoveObject((tObject *)gFirstObj->next);
   }
-  DisposePtr((Ptr)gFirstObj);
+  DisposePtr(gFirstObj);
 }
 
 extern int gOSX;

@@ -204,7 +204,7 @@ void Register(int fullscreen) {
       int icFailed = true;
       Str255 url = "\phttp://order.kagi.com/?F6";
       long start = 0, end = url[0];
-      if ((Ptr)ICStart != (Ptr)kUnresolvedCFragSymbolAddress)
+      if (ICStart != kUnresolvedCFragSymbolAddress)
         if (!ICStart(&inst, kCreator)) {
           icFailed = false;
           DoError(ICLaunchURL(inst, "\p", url + 1, url[0], &start, &end));

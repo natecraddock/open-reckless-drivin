@@ -90,7 +90,7 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
       *size = GetHandleSize(gPacks[packNum]) - offs;
     else
       *size = pack[entryID - startId + 2].offs - offs;
-  return (Ptr)pack + offs;
+  return pack + offs;
 }
 
 int ComparePackHeaders(const tPackHeader *p1, const tPackHeader *p2) {
@@ -111,7 +111,7 @@ Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
         *size = GetHandleSize(gPacks[packNum]) - offs;
       else
         *size = (found + 1)->offs - offs;
-    return (Ptr)pack + offs;
+    return pack + offs;
   }
   else
     return 0;

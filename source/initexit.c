@@ -63,7 +63,7 @@ int ReqCheck() {
                                       kAlertStdAlertOKButton,
                                       0,
                                       kWindowDefaultPosition};
-  if ((Ptr)RegisterAppearanceClient == (Ptr)kUnresolvedCFragSymbolAddress) {
+  if (RegisterAppearanceClient == kUnresolvedCFragSymbolAddress) {
     StopAlert(131, NULL);
     return false;
   }

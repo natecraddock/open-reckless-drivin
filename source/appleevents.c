@@ -78,7 +78,7 @@ pascal OSErr myODOC(AppleEvent *theAppleEvent, AppleEvent *reply, long refCon) {
   // associated file
   for (index = 1; index <= itemsInList; index++) {
     myErr = AEGetNthPtr(&docList, index, typeFSS, &keywd, &returnedType,
-                        (Ptr)&myFSS, sizeof(myFSS), &actualSize);
+                        &myFSS, sizeof(myFSS), &actualSize);
     if (myErr)
       DoError(myErr);
     MyOpenFile(&myFSS);

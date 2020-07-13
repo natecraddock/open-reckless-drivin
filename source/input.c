@@ -140,7 +140,7 @@ void InitHID() {
 uint32_t U32Version(NumVersion v);
 
 void InitInput() {
-  if ((Ptr)ISpGetVersion != (Ptr)kUnresolvedCFragSymbolAddress) {
+  if (ISpGetVersion != kUnresolvedCFragSymbolAddress) {
     if (U32Version(ISpGetVersion()) >= 0x0110)
       gInputISp = true;
   }
@@ -151,7 +151,7 @@ void InitInput() {
     (Handle) needs = GetResource('ISpN', 128);
     HLock((Handle)needs);
     needCount = GetHandleSize((Handle)needs) / sizeof(ISpNeed);
-    (Ptr) gVirtualElements = NewPtr(sizeof(ISpElementReference) * needCount);
+    gVirtualElements = NewPtr(sizeof(ISpElementReference) * needCount);
     DoError(
         ISpElement_NewVirtualFromNeeds(needCount, *needs, gVirtualElements, 0));
     DoError(ISpInit(needCount, *needs, gVirtualElements, kCreator, '????', 0,
