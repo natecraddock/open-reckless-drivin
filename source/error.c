@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "defines.h"
 #include "initexit.h"
 #include "screen.h"

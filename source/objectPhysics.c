@@ -1,3 +1,5 @@
+#include <stdbool.h>
+
 #include "gamesounds.h"
 #include "input.h"
 #include "objectcontrol.h"

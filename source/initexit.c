@@ -1,5 +1,6 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "error.h"

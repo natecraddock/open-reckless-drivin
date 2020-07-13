@@ -1,5 +1,6 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "defines.h"
@@ -248,7 +249,7 @@ int ContinuePress() {
 
 int GetEvent(int *element, int *data) {
   if (gInputISp) {
-    Boolean wasEvent;
+    bool wasEvent;
     ISpElementEvent event;
     DoError(ISpElementList_GetNextEvent(gEventElements, sizeof(ISpElementEvent),
                                         &event, &wasEvent));

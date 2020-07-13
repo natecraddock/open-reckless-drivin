@@ -3,7 +3,7 @@
  *
  *  Created by ggs on Mon Nov 26 2001.
 
-    Copyright:	Copyright © 2001 Apple Computer, Inc., All Rights Reserved
+    Copyright:	Copyright ï¿½ 2001 Apple Computer, Inc., All Rights Reserved
 
         Disclaimer:	IMPORTANT:  This Apple software is supplied to you by
  Apple Computer, Inc.
@@ -15,7 +15,7 @@
 
                         In consideration of your agreement to abide by the
  following terms, and subject to these terms, Apple grants you a personal,
- non-exclusive license, under AppleÕs copyrights in this original Apple software
+ non-exclusive license, under Appleï¿½s copyrights in this original Apple software
  (the "Apple Software"), to use, reproduce, modify and redistribute the Apple
  Software, with or without modifications, in source and/or binary forms;
  provided that if you redistribute the Apple Software in its entirety and
@@ -125,8 +125,8 @@ CFBundleRef gBundle = NULL;
 // ==================================
 
 OSStatus SetupHIDCFM(void) {
-  Boolean didLoad = false; //	Flag that indicates the status returned when
-                           // attempting to load a bundle's executable code.
+  bool didLoad = false; //	Flag that indicates the status returned when
+                        // attempting to load a bundle's executable code.
   CFBundleRef refMainBundle = NULL;
   CFURLRef refMainBundleURL = NULL, refPathBundleURL = NULL;
 

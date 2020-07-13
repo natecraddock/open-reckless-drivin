@@ -19,6 +19,6 @@ typedef struct PortList {
 #pragma pack()
 #endif
 
-Boolean IsPortListValid() {
+bool IsPortListValid() {
   return (true);
 }

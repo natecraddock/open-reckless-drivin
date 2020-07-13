@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "gameinitexit.h"
@@ -38,7 +39,7 @@ void ResumeFrameCount() {
   gStartMS += GetMSTime() - gPauseMS;
 }
 
-inline Boolean CheckFrameTime() {
+inline bool CheckFrameTime() {
   unsigned long optFrameCount;
   uint64_t curMS;
 
