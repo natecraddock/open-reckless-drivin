@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "initexit.h"
@@ -26,7 +27,7 @@ Str255 *FindRoutineName(unsigned long *codeAddress) {
       }
     }
   }
-  return nil;
+  return NULL;
 }
 
 inline void GetCallerName(Str255 callerName) {
@@ -46,10 +47,10 @@ void HandleError(int id) {
   Str255 help;
   AlertStdAlertParamRec alertParam = {false,
                                       false,
-                                      nil,
+                                      NULL,
                                       "\pExit",
-                                      nil,
-                                      nil,
+                                      NULL,
+                                      NULL,
                                       kAlertStdAlertOKButton,
                                       0,
                                       kWindowDefaultPosition};

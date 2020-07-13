@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "gamesounds.h"
@@ -65,7 +66,7 @@ void Explosion(t2DPoint pos, t2DPoint velo, int offs, float mass, int sound) {
 
 tObject *GetCloseObj(t2DPoint pos, tObject *posObj, float *dist) {
   tObject *theObj = (tObject *)(gFirstObj->next);
-  tObject *closeObj = nil;
+  tObject *closeObj = NULL;
   *dist = INFINITY;
   while (theObj != gFirstObj) {
     if (theObj != posObj) {
@@ -118,7 +119,7 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
                 (pos.y - gTrackDown->track[target - 1].y);
         *dir = kObjectDriveDown;
       }
-      GetCloseObj(pos, nil, &sqdist);
+      GetCloseObj(pos, NULL, &sqdist);
       ok = (sqdist > kScale * kScale * kMinCarDist * kMinCarDist);
     }
     else {
@@ -180,7 +181,7 @@ void InsertObjectGroup(tObjectGroupReference groupRef) {
   int probilities[100];
   int entryCnt, indexCount = 0, probCount;
   tObjectGroup *group =
-      (tObjectGroup *)GetSortedPackEntry(kPackOgrp, groupRef.resID, nil);
+      (tObjectGroup *)GetSortedPackEntry(kPackOgrp, groupRef.resID, NULL);
   for (entryCnt = 0; entryCnt < (*group).numEntries; entryCnt++)
     for (probCount = 0; probCount < (*group).data[entryCnt].probility;
          probCount++)

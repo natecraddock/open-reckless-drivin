@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "interface.h"
 #include "lzrwHandleInterface.h"
@@ -65,7 +66,7 @@ int CheckPack(int num, uint32_t check) {
       if (num >= kEncryptedPack)
         ok = check == CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
       ReleaseResource(gPacks[num]);
-      gPacks[num] = nil;
+      gPacks[num] = NULL;
     }
   }
   if (gLevelResFile)
@@ -76,7 +77,7 @@ int CheckPack(int num, uint32_t check) {
 void UnloadPack(int num) {
   if (gPacks[num]) {
     DisposeHandle(gPacks[num]);
-    gPacks[num] = nil;
+    gPacks[num] = NULL;
   }
 }
 

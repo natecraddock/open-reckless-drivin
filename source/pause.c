@@ -1,6 +1,7 @@
 #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
 
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "gameframe.h"
@@ -25,7 +26,7 @@ void PauseGame() {
   ShowPicScreen(1006);
   ShowCursor();
   do {
-    if (WaitNextEvent(everyEvent, &event, 60, nil)) {
+    if (WaitNextEvent(everyEvent, &event, 60, NULL)) {
       int eventWasProcessed;
       DoError(DSpProcessEvent(&event, &eventWasProcessed));
       if (event.what == mouseDown)

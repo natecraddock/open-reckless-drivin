@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "objects.h"
@@ -938,7 +939,7 @@ void SpriteUnused(int id) {
   if (id - 128 >= kNumSprites)
     if (gSprites[id - 128]) {
       DisposeHandle(gSprites[id - 128]);
-      gSprites[id - 128] = nil;
+      gSprites[id - 128] = NULL;
     }
 }
 
@@ -952,10 +953,10 @@ void LoadSprites() {
     if (data)
       DoError(PtrToHand(data, &gSprites[i - 128], size));
     else
-      gSprites[i - 128] = nil;
+      gSprites[i - 128] = NULL;
   }
   for (i = kNumSprites; i < kNumSprites + kNumSpecialSprites; i++)
-    gSprites[i] = nil;
+    gSprites[i] = NULL;
   UnloadPack(spritePack);
 }
 
@@ -1016,6 +1017,6 @@ void UnloadSprites() {
   for (i = 0; i < kNumSprites + kNumSpecialSprites; i++)
     if (gSprites[i]) {
       DisposeHandle(gSprites[i]);
-      gSprites[i] = nil;
+      gSprites[i] = NULL;
     }
 }

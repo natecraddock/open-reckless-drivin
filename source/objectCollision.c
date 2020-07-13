@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "gamesounds.h"
@@ -617,7 +618,7 @@ srcPoint=VEC2D_Sum(shooter->pos,P2D(sin(ranDir)*offset.y+cos(ranDir)*offset.x,-s
                 t2DPoint
 shotPoint=VEC2D_Sum(srcPoint,P2D(sin(ranDir)*ranLength,cos(ranDir)*ranLength));
                 float closeDist =INFINITY;
-                tObject *closeObj=nil;
+                tObject *closeObj=NULL;
                 if(i==0){
                         tObject *nozzleObj=NewObject(shooter,197);
                         nozzleObj->dir=shooter->dir;

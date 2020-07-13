@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "error.h"
@@ -45,7 +46,7 @@ void ShowPicScreen(int id) {
   ScreenMode(kScreenRunning);
   screenGW = GetScreenGW();
   GetGWorld(&oldGW, &oldGD);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   pic = GetResource('PPic', id);
   LZRWDecodeHandle(&pic);
   DrawPicture((PicHandle)pic, &r);
@@ -63,7 +64,7 @@ void ShowPicScreenNoFade(int id) {
   ScreenMode(kScreenRunning);
   screenGW = GetScreenGW();
   GetGWorld(&oldGW, &oldGD);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   pic = GetResource('PPic', id);
   LZRWDecodeHandle(&pic);
   DrawPicture((PicHandle)pic, &r);
@@ -96,14 +97,14 @@ void DrawScreen(int button, GWorldPtr src) {
   GWorldPtr oldGW;
   GDHandle oldGD;
   GetGWorld(&oldGW, &oldGD);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   if (button != kNoButton)
     CopyBits(GetPortBitMapForCopyBits(src), GetPortBitMapForCopyBits(screenGW),
-             (*gButtonList) + button, (*gButtonList) + button, srcCopy, nil);
+             (*gButtonList) + button, (*gButtonList) + button, srcCopy, NULL);
   else {
     Rect r = {0, 0, 480, 640};
     CopyBits(GetPortBitMapForCopyBits(src), GetPortBitMapForCopyBits(screenGW),
-             &r, &r, srcCopy, nil);
+             &r, &r, srcCopy, NULL);
     ForeColor(whiteColor);
     TextSize(12);
     TextFont(3);
@@ -155,7 +156,7 @@ void SaveFlushEvents() {
   int eventMask = mDownMask + mUpMask + keyDownMask + keyUpMask + autoKeyMask;
   EventRecord event;
   FlushEvents(eventMask, 0);
-  while (WaitNextEvent(eventMask, &event, 0, nil))
+  while (WaitNextEvent(eventMask, &event, 0, NULL))
     ;
 }
 
@@ -166,27 +167,27 @@ void InitInterface() {
     GDHandle oldGD;
     Handle pic;
     SetRect(&gwSize, 0, 0, 640, 480);
-    DoError(NewGWorld(&gMainScreenGW, gPrefs.hiColor ? 16 : 8, &gwSize, nil,
-                      nil, 0));
+    DoError(NewGWorld(&gMainScreenGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+                      NULL, 0));
     DoError(
-        NewGWorld(&gHilitGW, gPrefs.hiColor ? 16 : 8, &gwSize, nil, nil, 0));
-    DoError(
-        NewGWorld(&gSelectedGW, gPrefs.hiColor ? 16 : 8, &gwSize, nil, nil, 0));
+        NewGWorld(&gHilitGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, NULL, 0));
+    DoError(NewGWorld(&gSelectedGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+                      NULL, 0));
     LockPixels(GetGWorldPixMap(gMainScreenGW));
     LockPixels(GetGWorldPixMap(gHilitGW));
     LockPixels(GetGWorldPixMap(gSelectedGW));
     GetGWorld(&oldGW, &oldGD);
-    SetGWorld(gMainScreenGW, nil);
+    SetGWorld(gMainScreenGW, NULL);
     pic = GetResource('PPic', 1000);
     LZRWDecodeHandle(&pic);
     DrawPicture((PicHandle)pic, &gwSize);
     DisposeHandle(pic);
-    SetGWorld(gHilitGW, nil);
+    SetGWorld(gHilitGW, NULL);
     pic = GetResource('PPic', 1001);
     LZRWDecodeHandle(&pic);
     DrawPicture((PicHandle)pic, &gwSize);
     DisposeHandle(pic);
-    SetGWorld(gSelectedGW, nil);
+    SetGWorld(gSelectedGW, NULL);
     pic = GetResource('PPic', 1002);
     LZRWDecodeHandle(&pic);
     DrawPicture((PicHandle)pic, &gwSize);
@@ -199,14 +200,14 @@ void InitInterface() {
   InputMode(kInputSuspended);
   FadeScreen(1);
   ScreenMode(kScreenRunning);
-  ScreenUpdate(nil);
+  ScreenUpdate(NULL);
   FadeScreen(0);
   SaveFlushEvents();
   gGameOn = false;
 }
 
 void UpdateButtonLocation() {
-  Point mPos = GetScreenPos(nil);
+  Point mPos = GetScreenPos(NULL);
   int i, button = kNoButton;
   HLock((Handle)gButtonList);
   for (i = 0; i < GetHandleSize((Handle)gButtonList) / sizeof(Rect); i++)
@@ -234,7 +235,7 @@ int GetButtonClick(Point mPos) {
   if (button != kNoButton) {
     SimplePlaySound(147);
     while (StillDown()) {
-      mPos = GetScreenPos(nil);
+      mPos = GetScreenPos(NULL);
       if (clicked = PtInRect(mPos, (*gButtonList) + button)) {
         if (clicked != oldclicked)
           DrawScreen(button, gSelectedGW);
@@ -307,7 +308,7 @@ void WaitForPress() {
     GetKeys(theKeys);
     pressed = theKeys[0] | theKeys[1] | theKeys[2] | theKeys[3] | Button() |
               ContinuePress();
-    WaitNextEvent(everyEvent, &event, 0, nil);
+    WaitNextEvent(everyEvent, &event, 0, NULL);
   } while (!pressed);
   while (Button())
     ;
@@ -333,7 +334,7 @@ void HandleCommand(int cmd, int modifiers) {
     ShowPicScreen(1008);
     WaitForPress();
     FadeScreen(1);
-    ScreenUpdate(nil);
+    ScreenUpdate(NULL);
     FadeScreen(0);
     break;
   case kScoreButton:
@@ -372,13 +373,13 @@ void Eventloop() {
         break;
       case suspendResumeMessage:
         if (event.message & resumeFlag)
-          ScreenUpdate(nil);
+          ScreenUpdate(NULL);
         break;
       }
       break;
     case kHighLevelEvent:
       DoError(AEProcessAppleEvent(&event));
-      ScreenUpdate(nil);
+      ScreenUpdate(NULL);
       break;
     case updateEvt:
       ScreenUpdate((WindowPtr)event.message);

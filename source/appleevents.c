@@ -12,10 +12,10 @@ MyOpenFile(FSSpec *myFSS) {
   else {
     AlertStdAlertParamRec alertParam = {false,
                                         false,
-                                        nil,
+                                        NULL,
                                         "\pOK",
-                                        nil,
-                                        nil,
+                                        NULL,
+                                        NULL,
                                         kAlertStdAlertOKButton,
                                         0,
                                         kWindowDefaultPosition};
@@ -36,7 +36,7 @@ OSErr MyGotRequiredParams(AppleEvent *theAppleEvent) {
   OSErr myErr;
 
   myErr = AEGetAttributePtr(theAppleEvent, keyMissedKeywordAttr, typeWildCard,
-                            &returnedType, nil, 0, &actualSize);
+                            &returnedType, NULL, 0, &actualSize);
 
   if (myErr == errAEDescNotFound) // you got all the required
                                   // parameters

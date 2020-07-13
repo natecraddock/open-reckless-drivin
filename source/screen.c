@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <QDOffscreen.h>
 #undef CALL_NOT_IN_CARBON
@@ -25,7 +26,7 @@ int gMessageCount;
 short gXSize, gYSize;
 int gFlickerMode = false;
 int gOddLines;
-Handle gTranslucenceTab = nil, g16BitClut = nil;
+Handle gTranslucenceTab = NULL, g16BitClut = NULL;
 uint8_t gLightningTab[kLightValues][256];
 int gScreenMode;
 int gScreenBlitSpecial = false;
@@ -95,7 +96,7 @@ void InitScreen() {
   inDesiredAttributes.reserved1 = 0;
   inDesiredAttributes.reserved2 = 0;
   inDesiredAttributes.colorNeeds = kDSpColorNeeds_Request;
-  inDesiredAttributes.colorTable = gPrefs.hiColor ? nil : GetCTable(8);
+  inDesiredAttributes.colorTable = gPrefs.hiColor ? NULL : GetCTable(8);
   inDesiredAttributes.contextOptions = 0;
   inDesiredAttributes.backBufferDepthMask =
       gPrefs.hiColor ? kDSpDepthMask_16 : kDSpDepthMask_8;
@@ -131,9 +132,9 @@ void FadeScreen(int out) {
     break;
   }
   if (out >= 256)
-    DSpContext_FadeGamma(gDrawContext, (out - 256) / 256.0 * 100, nil);
+    DSpContext_FadeGamma(gDrawContext, (out - 256) / 256.0 * 100, NULL);
   if (out > 256 + 256)
-    DSpContext_FadeGamma(gDrawContext, 0, nil);
+    DSpContext_FadeGamma(gDrawContext, 0, NULL);
 #endif
 }
 
@@ -147,7 +148,7 @@ void ScreenMode(int mode) {
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(gameGW));
     gRowBytes = (**GetGWorldPixMap(gameGW)).rowBytes & 0x3FFF;
-    SetGWorld(gameGW, nil);
+    SetGWorld(gameGW, NULL);
     if (gScreenMode == kScreenSuspended)
       SetScreenClut(8);
     break;
@@ -367,7 +368,7 @@ void CopyBits_Interlaced(BitMap *srcPixMapP, BitMap *destPixMapP,
       (0x3FFF & (destMap.rowBytes << 1)) | (0xC000 & destMap.rowBytes);
 
   CopyBits((BitMap *)&srcMap, (BitMap *)&destMap, &srcRect, &destRect, srcCopy,
-           nil);
+           NULL);
 }
 
 extern int gOSX;
@@ -392,24 +393,24 @@ void Blit2Screen() {
     // CopyBits_Interlaced((BitMap*)*GetGWorldPixMap(gameGW),(BitMap*)*GetGWorldPixMap(screenGW),&rec,&rec,gOddLines,!gOddLines);
     if (gFlickerMode)
       gOddLines = !gOddLines;
-    SetGWorld(gameGW, nil);
+    SetGWorld(gameGW, NULL);
   }
   else if (gOSX) {
     DoError(
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     DoError(DSpContext_GetFrontBuffer(gDrawContext, &screenGW));
     CopyBits(GetPortBitMapForCopyBits(gameGW),
-             GetPortBitMapForCopyBits(screenGW), &rec, &rec, nil, srcCopy);
-    SetGWorld(gameGW, nil);
+             GetPortBitMapForCopyBits(screenGW), &rec, &rec, NULL, srcCopy);
+    SetGWorld(gameGW, NULL);
   }
   else {
     DoError(DSpContext_InvalBackBufferRect(gDrawContext, &rec));
-    DoError(DSpContext_SwapBuffers(gDrawContext, nil, 0));
+    DoError(DSpContext_SwapBuffers(gDrawContext, NULL, 0));
     DoError(
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(gameGW));
     gRowBytes = (**GetGWorldPixMap(gameGW)).rowBytes & 0x3fff;
-    SetGWorld(gameGW, nil);
+    SetGWorld(gameGW, NULL);
   }
 }
 
@@ -425,7 +426,7 @@ PicHandle MakeGWPicture(Rect *size) {
   thePicture = OpenCPicture(&picHeader);
   GetPortBounds(gw, &bounds);
   CopyBits(*(BitMapHandle)GetGWorldPixMap(gw),
-           *(BitMapHandle)GetGWorldPixMap(gw), &bounds, size, nil, srcCopy);
+           *(BitMapHandle)GetGWorldPixMap(gw), &bounds, size, NULL, srcCopy);
   ClosePicture();
   return thePicture;
 }

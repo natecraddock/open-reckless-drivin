@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "objectcontrol.h"
 #include "gamesounds.h"
 #include "input.h"
@@ -30,7 +32,7 @@
 
 float GetCloseCar(t2DPoint pos) {
   tObject *theObj = gFirstVisObj;
-  tObject *closeObj = nil;
+  tObject *closeObj = NULL;
   int dist = 0x7fffffff;
   while (theObj != gLastVisObj) {
     if ((*theObj->type).flags & kObjectBackCollFlag + kObjectBounce ||
@@ -157,7 +159,7 @@ void ObjectStartChase(tObject *theObj, int distance, float velo) {
 
 void CallFriend(tObject *copObj) {
   tObject *theObj = gFirstObj->next;
-  tObject *farObj = nil;
+  tObject *farObj = NULL;
   int dist = 0;
   while (theObj != gFirstObj) {
     if ((*theObj->type).flags & kObjectCop) {

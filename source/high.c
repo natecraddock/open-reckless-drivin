@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "error.h"
@@ -16,7 +17,7 @@ void ShowHighScores(int hilite) {
   ShowPicScreen(1004);
   screenGW = GetScreenGW();
   GetGWorld(&oldGW, &oldGD);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   TextMode(srcOr);
   TextSize(24);
   TextFont(3);
@@ -38,7 +39,7 @@ void ShowHighScores(int hilite) {
   SetGWorld(oldGW, oldGD);
   WaitForPress();
   FadeScreen(1);
-  ScreenUpdate(nil);
+  ScreenUpdate(NULL);
   FadeScreen(0);
 }
 
@@ -57,13 +58,13 @@ void SetHighScoreEntry(int index, uint32_t score) {
     FadeScreen(0);
   }
 
-  highDlg = GetNewDialog(130, nil, (WindowPtr)-1);
+  highDlg = GetNewDialog(130, NULL, (WindowPtr)-1);
   DoError(SetDialogDefaultItem(highDlg, 1));
   GetDialogItem(highDlg, 2, &type, &item, &box);
   SetDialogItemText(item, gPrefs.lastName);
   SelectDialogItemText(highDlg, 2, 0, 32767);
   do
-    ModalDialog(nil, &hit);
+    ModalDialog(NULL, &hit);
   while (hit != 1);
   GetDialogItemText(item, text);
   BlockMove(text, gPrefs.lastName, text[0] + 1);

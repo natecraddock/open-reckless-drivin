@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "gamesounds.h"
@@ -69,7 +70,7 @@ void ReInitGraphics() {
   }
   LoadSprites();
   InitInterface();
-  ScreenUpdate(nil);
+  ScreenUpdate(NULL);
 }
 
 void FirstRun() {
@@ -156,7 +157,7 @@ void Preferences() {
   FadeScreen(1);
   ScreenMode(kScreenSuspended);
   FadeScreen(0);
-  prefDlg = GetNewDialog(128, nil, (WindowPtr)-1L);
+  prefDlg = GetNewDialog(128, NULL, (WindowPtr)-1L);
   DoError(SetDialogDefaultItem(prefDlg, kOKButton));
   DoError(SetDialogCancelItem(prefDlg, kCancelButton));
   DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt));
@@ -182,7 +183,7 @@ void Preferences() {
     short type;
     Rect box;
     Handle item;
-    ModalDialog(nil, &hit);
+    ModalDialog(NULL, &hit);
     GetDialogItem(prefDlg, hit, &type, &item, &box);
     if (hit == kSoundBox)
       if (!GetControlValue((ControlHandle)item))
@@ -235,6 +236,6 @@ void Preferences() {
     ReInitGraphics();
   FadeScreen(1);
   ScreenMode(kScreenRunning);
-  ScreenUpdate(nil);
+  ScreenUpdate(NULL);
   FadeScreen(0);
 }

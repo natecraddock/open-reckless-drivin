@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "error.h"
@@ -99,10 +100,10 @@ int LoadLevel() {
   }
 
   LoadPack(kPackLevel1 + gLevelID);
-  (Ptr) gLevelData = GetSortedPackEntry(kPackLevel1 + gLevelID, 1, nil);
+  (Ptr) gLevelData = GetSortedPackEntry(kPackLevel1 + gLevelID, 1, NULL);
   (Ptr) gMarks = GetSortedPackEntry(kPackLevel1 + gLevelID, 2, &gMarkSize);
   gMarkSize /= sizeof(tMarkSeg);
-  (Ptr) gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, nil);
+  (Ptr) gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
   (Ptr) gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
   (Ptr) gTrackDown =
       (Ptr)gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
@@ -124,10 +125,10 @@ int LoadLevel() {
   gPlayerObj->target = 1;
   gCameraObj = gPlayerObj;
   gPlayerBonus = 1;
-  //	gPlayerObj=nil; //	Uncomment this line to make the player car ai
+  //	gPlayerObj=NULL; //	Uncomment this line to make the player car ai
   // controlled
-  gSpikeObj = nil;
-  gBrakeObj = nil;
+  gSpikeObj = NULL;
+  gBrakeObj = NULL;
   CopClear();
   SortObjects();
 
@@ -150,7 +151,7 @@ int LoadLevel() {
 
 void DisposeLevel() {
   UnloadPack(kPackLevel1 + gLevelID);
-  gPlayerObj = nil;
+  gPlayerObj = NULL;
   while ((tObject *)gFirstObj->next != gFirstObj) {
     SpriteUnused((*(tObject *)gFirstObj->next).frame);
     RemoveObject((tObject *)gFirstObj->next);
@@ -173,10 +174,10 @@ void GetLevelNumber() {
     ScreenMode(kScreenSuspended);
     FadeScreen(0);
   }
-  cheatDlg = GetNewDialog(129, nil, (WindowPtr)-1);
+  cheatDlg = GetNewDialog(129, NULL, (WindowPtr)-1);
   DoError(SetDialogDefaultItem(cheatDlg, 1));
   do {
-    ModalDialog(nil, &hit);
+    ModalDialog(NULL, &hit);
   } while (hit != 1);
   GetDialogItem(cheatDlg, 2, &type, &item, &box);
   GetDialogItemText(item, text);

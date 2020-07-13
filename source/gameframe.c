@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "gameinitexit.h"
 #include "gamesounds.h"
@@ -244,12 +245,12 @@ void PlayerHandling() {
   }
   else if (gSpikeObj) {
     KillObject(gSpikeObj);
-    gSpikeObj = nil;
+    gSpikeObj = NULL;
   }
   // brake light handling
   if (gBrakeObj) {
     KillObject(gBrakeObj);
-    gBrakeObj = nil;
+    gBrakeObj = NULL;
   }
   if ((gPlayerObj->input.brake || gPlayerObj->input.reverse) &&
       !(*gRoadInfo).water && !(gPlayerDeathDelay != 0) && gPlayerLives) {

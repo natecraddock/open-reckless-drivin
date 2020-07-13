@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "objects.h"
@@ -44,13 +45,13 @@ float gVolume;
 long gSystemRate = 0;
 int gGear;
 int gBuggySoundManager;
-UniversalProcPtr gSoundCallBack = nil;
+UniversalProcPtr gSoundCallBack = NULL;
 
 uint32_t U32Version(NumVersion v);
 
 void SetGameVolume(int volume) {
   ComponentDescription theDesc = {kSoundOutputDeviceType, 0, 0, 0, 0};
-  Component theDefaultSoundOutputDevice = FindNextComponent(nil, &theDesc);
+  Component theDefaultSoundOutputDevice = FindNextComponent(NULL, &theDesc);
   if (theDefaultSoundOutputDevice) {
     SoundInfoList rates;
     UnsignedFixed searchRate = gPrefs.hqSound ? rate44khz : rate22050hz;
@@ -78,7 +79,7 @@ void SetGameVolume(int volume) {
 
 void SetSystemVolume() {
   ComponentDescription theDesc = {kSoundOutputDeviceType, 0, 0, 0, 0};
-  Component theDefaultSoundOutputDevice = FindNextComponent(nil, &theDesc);
+  Component theDefaultSoundOutputDevice = FindNextComponent(NULL, &theDesc);
   if (theDefaultSoundOutputDevice && gSystemRate) {
     gSystemVolumeActive = true;
     DoError(SetSoundOutputInfo(theDefaultSoundOutputDevice, siSampleRate,
@@ -125,15 +126,15 @@ void InitChannels() {
     gChannelsInited = 0;
   }
   for (i = 0; i < (gPrefs.hqSound ? kNumHQChannels : kNumChannels); i++) {
-    gChannels[i] = nil;
+    gChannels[i] = NULL;
     DoError(SndNewChannel(&gChannels[i], sampledSynth, init, gSoundCallBack));
     gChannels[i]->userInfo = 0;
     gChannelsInited++;
   }
-  gEngineChannel = nil;
+  gEngineChannel = NULL;
   DoError(SndNewChannel(&gEngineChannel, sampledSynth, init, gSoundCallBack));
   gEngineChannel->userInfo = 0;
-  gSkidChannel = nil;
+  gSkidChannel = NULL;
   DoError(SndNewChannel(&gSkidChannel, sampledSynth, init, gSoundCallBack));
   gSkidChannel->userInfo = 0;
   gBuggySoundManager = U32Version(SndSoundManagerVersion()) < 0x03600000 &&
@@ -173,7 +174,7 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
     else
       engineVol = 0;
     if (gEngineChannel->userInfo) {
-      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, nil);
+      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, NULL);
       gEngineChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
       cmd.param2 =
@@ -214,7 +215,7 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
       skidR = 1;
     if (gSkidChannel->userInfo) {
       tSound *sound =
-          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, nil);
+          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, NULL);
       gSkidChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
       cmd.param2 =
@@ -266,7 +267,7 @@ void StartCarChannels() {
   DoError(SndDoCommand(gEngineChannel, &cmd, false));
   if (gPrefs.engineSound && gPrefs.sound)
     for (i = 0; i < 2; i++) {
-      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, nil);
+      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, NULL);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
       cmd.param2 =
@@ -277,7 +278,7 @@ void StartCarChannels() {
       cmd.param2 = 0;
       DoError(SndDoCommand(gEngineChannel, &cmd, false));
       sound =
-          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, nil);
+          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, NULL);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
       cmd.param2 =
@@ -293,7 +294,7 @@ void StartCarChannels() {
 
 void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
   if (gPrefs.sound) {
-    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, nil);
+    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, NULL);
     SndChannelPtr chan;
     SndCommand cmd;
     int i;
@@ -362,7 +363,7 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
 
 void SimplePlaySound(int id) {
   if (gPrefs.sound) {
-    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, nil);
+    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, NULL);
     SndChannelPtr chan;
     SndCommand cmd;
     int i;

@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "gameframe.h"
@@ -35,12 +36,12 @@ void GameEndSequence() {
   GetQDGlobalsBlack(&black);
   picSize = (**pic).picFrame;
   GetGWorld(&oldGW, &oldGD);
-  DoError(NewGWorld(&textGW, 8, &picSize, nil, nil, 0));
-  SetGWorld(textGW, nil);
+  DoError(NewGWorld(&textGW, 8, &picSize, NULL, NULL, 0));
+  SetGWorld(textGW, NULL);
   FillRect(&picSize, &black);
   DrawPicture((PicHandle)pic, &picSize);
   DisposeHandle(pic);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   SetRect(&draw, 0, 0, 640, 480);
   FillRect(&draw, &black);
   FadeScreen(512);
@@ -55,7 +56,7 @@ void GameEndSequence() {
               480 + (picSize.bottom - picSize.top) - yScroll);
       CopyBits(GetPortBitMapForCopyBits(textGW),
                GetPortBitMapForCopyBits(screenGW), &picSize, &draw, srcCopy,
-               nil);
+               NULL);
       while (yScroll >= time * kScrollSpeed)
         time = (GetMSTime() - startMS) / (float)1000000;
     }

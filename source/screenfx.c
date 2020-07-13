@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "gameframe.h"
 #include "input.h"
@@ -29,7 +30,7 @@ void ScreenClear() {
   Pattern black;
   GetQDGlobalsBlack(&black);
   GetGWorld(&oldGW, &oldGD);
-  SetGWorld(screenGW, nil);
+  SetGWorld(screenGW, NULL);
   SetRect(&r, 0, 0, gXSize, gYSize);
   FillRect(&r, &black);
   SetGWorld(oldGW, oldGD);

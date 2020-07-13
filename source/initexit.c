@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "error.h"
 #include "gameinitexit.h"
@@ -34,7 +35,7 @@ void InitToolbox() {
     InitWindows();
     InitMenus();
     TEInit();
-    InitDialogs(nil);*/
+    InitDialogs(NULL);*/
   InitCursor();
 }
 
@@ -55,15 +56,15 @@ int ReqCheck() {
   long resp;
   AlertStdAlertParamRec alertParam = {false,
                                       false,
-                                      nil,
+                                      NULL,
                                       "\pExit",
-                                      nil,
-                                      nil,
+                                      NULL,
+                                      NULL,
                                       kAlertStdAlertOKButton,
                                       0,
                                       kWindowDefaultPosition};
   if ((Ptr)RegisterAppearanceClient == (Ptr)kUnresolvedCFragSymbolAddress) {
-    StopAlert(131, nil);
+    StopAlert(131, NULL);
     return false;
   }
   if (U32Version(SndSoundManagerVersion()) <= 0x03100000) {

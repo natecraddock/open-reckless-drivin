@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "InternetConfig.h"
 #include "defines.h"
@@ -75,7 +76,7 @@ int CheckRegi() {
 
 void EnterCode() {
   int repeat;
-  DialogPtr regDlg = GetNewDialog(133, nil, (WindowPtr)-1L);
+  DialogPtr regDlg = GetNewDialog(133, NULL, (WindowPtr)-1L);
   do {
     short hit;
     short type;
@@ -94,7 +95,7 @@ void EnterCode() {
       DialogPtr dlg;
       hit = 0;
       TEFromScrap();
-      if (WaitNextEvent(everyEvent, &event, 60, nil)) {
+      if (WaitNextEvent(everyEvent, &event, 60, NULL)) {
         if (event.what == keyDown)
           switch ((event.message & keyCodeMask) >> 8) {
           case 0x24:
@@ -129,10 +130,10 @@ void EnterCode() {
     if (hit == kCodeOKButton) {
       AlertStdAlertParamRec alertParam = {false,
                                           false,
-                                          nil,
+                                          NULL,
                                           "\pOK",
-                                          nil,
-                                          nil,
+                                          NULL,
+                                          NULL,
                                           kAlertStdAlertOKButton,
                                           0,
                                           kWindowDefaultPosition};
@@ -163,10 +164,10 @@ void EnterCode() {
 void Register(int fullscreen) {
   AlertStdAlertParamRec alertParam = {false,
                                       false,
-                                      nil,
+                                      NULL,
                                       "\pOK",
-                                      nil,
-                                      nil,
+                                      NULL,
+                                      NULL,
                                       kAlertStdAlertOKButton,
                                       0,
                                       kWindowDefaultPosition};
@@ -174,12 +175,12 @@ void Register(int fullscreen) {
   if (fullscreen)
     ScreenMode(kScreenSuspended);
   if (!gRegistered) {
-    DialogPtr regDlg = GetNewDialog(132, nil, (WindowPtr)-1L);
+    DialogPtr regDlg = GetNewDialog(132, NULL, (WindowPtr)-1L);
     short hit;
     DoError(SetDialogDefaultItem(regDlg, kCancelButton));
     DoError(SetDialogCancelItem(regDlg, kCancelButton));
     do {
-      ModalDialog(nil, &hit);
+      ModalDialog(NULL, &hit);
     } while (hit > kCancelButton);
     DisposeDialog(regDlg);
     switch (hit) {
@@ -229,7 +230,7 @@ void Register(int fullscreen) {
   }
   if (fullscreen) {
     ScreenMode(kScreenRunning);
-    ScreenUpdate(nil);
+    ScreenUpdate(NULL);
   }
 }
 
@@ -243,7 +244,7 @@ MANUALLY LANUCH REGISTER APP
                                 launchParams.launchEPBLength=extendedBlockLen;
                                 launchParams.launchAppSpec=&regApp;
                                 launchParams.launchControlFlags=launchNoFileFlags+launchContinue;
-                                launchParams.launchAppParameters=nil;
+                                launchParams.launchAppParameters=NULL;
                                 err=LaunchApplication(&launchParams);
                                 if(err==memFullErr)
                                         DoError(StandardAlert(kAlertStopAlert,

@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "objects.h"
@@ -307,7 +308,7 @@ void DrawTextFX(int xDrawStart, int yDrawStart) {
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
       Ptr theCH =
-          GetSortedPackEntry(kPackcRLE, gTextFX[i].text[ch] - 'A' + 128, nil) +
+          GetSortedPackEntry(kPackcRLE, gTextFX[i].text[ch] - 'A' + 128, NULL) +
           8;
       float y = baseY;
       for (line = 0; line < kCharSize; line++) {
@@ -363,7 +364,7 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
       Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? kPackcR16 : kPackcRLE,
-                                     gTextFX[i].text[ch] - 'A' + 128, nil) +
+                                     gTextFX[i].text[ch] - 'A' + 128, NULL) +
                   8;
       float y = baseY;
       for (line = 0; line < kCharSize; line++) {
@@ -394,7 +395,7 @@ void SimpleDrawText(Str255 text, int xPos, int yPos) {
   int ch, line;
   for (ch = 1; ch <= text[0]; ch++) {
     Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? kPackcR16 : kPackcRLE,
-                                   text[ch] - 'A' + 128, nil) +
+                                   text[ch] - 'A' + 128, NULL) +
                 8;
     int y = yPos;
     for (line = 0; line < kCharSize / 2; line++) {

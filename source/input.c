@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "defines.h"
 #include "error.h"
@@ -159,7 +160,7 @@ void InitInput() {
     // DoError(ISpDevices_ActivateClass(kISpDeviceClass_Mouse));
     DoError(ISpDevices_ActivateClass(kISpDeviceClass_Keyboard));
     InputMode(kInputSuspended);
-    DoError(ISpElementList_New(0, nil, &gEventElements, 0));
+    DoError(ISpElementList_New(0, NULL, &gEventElements, 0));
     DoError(ISpElementList_AddElements(gEventElements, kForward, 1,
                                        &gVirtualElements[kForward]));
     DoError(ISpElementList_AddElements(gEventElements, kBackward, 1,
@@ -451,7 +452,7 @@ void GetKeyPress(int element, DialogPtr keyDlg, uint8_t *elements) {
   Str255 text;
   EventRecord event;
   SelectDialogItemText(keyDlg, element + 4, 0, 32767);
-  WaitNextEvent(everyEvent, &event, 0, nil);
+  WaitNextEvent(everyEvent, &event, 0, NULL);
   while (!pressed)
     for (i = 0; i < 128; i++)
       if (IsPressed(i)) {
@@ -494,7 +495,7 @@ void GetHIDPress(int element, DialogPtr keyDlg, uint8_t *elements) {
 
 void ConfigureHID() {
   if (gInputHID) {
-    DialogPtr keyDlg = GetNewDialog(135, nil, (WindowPtr)-1L);
+    DialogPtr keyDlg = GetNewDialog(135, NULL, (WindowPtr)-1L);
     short hit;
     short type;
     Rect box;
@@ -514,7 +515,7 @@ void ConfigureHID() {
     }
     do {
       SelectDialogItemText(keyDlg, 21, 0, 0);
-      ModalDialog(nil, &hit);
+      ModalDialog(NULL, &hit);
       if (hit >= 4 && hit < 12 && !IsPressed(0x30))
         GetHIDPress(hit - 4, keyDlg, elements);
     } while (hit != 2 && hit != 3);
@@ -527,10 +528,10 @@ void ConfigureHID() {
     int hit;
     AlertStdAlertParamRec alertParam = {false,
                                         false,
-                                        nil,
-                                        nil,
-                                        nil,
-                                        nil,
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        NULL,
                                         kAlertStdAlertOKButton,
                                         0,
                                         kWindowDefaultPosition};
@@ -543,9 +544,9 @@ void ConfigureHID() {
 
 void ConfigureInput() {
   if (gInputISp)
-    DoError(ISpConfigure(nil));
+    DoError(ISpConfigure(NULL));
   else {
-    DialogPtr keyDlg = GetNewDialog(134, nil, (WindowPtr)-1L);
+    DialogPtr keyDlg = GetNewDialog(134, NULL, (WindowPtr)-1L);
     short hit;
     short type;
     Rect box;
@@ -563,7 +564,7 @@ void ConfigureInput() {
     }
     do {
       SelectDialogItemText(keyDlg, 21, 0, 0);
-      ModalDialog(nil, &hit);
+      ModalDialog(NULL, &hit);
       if (hit >= 4 && hit < 12 && !IsPressed(0x30))
         GetKeyPress(hit - 4, keyDlg, elements);
       if (hit == 23)
