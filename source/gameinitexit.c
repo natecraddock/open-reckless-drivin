@@ -22,7 +22,7 @@
 #include "trig.h"
 
 tRoad gRoadData;
-uint32_t *gRoadLenght;
+uint32_t *gRoadLength;
 tRoadInfo *gRoadInfo;
 tLevelData *gLevelData;
 tTrackInfo *gTrackUp, *gTrackDown;
@@ -107,9 +107,9 @@ int LoadLevel() {
   gTrackUp = gLevelData + sizeof(tLevelData);
   gTrackDown =
       gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
-  gRoadLenght = LoadObjs(gTrackDown + sizeof(uint32_t) +
-                               gTrackDown->num * sizeof(tTrackInfoSeg));
-  gRoadData = gRoadLenght + sizeof(uint32_t);
+  gRoadLength = LoadObjs(gTrackDown + sizeof(uint32_t) +
+                         gTrackDown->num * sizeof(tTrackInfoSeg));
+  gRoadData = gRoadLength + sizeof(uint32_t);
 
   for (i = 0; i < 9; i++) {
     if ((*gLevelData).objGrps[i].resID) {

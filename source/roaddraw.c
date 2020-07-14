@@ -237,7 +237,7 @@ void DrawRoadZoomed(float xDrawStart, float yDrawStart, float zoom) {
   if (gPrefs.lineSkip)
     rowBytesSkip += gRowBytes;
   for (screenY = 0; screenY < gYSize; screenY += (gPrefs.lineSkip ? 2 : 1)) {
-    float worldY = InZeroMax(yDrawStart - screenY * zoom, *gRoadLenght * 2);
+    float worldY = InZeroMax(yDrawStart - screenY * zoom, *gRoadLength * 2);
     float ceilRoadLine = ceil(worldY * 0.5);
     float floorRoadLine = floor(worldY * 0.5);
     float floorPerc = ceilRoadLine - worldY * 0.5;
@@ -373,7 +373,7 @@ void DrawRoadZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   if (gPrefs.lineSkip)
     rowBytesSkip += gRowBytes;
   for (screenY = 0; screenY < gYSize; screenY += (gPrefs.lineSkip ? 2 : 1)) {
-    float worldY = InZeroMax(yDrawStart - screenY * zoom, *gRoadLenght * 2);
+    float worldY = InZeroMax(yDrawStart - screenY * zoom, *gRoadLength * 2);
     float ceilRoadLine = ceil(worldY * 0.5);
     float floorRoadLine = floor(worldY * 0.5);
     float floorPerc = ceilRoadLine - worldY * 0.5;

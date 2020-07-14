@@ -12,7 +12,7 @@ typedef int16_t tRoadSeg[4];
 typedef tRoadSeg *tRoad;
 
 extern tRoad gRoadData;
-extern uint32_t *gRoadLenght;
+extern uint32_t *gRoadLength;
 
 typedef struct {
   float friction, airResistance;

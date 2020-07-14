@@ -406,14 +406,14 @@ inline void MoveObject(tObject *theObj) {
   if (*(double *)(&theObj->velo)) {
     theObj->pos = VEC2D_Sum(theObj->pos,
                             VEC2D_Scale(theObj->velo, kScale * kFrameDuration));
-    if (theObj->pos.y > *gRoadLenght * 2) {
+    if (theObj->pos.y > *gRoadLength * 2) {
       theObj->pos = P2D(gTrackUp->track[0].x, 100);
       if (theObj->control == kObjectDriveUp)
         theObj->target = 0;
       RepairObj(theObj);
     }
     else if (theObj->pos.y < 0) {
-      theObj->pos = P2D(gTrackDown->track[0].x, *gRoadLenght * 2 - 100);
+      theObj->pos = P2D(gTrackDown->track[0].x, *gRoadLength * 2 - 100);
       if (theObj->control == kObjectDriveDown)
         theObj->target = 0;
       RepairObj(theObj);
