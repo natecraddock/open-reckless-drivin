@@ -1,6 +1,7 @@
 #ifndef __PACKS
 #define __PACKS
 
+#include <stdbool.h>
 #include <stdint.h>
 
 enum {
@@ -36,7 +37,7 @@ void UnloadPack(int);
 Ptr GetSortedPackEntry(int, int, int *);
 Ptr GetUnsortedPackEntry(int, int, int *);
 int NumPackEntries(int);
-int CheckPack(int num, uint32_t check);
+bool CheckPack(int num, uint32_t check);
 uint32_t BlockChecksum(uint32_t *data, uint32_t len);
 
 #endif

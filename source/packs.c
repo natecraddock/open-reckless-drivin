@@ -1,12 +1,10 @@
-#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
 #include "interface.h"
-#include "lzrwHandleInterface.h"
+/* #include "lzrwHandleInterface.h" */
 #include "packs.h"
 #include "register.h"
-#include <stdlib.h>
 
 typedef struct {
   int16_t id;
@@ -30,13 +28,16 @@ uint32_t CryptData(uint32_t *data, uint32_t len) {
   }
   if (len) {
     *((uint8_t *)data) ^= gKey >> 24;
-    check += (*((uint8_t *)data)++) << 24;
+    /* check += (*((uint8_t *)data)++) << 24; */
+    check += (*((uint8_t *)data))++ << 24;
     if (len > 1) {
       *((uint8_t *)data) ^= (gKey >> 16) & 0xff;
-      check += (*((uint8_t *)data)++) << 16;
+      /* check += (*((uint8_t *)data)++) << 16; */
+      check += (*((uint8_t *)data))++ << 16;
       if (len > 2) {
         *((uint8_t *)data) ^= (gKey >> 8) & 0xff;
-        check += (*((uint8_t *)data)++) << 8;
+        /* check += (*((uint8_t *)data)++) << 8; */
+        check += (*((uint8_t *)data))++ << 8;
       }
     }
   }
@@ -48,29 +49,32 @@ uint32_t LoadPack(int num) {
   if (!gPacks[num]) {
     gPacks[num] = GetResource('Pack', num + 128);
     if (gPacks[num]) {
-      if (num >= kEncryptedPack || gLevelResFile)
+      if (num >= kEncryptedPack || gLevelResFile) {
         check = CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
-      LZRWDecodeHandle(&gPacks[num]);
-      HLockHi(gPacks[num]);
+      }
+      /* LZRWDecodeHandle(&gPacks[num]); process compression later. */
+      /* HLockHi(gPacks[num]); Locks a handle in memory. Unneeded. */
     }
   }
   return check;
 }
 
-int CheckPack(int num, uint32_t check) {
-  int ok = false;
+bool CheckPack(int num, uint32_t check) {
+  bool ok = false;
   UseResFile(gAppResFile);
   if (!gPacks[num]) {
     gPacks[num] = GetResource('Pack', num + 128);
     if (gPacks[num]) {
-      if (num >= kEncryptedPack)
+      if (num >= kEncryptedPack) {
         ok = check == CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
+      }
       ReleaseResource(gPacks[num]);
       gPacks[num] = NULL;
     }
   }
-  if (gLevelResFile)
+  if (gLevelResFile) {
     UseResFile(gLevelResFile);
+  }
   return ok;
 }
 
@@ -85,11 +89,14 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
   tPackHeader *pack = (tPackHeader *)*gPacks[packNum];
   int startId = pack[1].id;
   uint32_t offs = pack[entryID - startId + 1].offs;
-  if (size)
-    if (entryID - startId + 1 == pack->id)
+  if (size) {
+    if (entryID - startId + 1 == pack->id) {
       *size = GetHandleSize(gPacks[packNum]) - offs;
-    else
+    }
+    else {
       *size = pack[entryID - startId + 2].offs - offs;
+    }
+  }
   return pack + offs;
 }
 
@@ -106,15 +113,18 @@ Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
                   ComparePackHeaders);
   if (found) {
     offs = found->offs;
-    if (size)
-      if (pack->id == found - pack)
+    if (size) {
+      if (pack->id == found - pack) {
         *size = GetHandleSize(gPacks[packNum]) - offs;
-      else
+      }
+      else {
         *size = (found + 1)->offs - offs;
+      }
+    }
     return pack + offs;
   }
-  else
-    return 0;
+
+  return 0;
 }
 
 int NumPackEntries(int num) {
