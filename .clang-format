@@ -3,7 +3,7 @@ BasedOnStyle: LLVM
 
 AlignTrailingComments: true
 
-AllowShortBlocksOnASingleLine: Never
+AllowShortBlocksOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 AllowShortLoopsOnASingleLine: false
