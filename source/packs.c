@@ -59,6 +59,7 @@ uint32_t LoadPack(int num) {
   return check;
 }
 
+/* Only used to check if registration is valid. */
 bool CheckPack(int num, uint32_t check) {
   bool ok = false;
   UseResFile(gAppResFile);
