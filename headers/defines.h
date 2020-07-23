@@ -1,3 +1,5 @@
+#ifndef DEFINES_H
+#define DEFINES_H
 
 #include <stdint.h>
 
@@ -24,3 +26,5 @@ typedef struct Point {
 
 typedef struct GWorldPtr {
 } GWorldPtr;
+
+#endif /* DEFINES_H */
