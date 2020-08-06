@@ -9,6 +9,11 @@ typedef unsigned char Str31[32];
 typedef unsigned char Str63[64];
 typedef unsigned char Str255[256];
 
+typedef struct Pointer {
+  int size;
+  char *data;
+} Pointer;
+
 typedef char *Ptr;
 typedef Ptr *Handle;
 typedef unsigned char *StringPtr;

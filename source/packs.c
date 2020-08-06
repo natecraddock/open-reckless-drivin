@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "interface.h"
-/* #include "lzrwHandleInterface.h" */
+#include "lzrw.h"
 #include "packs.h"
 #include "register.h"
 
@@ -52,7 +52,7 @@ uint32_t LoadPack(int num) {
       if (num >= kEncryptedPack || gLevelResFile) {
         check = CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
       }
-      /* LZRWDecodeHandle(&gPacks[num]); process compression later. */
+      LZRWDecodeHandle(&gPacks[num]);
       /* HLockHi(gPacks[num]); Locks a handle in memory. Unneeded. */
     }
   }
