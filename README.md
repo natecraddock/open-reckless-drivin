@@ -4,6 +4,16 @@ This is an attempt to port Reckless Drivin' from Macintosh to openGL on Linux.
 
 The game is now available for free http://jonasechterhoff.com/Reckless_Drivin.html
 
+---
+
+# Current status
+
+Working on loading the packed data from `Data` (the resource fork). I have successfully written a function to fetch the correct resource, and decompress it with lzrw decompression.
+
+The next step is to interpret the bytes correctly!
+
+---
+
 Name: Free<br>
 Code: B3FB09B1EB
 
