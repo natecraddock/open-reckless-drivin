@@ -40,8 +40,6 @@ Handle GetResource(const char *type, short id) {
     return NULL;
   }
 
-  printf("Got length %d\n", length);
-
   ptr->size = length;
   ptr->data = data;
 

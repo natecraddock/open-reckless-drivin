@@ -1,6 +1,7 @@
 #ifndef DEFINES_H
 #define DEFINES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 /* Common constant string sizes. */
