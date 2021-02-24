@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
@@ -80,27 +81,36 @@ uint32_t CodeStr2Long(const char *code) {
   uint32_t seed = 0;
 
   /* Validate code. */
-  if (strlen(code) != 11) {
+  if (strlen(code) != 10) {
     return 0;
   }
-  for (int digi = 10; digi > 0; digi--) {
+  for (int digi = 0; digi < 10; digi++) {
     if (!((code[digi] >= '0' && code[digi] <= '9') ||
           (code[digi] >= 'A' && code[digi] <= 'F'))) {
       return 0;
     }
   }
 
-  for (int digi = 10; digi > 8; digi--) {
-    seed += Hex2Num(code[digi]) * pow(16, 10 - digi);
+  for (int digi = 9; digi > 7; digi--) {
+    seed += Hex2Num(code[digi]) * pow(16, 9 - digi);
   }
   seed = seed + (seed << 8) + (seed << 16) + (seed << 24);
-  for (int digi = 8; digi > 0; digi--) {
-    codeNum += Hex2Num(code[digi]) * pow(16, 8 - digi);
+  for (int digi = 7; digi >= 0; digi--) {
+    codeNum += Hex2Num(code[digi]) * pow(16, 7 - digi);
   }
   return codeNum ^ seed;
 }
 
-int main() {
+void upper_string(char *str) {
+  for (int i = 0; i < strlen(str); ++i) {
+    str[i] = toupper(str[i]);
+  }
+}
+
+void remove_spaces(char *str) {
+}
+
+int main(int argc, char **argv) {
   const int pack = 128;
   const char *pack_name = "Chck";
 
@@ -112,18 +122,29 @@ int main() {
   uint32_t check_n = ntohl(**(uint32_t **)check);
   printf("Check: %u\n", check_n);
 
-  char name[] = "NOWHEREMAN";
+  char name[256];
+  char code[256];
+  if (argc == 3) {
+    strcpy(name, argv[1]);
+    strcpy(code, argv[2]);
+  }
+  else {
+    strcpy(name, "Free");
+    strcpy(code, "B3FB09B1EB");
+  }
+  upper_string(name);
+  remove_spaces(name);
+  upper_string(code);
 
   /* It appears that valid registered usernames were >= 4 characters as this
    * grabs the last 4 for decryption */
-  uint32_t name_num = ntohl(*(uint32_t *)(name + strlen(name) - 4)); // FREE
+  uint32_t name_num = ntohl(*(uint32_t *)(name + strlen(name) - 4));
   printf("name_num: %u\n", name_num);
 
-  uint32_t code_num = CodeStr2Long(" CB9F76C190");
+  uint32_t code_num = CodeStr2Long(code);
   printf("code_num: %u\n", code_num);
 
   gKey = code_num ^ name_num;
-  // gKey = code_num ^ 0x46524545;
   printf("gKey: %u\n", gKey);
 
   if (CheckPack(kEncryptedPack, check_n)) {
