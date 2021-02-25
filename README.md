@@ -6,8 +6,7 @@ on deprecated Macintosh system calls for most aspects of the game. Additionally,
 level data, etc.) are all LZRW3 compressed inside the resource fork of the original game, which is an additional
 barrier to reimplementation.
 
----
-
+The original source may be found at https://github.com/jechter/RecklessDrivin.
 ## Current status
 
 All data in the original `Data` resource fork has been separated into individual files, decrypted (when applicable)
@@ -26,9 +25,3 @@ Name: Free<br>
 Code: B3FB09B1EB
 
 Registration keys can also be generated in your name using a Python script. See [the wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/Decryption) for more info.
-
----
-
-This is the original source code for the mac shareware game "Reckless Drivin'", originally released in 2000.
-
-The source code is in C, project.mcp is a CodeWarrior project file which was used to build it. To be able to upload this to git, Line endings have been converted to Unix style, and the resource forks of the rsrc files have been moved to the data fork. You may need to revert these changes before being able to build it on a classic Macintosh.
