@@ -6,8 +6,11 @@ packs.o:
 
 packs: packs.o
 
-resource_test: packs.o tests/resource_test.c source/resource.c source/lzrw3.c
-	gcc -g -I headers/ tests/resource_test.c source/resource.c source/lzrw3.c packs.o -o resource_test -fsanitize=address -fsanitize=leak -lm
+resource_test: packs.o tests/resource_test.c source/resource.c source/lzrw3-a.c
+	gcc -g -I headers/ tests/resource_test.c source/resource.c source/lzrw3-a.c packs.o -o resource_test -fsanitize=address -fsanitize=leak -lm
 
-crypt_test: packs.o tests/crypt_test.c source/resource.c source/lzrw3.c
-	gcc -g -I headers/ tests/crypt_test.c source/resource.c source/lzrw3.c packs.o -o crypt_test -fsanitize=address -fsanitize=leak -lm
+crypt_test: packs.o tests/crypt_test.c source/resource.c source/lzrw3-a.c
+	gcc -g -I headers/ tests/crypt_test.c source/resource.c source/lzrw3-a.c packs.o -o crypt_test -fsanitize=address -fsanitize=leak -lm
+
+quickdraw_test: packs.o tests/quickdraw_test.c source/resource.c source/quickdraw.c source/lzrw3-a.c
+	gcc -g -I headers/ tests/quickdraw_test.c source/resource.c source/quickdraw.c source/lzrw3-a.c packs.o -o quickdraw_test -fsanitize=address -fsanitize=leak -lm
