@@ -7,13 +7,16 @@ level data, etc.) are all LZRW3 compressed inside the resource fork of the origi
 barrier to reimplementation.
 
 The original source may be found at https://github.com/jechter/RecklessDrivin.
-## Current status
+## Current Status
 
 All data in the original `Data` resource fork has been separated into individual files, decrypted (when applicable)
 and decompressed (lzrw3 decompression).
 
-The next step is to interpret these bytes properly. I plan to start with the `PPic` types as these are the images
-that show when loading the game. The data appears similar to a version 1 Macintosh QuickDraw image.
+The PPic images 1000 through 1008 have been interpreted and read from memory. This verifies
+that the decompression works! Image 1009 is in a more complex format so I might take a break
+from PPic and QuickDraw for a while. See the images on the wiki: https://github.com/natecraddock/open-reckless-drivin/wiki/QuickDraw-Pictures-(PPic)
+
+Next I will take some time to organize the source code. I will likely use CMake.
 
 ## Registration Keys
 
