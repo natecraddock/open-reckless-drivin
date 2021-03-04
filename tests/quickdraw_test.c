@@ -72,6 +72,10 @@ int main(char argc, char **argv) {
     ReleaseResource(resource);
     return 1;
   }
+
+  /* TODO: Some of this logic should be moved to quickdraw.c. Also, we never
+   * check for the 0x00FF end of image opcode. */
+
   ReleaseResource(resource);
 
   return 0;

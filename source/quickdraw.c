@@ -239,12 +239,11 @@ static uint16_t read_scanline(char **bytes, PixMap *pix_map, RGBValue *pixels,
   else {
     for (uint16_t pixel = 0; pixel < width; pixel++, index += 2) {
       RGBValue rgb;
-      // TODO: RENAME
-      uint16_t byte = *(uint16_t *)(buf + index);
+      uint16_t color = *(uint16_t *)(buf + index);
 
-      rgb.r = (byte & 0x7C00) >> 10;
-      rgb.g = (byte & 0x03E0) >> 5;
-      rgb.b = (byte & 0x001F);
+      rgb.r = (color & 0x7C00) >> 10;
+      rgb.g = (color & 0x03E0) >> 5;
+      rgb.b = (color & 0x001F);
 
       pixels[(line * width) + pixel] = rgb;
     }
