@@ -104,12 +104,12 @@ int LoadLevel() {
   gMarks = GetSortedPackEntry(kPackLevel1 + gLevelID, 2, &gMarkSize);
   gMarkSize /= sizeof(tMarkSeg);
   gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
-  gTrackUp = gLevelData + sizeof(tLevelData);
+  gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
   gTrackDown =
-      gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
-  gRoadLength = LoadObjs(gTrackDown + sizeof(uint32_t) +
+      (Ptr)gTrackUp + sizeof(uint32_t) + gTrackUp->num * sizeof(tTrackInfoSeg);
+  gRoadLength = LoadObjs((Ptr)gTrackDown + sizeof(uint32_t) +
                          gTrackDown->num * sizeof(tTrackInfoSeg));
-  gRoadData = gRoadLength + sizeof(uint32_t);
+  gRoadData = (Ptr)gRoadLength + sizeof(uint32_t);
 
   for (i = 0; i < 9; i++) {
     if ((*gLevelData).objGrps[i].resID) {

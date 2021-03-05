@@ -98,7 +98,7 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
       *size = pack[entryID - startId + 2].offs - offs;
     }
   }
-  return pack + offs;
+  return (Ptr)pack + offs;
 }
 
 int ComparePackHeaders(const tPackHeader *p1, const tPackHeader *p2) {
@@ -122,7 +122,7 @@ Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
         *size = (found + 1)->offs - offs;
       }
     }
-    return pack + offs;
+    return (Ptr)pack + offs;
   }
 
   return 0;
