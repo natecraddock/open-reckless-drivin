@@ -19,6 +19,10 @@ void ReleaseResource(Handle resource);
 /* Print resource data. */
 void PrintResource();
 
+/* TODO: These should be moved */
+
+void PtrToHandle(Ptr src, Handle *dst, uint32_t size);
+
 int GetHandleSize(Handle handle);
 void SetHandleSize(Handle handle, int size);
 

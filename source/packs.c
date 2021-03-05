@@ -5,6 +5,7 @@
 #include "lzrw.h"
 #include "packs.h"
 #include "register.h"
+#include "resource.h"
 
 typedef struct {
   int16_t id;
@@ -47,7 +48,7 @@ uint32_t CryptData(uint32_t *data, uint32_t len) {
 uint32_t LoadPack(int num) {
   uint32_t check = 0;
   if (!gPacks[num]) {
-    gPacks[num] = GetResource('Pack', num + 128);
+    gPacks[num] = GetResource("Pack", num + 128);
     if (gPacks[num]) {
       if (num >= kEncryptedPack || gLevelResFile) {
         check = CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
@@ -64,7 +65,7 @@ bool CheckPack(int num, uint32_t check) {
   bool ok = false;
   UseResFile(gAppResFile);
   if (!gPacks[num]) {
-    gPacks[num] = GetResource('Pack', num + 128);
+    gPacks[num] = GetResource("Pack", num + 128);
     if (gPacks[num]) {
       if (num >= kEncryptedPack) {
         ok = check == CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
