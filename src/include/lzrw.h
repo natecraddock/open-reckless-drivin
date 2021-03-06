@@ -119,35 +119,8 @@
 /*                                                                            */
 /******************************************************************************/
 
-#ifndef DONE_PORT /* Only do this if not previously done.                   */
-
-#ifdef THINK_C
-#define UBYTE unsigned char     /* Unsigned byte                       */
-#define UWORD unsigned int      /* Unsigned word (2 bytes)             */
-#define uint32_t unsigned long  /* Unsigned word (4 bytes)             */
-#define BOOL unsigned char      /* Boolean                             */
-#define FOPEN_BINARY_READ "rb"  /* Mode string for binary reading.     */
-#define FOPEN_BINARY_WRITE "wb" /* Mode string for binary writing.     */
-#define FOPEN_TEXT_APPEND "a"   /* Mode string for text appending.     */
-#define REAL double             /* USed for floating point stuff.      */
-#endif
-
-#define DONE_PORT /* Don't do all this again.            */
-
-/* Added by Matt Mahoney, Feb. 14, 2008 */
-typedef unsigned char UBYTE;
-typedef unsigned short UWORD;
-
-#define ass(p, m)                                                              \
-  if (!(p))                                                                    \
-  fprintf(stderr, "%s\n", m), exit(1)
-/* End added section */
-
-#endif
-
-/******************************************************************************/
-/*                              End of PORT.H                                 */
-/******************************************************************************/
+#ifndef LZRW_H
+#define LZRW_H
 
 #include <stdint.h>
 #include <string.h>
@@ -183,12 +156,12 @@ struct compress_identity {
 };
 
 void lzrw3a_compress(/* Single function interface to compression algorithm. */
-                     UWORD action,       /* Action to be performed.       */
-                     UBYTE *wrk_mem,     /* Working memory temporarily given to
-                                            routine to use. */
-                     UBYTE *src_adr,     /* Address of input  data.     */
+                     uint16_t action,    /* Action to be performed.       */
+                     uint8_t *wrk_mem,   /* Working memory temporarily given to
+                                          routine to use. */
+                     uint8_t *src_adr,   /* Address of input  data.     */
                      uint32_t src_len,   /* Length  of input  data.   */
-                     UBYTE *dst_adr,     /* Address of output data.     */
+                     uint8_t *dst_adr,   /* Address of output data.     */
                      uint64_t *p_dst_len /* Pointer to a longword where routine
                                             will write:     */
                      /*    If action=..IDENTITY   => Adr of id structure.   */
@@ -204,3 +177,5 @@ void lzrw3a_compress(/* Single function interface to compression algorithm. */
 
 /* Decompress the bytes referenced by a handle. */
 void LZRWDecodeHandle(Handle *handle);
+
+#endif /* LZRW_H */
