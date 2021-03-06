@@ -1,10 +1,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "interface.h"
+#include <arpa/inet.h>
+
+// #include "interface.h"
 #include "lzrw.h"
 #include "packs.h"
-#include "register.h"
+// #include "register.h"
 #include "resource.h"
 
 typedef struct {
@@ -17,28 +19,28 @@ typedef tPackHeader **tPackHandle;
 Handle gPacks[kNumPacks];
 #define kUnCryptedHeader 256
 
+/* TODO: Remove once register.c is added */
+uint32_t gKey;
+
 uint32_t CryptData(uint32_t *data, uint32_t len) {
   uint32_t check = 0;
   data += kUnCryptedHeader / 4;
   len -= kUnCryptedHeader;
   while (len >= 4) {
-    *data ^= gKey;
-    check += *data;
+    *data = htonl(ntohl(*data) ^ gKey);
+    check += ntohl(*data);
     data++;
     len -= 4;
   }
   if (len) {
     *((uint8_t *)data) ^= gKey >> 24;
-    /* check += (*((uint8_t *)data)++) << 24; */
-    check += (*((uint8_t *)data))++ << 24;
+    check += ntohl((*((uint8_t *)data))++ << 24);
     if (len > 1) {
       *((uint8_t *)data) ^= (gKey >> 16) & 0xff;
-      /* check += (*((uint8_t *)data)++) << 16; */
-      check += (*((uint8_t *)data))++ << 16;
+      check += ntohl((*((uint8_t *)data))++ << 16);
       if (len > 2) {
         *((uint8_t *)data) ^= (gKey >> 8) & 0xff;
-        /* check += (*((uint8_t *)data)++) << 8; */
-        check += (*((uint8_t *)data))++ << 8;
+        check += ntohl((*((uint8_t *)data))++ << 8);
       }
     }
   }
@@ -50,8 +52,9 @@ uint32_t LoadPack(int num) {
   if (!gPacks[num]) {
     gPacks[num] = GetResource("Pack", num + 128);
     if (gPacks[num]) {
-      if (num >= kEncryptedPack || gLevelResFile) {
-        check = CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
+      /* TODO */
+      if (num >= kEncryptedPack /* || gLevelResFile*/) {
+        check = CryptData((uint32_t *)*gPacks[num], GetHandleSize(gPacks[num]));
       }
       LZRWDecodeHandle(&gPacks[num]);
       /* HLockHi(gPacks[num]); Locks a handle in memory. Unneeded. */
@@ -63,26 +66,30 @@ uint32_t LoadPack(int num) {
 /* Only used to check if registration is valid. */
 bool CheckPack(int num, uint32_t check) {
   bool ok = false;
-  UseResFile(gAppResFile);
+  // UseResFile(gAppResFile);
   if (!gPacks[num]) {
     gPacks[num] = GetResource("Pack", num + 128);
     if (gPacks[num]) {
       if (num >= kEncryptedPack) {
-        ok = check == CryptData(*gPacks[num], GetHandleSize(gPacks[num]));
+        ok = check ==
+             CryptData((uint32_t *)*gPacks[num], GetHandleSize(gPacks[num]));
       }
       ReleaseResource(gPacks[num]);
       gPacks[num] = NULL;
     }
   }
-  if (gLevelResFile) {
-    UseResFile(gLevelResFile);
-  }
+  // if (gLevelResFile) {
+  //   UseResFile(gLevelResFile);
+  // }
   return ok;
 }
 
 void UnloadPack(int num) {
   if (gPacks[num]) {
-    DisposeHandle(gPacks[num]);
+    /* Changed this from DisposeHandle(num) due to information found on
+     * https://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Memory/Memory-73.html
+     */
+    ReleaseResource(gPacks[num]);
     gPacks[num] = NULL;
   }
 }
@@ -102,8 +109,10 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
   return (Ptr)pack + offs;
 }
 
-int ComparePackHeaders(const tPackHeader *p1, const tPackHeader *p2) {
-  return p1->id - p2->id;
+int ComparePackHeaders(const void *p1, const void *p2) {
+  tPackHeader pack1 = *(tPackHeader *)p1;
+  tPackHeader pack2 = *(tPackHeader *)p2;
+  return pack1.id - pack2.id;
 }
 
 Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
