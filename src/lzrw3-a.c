@@ -103,8 +103,10 @@ static struct compress_identity identity = {
     "Public Domain"         /* Vendor of algorithm.             */
 };
 
-void lzrw3a_compress_compress(UBYTE *, UBYTE *, ULONG, UBYTE *, uint64_t *);
-void lzrw3a_compress_decompress(UBYTE *, UBYTE *, ULONG, UBYTE *, uint64_t *);
+static void lzrw3a_compress_compress(UBYTE *, UBYTE *, ULONG, UBYTE *,
+                                     uint64_t *);
+static void lzrw3a_compress_decompress(UBYTE *, UBYTE *, ULONG, UBYTE *,
+                                       uint64_t *);
 
 static void fast_copy(void *src, void *dest, unsigned long len) {
   memcpy(dest, src, len);
@@ -117,9 +119,8 @@ static void fast_copy(void *src, void *dest, unsigned long len) {
 /* compress a block of memory, decompress a block of memory, or to identify   */
 /* itself. For more information, see the specification file "compress.h".     */
 
-EXPORT void lzrw3a_compress(UWORD action, UBYTE *wrk_mem, UBYTE *src_adr,
-                            ULONG src_len, UBYTE *dst_adr,
-                            uint64_t *p_dst_len) {
+void lzrw3a_compress(UWORD action, UBYTE *wrk_mem, UBYTE *src_adr,
+                     ULONG src_len, UBYTE *dst_adr, uint64_t *p_dst_len) {
   switch (action) {
   case COMPRESS_ACTION_COMPRESS:
     lzrw3a_compress_compress(wrk_mem, src_adr, src_len, dst_adr, p_dst_len);
@@ -408,9 +409,9 @@ EXPORT void lzrw3a_compress(UWORD action, UBYTE *wrk_mem, UBYTE *src_adr,
 
 /******************************************************************************/
 
-LOCAL void lzrw3a_compress_compress(UBYTE *p_wrk_mem, UBYTE *p_src_first,
-                                    ULONG src_len, UBYTE *p_dst_first,
-                                    uint64_t *p_dst_len)
+static void lzrw3a_compress_compress(UBYTE *p_wrk_mem, UBYTE *p_src_first,
+                                     ULONG src_len, UBYTE *p_dst_first,
+                                     uint64_t *p_dst_len)
 /* Input  : Hand over the required amount of working memory in p_wrk_mem.     */
 /* Input  : Specify input block using p_src_first and src_len.                */
 /* Input  : Point p_dst_first to the start of the output zone (OZ).           */
@@ -518,7 +519,7 @@ LOCAL void lzrw3a_compress_compress(UBYTE *p_wrk_mem, UBYTE *p_src_first,
   /* The main loop processes either 1 or 16 items per iteration. As its */
   /* termination logic is complicated, I have opted for an infinite loop */
   /* structure containing 'break' and 'goto' statements. */
-  while (TRUE) { /* Begin main processing loop. */
+  while (true) { /* Begin main processing loop. */
 
     /* Note: All the variables here except unroll should be defined within    */
     /*       the inner loop. Unfortunately the loop hasn't got a block.       */
@@ -702,9 +703,9 @@ overrun:
 
 /******************************************************************************/
 
-LOCAL void lzrw3a_compress_decompress(UBYTE *p_wrk_mem, UBYTE *p_src_first,
-                                      ULONG src_len, UBYTE *p_dst_first,
-                                      uint64_t *p_dst_len)
+static void lzrw3a_compress_decompress(UBYTE *p_wrk_mem, UBYTE *p_src_first,
+                                       ULONG src_len, UBYTE *p_dst_first,
+                                       uint64_t *p_dst_len)
 /* Input  : Hand over the required amount of working memory in p_wrk_mem.     */
 /* Input  : Specify input block using p_src_first and src_len.                */
 /* Input  : Point p_dst_first to the start of the output zone.                */

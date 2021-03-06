@@ -132,21 +132,12 @@
 #define REAL double             /* USed for floating point stuff.      */
 #endif
 
-#define DONE_PORT        /* Don't do all this again.            */
-#define MALLOC_FAIL NULL /* Failure status from malloc()        */
-#define LOCAL static     /* For non-exported routines.          */
-#define EXPORT           /* Signals exported function.          */
-#define then             /* Useful for aligning ifs.            */
+#define DONE_PORT /* Don't do all this again.            */
 
 /* Added by Matt Mahoney, Feb. 14, 2008 */
 typedef unsigned char UBYTE;
 typedef unsigned short UWORD;
 
-#define TRUE 1
-#define FALSE 0
-#define REGISTER
-#undef LOCAL
-#define LOCAL
 #define ass(p, m)                                                              \
   if (!(p))                                                                    \
   fprintf(stderr, "%s\n", m), exit(1)
@@ -191,48 +182,6 @@ struct compress_identity {
   char *vendor;      /* Where the algorithm can be obtained.        */
 };
 
-void lzrw1a_compress(/* Single function interface to compression algorithm. */
-                     UWORD action,       /* Action to be performed.       */
-                     UBYTE *wrk_mem,     /* Working memory temporarily given to
-                                            routine to use. */
-                     UBYTE *src_adr,     /* Address of input  data.     */
-                     uint32_t src_len,   /* Length  of input  data.   */
-                     UBYTE *dst_adr,     /* Address of output data.     */
-                     uint64_t *p_dst_len /* Pointer to a longword where routine
-                                            will write:     */
-                     /*    If action=..IDENTITY   => Adr of id structure.   */
-                     /*    If action=..COMPRESS   => Length of output data. */
-                     /*    If action=..DECOMPRESS => Length of output data. */
-);
-
-void lzrw2_compress(/* Single function interface to compression algorithm. */
-                    UWORD action,       /* Action to be performed.       */
-                    UBYTE *wrk_mem,     /* Working memory temporarily given to
-                                           routine to use. */
-                    UBYTE *src_adr,     /* Address of input  data.     */
-                    uint32_t src_len,   /* Length  of input  data.   */
-                    UBYTE *dst_adr,     /* Address of output data.     */
-                    uint64_t *p_dst_len /* Pointer to a longword where routine
-                                           will write:     */
-                    /*    If action=..IDENTITY   => Adr of id structure.   */
-                    /*    If action=..COMPRESS   => Length of output data. */
-                    /*    If action=..DECOMPRESS => Length of output data. */
-);
-
-void lzrw3_compress(/* Single function interface to compression algorithm. */
-                    UWORD action,       /* Action to be performed.       */
-                    UBYTE *wrk_mem,     /* Working memory temporarily given to
-                                           routine to use. */
-                    UBYTE *src_adr,     /* Address of input  data.     */
-                    uint32_t src_len,   /* Length  of input  data.   */
-                    UBYTE *dst_adr,     /* Address of output data.     */
-                    uint32_t *p_dst_len /* Pointer to a longword where routine
-                                           will write:     */
-                    /*    If action=..IDENTITY   => Adr of id structure.   */
-                    /*    If action=..COMPRESS   => Length of output data. */
-                    /*    If action=..DECOMPRESS => Length of output data. */
-);
-
 void lzrw3a_compress(/* Single function interface to compression algorithm. */
                      UWORD action,       /* Action to be performed.       */
                      UBYTE *wrk_mem,     /* Working memory temporarily given to
@@ -246,15 +195,6 @@ void lzrw3a_compress(/* Single function interface to compression algorithm. */
                      /*    If action=..COMPRESS   => Length of output data. */
                      /*    If action=..DECOMPRESS => Length of output data. */
 );
-
-uint32_t lzrw1a_req_mem();
-uint32_t lzrw2_req_mem();
-uint32_t lzrw3_req_mem();
-
-void lzrw1_compress(UBYTE *p_src_first, uint32_t src_len, UBYTE *p_dst_first,
-                    uint32_t *p_dst_len);
-void lzrw1_decompress(UBYTE *p_src_first, uint32_t src_len, UBYTE *p_dst_first,
-                      uint32_t *p_dst_len);
 
 /******************************************************************************/
 /*                             End of COMPRESS.H                              */
