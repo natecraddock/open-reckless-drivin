@@ -16,7 +16,7 @@
 // #include "register.h"
 // #include "screen.h"
 #include "sprites.h"
-// #include "trig.h"
+#include "trig.h"
 // #include <Appearance.h>
 // #include <DrawSprocket.h>
 // #include <InputSprocket.h>
@@ -26,7 +26,7 @@
 // #include <profiler.h>
 // #endif
 
-// float gSinTab[kSinTabSize];
+float gSinTab[kSinTabSize];
 int gInitSuccessful = false;
 // int gOSX;
 
@@ -40,13 +40,13 @@ int gInitSuccessful = false;
 //   InitCursor();
 // }
 
-// #undef sin
-// void InitTrig() {
-//   int i;
-//   for (i = 0; i < kSinTabSize; i++) {
-//     gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
-//   }
-// }
+#undef sin
+void InitTrig() {
+  int i;
+  for (i = 0; i < kSinTabSize; i++) {
+    gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
+  }
+}
 
 // uint32_t U32Version(NumVersion v) {
 //   return *((uint32_t *)(&v));
@@ -120,7 +120,7 @@ void Init() {
   LoadPack(kPackTxtR);
   // }
   LoadSprites();
-  // InitTrig();
+  InitTrig();
   // InitInput();
   // SetGameVolume(-1);
   // InitChannels();
