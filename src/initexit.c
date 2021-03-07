@@ -27,7 +27,7 @@
 // #endif
 
 // float gSinTab[kSinTabSize];
-// int gInitSuccessful = false;
+int gInitSuccessful = false;
 // int gOSX;
 
 // void InitToolbox() {
@@ -135,22 +135,35 @@ void Init() {
   // DoError(err == fnfErr ? noErr : err);
   // DoError(ProfilerInit(collectSummary, bestTimeBase, 200, 5));
 
-  // gInitSuccessful = true;
+  gInitSuccessful = true;
 }
 
-// void Exit() {
-// #if __option(profile)
-//   DoError(ProfilerDump("\pProfiler Dump"));
-// #endif
-//   if (gInitSuccessful) {
-//     WritePrefs(false);
-//     FadeScreen(1);
-//     ScreenMode(kScreenSuspended);
-//     SetSystemVolume();
-//     FadeScreen(256);
-//     FadeScreen(0);
-//     ScreenMode(kScreenStopped);
-//     InputMode(kInputStopped);
-//   }
-//   ExitToShell();
-// }
+static void free_packs() {
+  UnloadPack(kPackSnds);
+  UnloadPack(kPackObTy);
+  UnloadPack(kPackOgrp);
+  UnloadPack(kPackRoad);
+  UnloadPack(kPacksR16);
+  UnloadPack(kPackcR16);
+  UnloadPack(kPackTx16);
+  UnloadPack(kPacksRLE);
+  UnloadPack(kPackcRLE);
+  UnloadPack(kPackTxtR);
+
+  UnloadSprites();
+}
+
+void Exit() {
+  if (gInitSuccessful) {
+    /* Cleanup all loaded packs */
+    free_packs();
+    //   WritePrefs(false);
+    //   FadeScreen(1);
+    //   ScreenMode(kScreenSuspended);
+    //   SetSystemVolume();
+    //   FadeScreen(256);
+    //   FadeScreen(0);
+    //   ScreenMode(kScreenStopped);
+    //   InputMode(kInputStopped);
+  }
+}

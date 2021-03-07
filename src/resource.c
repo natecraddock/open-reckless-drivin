@@ -54,7 +54,6 @@ void ReleaseResource(Handle resource) {
 }
 
 void PtrToHandle(Ptr src, Handle *dst, uint32_t size) {
-  char *p = malloc(5);
   char *data = malloc(size);
   memcpy(data, src, size);
   Pointer *ptr = malloc(sizeof *ptr);
@@ -80,6 +79,6 @@ void SetHandleSize(Handle handle, int size) {
 void DisposeHandle(Handle handle) {
   char *data = (char *)handle;
   Pointer *ptr = (Pointer *)(data - 8);
-  free(data);
+  free(*handle);
   free(ptr);
 }

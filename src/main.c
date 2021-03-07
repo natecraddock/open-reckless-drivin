@@ -17,7 +17,7 @@ int main(void) {
   //     Eventloop();
   //   }
   // }
-  // Exit();
+  Exit();
 
   return 0;
 }
