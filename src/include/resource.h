@@ -25,5 +25,6 @@ void PtrToHandle(Ptr src, Handle *dst, uint32_t size);
 
 int GetHandleSize(Handle handle);
 void SetHandleSize(Handle handle, int size);
+void DisposeHandle(Handle handle);
 
 #endif /* RESOURCE_H */

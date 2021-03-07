@@ -76,3 +76,10 @@ void SetHandleSize(Handle handle, int size) {
 
   ptr->size = size;
 }
+
+void DisposeHandle(Handle handle) {
+  char *data = (char *)handle;
+  Pointer *ptr = (Pointer *)(data - 8);
+  free(data);
+  free(ptr);
+}

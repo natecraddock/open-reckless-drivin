@@ -1,15 +1,17 @@
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "error.h"
-#include "objects.h"
+#include "defines.h"
 #include "packs.h"
-#include "preferences.h"
-#include "random.h"
-#include "screen.h"
-#include "trig.h"
-#include <math.h>
+#include "resource.h"
+// #include "objects.h"
+// #include "error.h"
+// #include "preferences.h"
+// #include "random.h"
+// #include "screen.h"
+// #include "trig.h"
 
 #define kNumSprites 300
 #define kNumSpecialSprites 100
@@ -49,9 +51,10 @@ typedef struct {
   int u, v;
 } tVertex;
 
-tSlopeInfo gSlope[kMaxScreenY];
+// tSlopeInfo gSlope[kMaxScreenY];
 Handle gSprites[kNumSprites + kNumSpecialSprites];
 
+/*
 void SlopeInitUVLine(tVertex v1, tVertex v2, int dudx, int dvdx) {
   int y;
   int dxdy = ((v2.x - v1.x) * 65536.0) / (v2.y - v1.y);
@@ -786,7 +789,8 @@ int YDistortSprite(int id, int startX, int endX, int startY, int endY, int dir,
     YDistortSprite8(sprite, startX, endX, startY, endY, dir, damage);
   return id;
 }
-/*
+*/
+#if 0
 int BulletHitSprite8(tSpriteHeader16 *sprite,int x,int y)
 {
         int offs;
@@ -870,7 +874,9 @@ int BulletHitSprite16(tSpriteHeader16 *sprite,int x,int y)
         }
         return id;
 }
-*/
+#endif
+
+/*
 void BulletHitSprite8(tSpriteHeader *sprite, int x, int y, int size) {
   int offs;
   float invSize = 1 / size;
@@ -935,31 +941,6 @@ int BulletHitSprite(int id, int x, int y) {
   return id;
 }
 
-void SpriteUnused(int id) {
-  if (id - 128 >= kNumSprites)
-    if (gSprites[id - 128]) {
-      DisposeHandle(gSprites[id - 128]);
-      gSprites[id - 128] = NULL;
-    }
-}
-
-void LoadSprites() {
-  int i;
-  int spritePack = gPrefs.hiColor ? kPackSp16 : kPackSprt;
-  LoadPack(spritePack);
-  for (i = 128; i < 128 + kNumSprites; i++) {
-    int size;
-    Ptr data = GetUnsortedPackEntry(spritePack, i, &size);
-    if (data)
-      DoError(PtrToHand(data, &gSprites[i - 128], size));
-    else
-      gSprites[i - 128] = NULL;
-  }
-  for (i = kNumSprites; i < kNumSprites + kNumSpecialSprites; i++)
-    gSprites[i] = NULL;
-  UnloadPack(spritePack);
-}
-
 void DrawLifeBar8(int cy, int cx, int shift) {
   tSpriteHeader *sprite = (tSpriteHeader *)*(gSprites[kLifeBarId - 128]);
   int y = cy - sprite->ySize / 2;
@@ -1010,6 +991,34 @@ void DrawLifeBar(int cx, int cy, int shift) {
     DrawLifeBar16(cy, cx, shift);
   else
     DrawLifeBar8(cy, cx, shift);
+}
+*/
+
+void SpriteUnused(int id) {
+  if (id - 128 >= kNumSprites)
+    if (gSprites[id - 128]) {
+      DisposeHandle(gSprites[id - 128]);
+      gSprites[id - 128] = NULL;
+    }
+}
+
+void LoadSprites() {
+  // int spritePack = gPrefs.hiColor ? kPackSp16 : kPackSprt;
+  int spritePack = kPackSprt;
+  LoadPack(spritePack);
+  for (int i = 128; i < 128 + kNumSprites; i++) {
+    int size;
+    Ptr data = GetUnsortedPackEntry(spritePack, i, &size);
+    if (data)
+      // DoError(PtrToHand(data, &gSprites[i - 128], size));
+      PtrToHandle(data, &gSprites[i - 128], size);
+    else
+      gSprites[i - 128] = NULL;
+  }
+  for (int i = kNumSprites; i < kNumSprites + kNumSpecialSprites; i++) {
+    gSprites[i] = NULL;
+  }
+  UnloadPack(spritePack);
 }
 
 void UnloadSprites() {

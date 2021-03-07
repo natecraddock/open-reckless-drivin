@@ -15,7 +15,7 @@
 // #include "random.h"
 // #include "register.h"
 // #include "screen.h"
-// #include "sprites.h"
+#include "sprites.h"
 // #include "trig.h"
 // #include <Appearance.h>
 // #include <DrawSprocket.h>
@@ -119,7 +119,7 @@ void Init() {
   LoadPack(kPackcRLE);
   LoadPack(kPackTxtR);
   // }
-  // LoadSprites();
+  LoadSprites();
   // InitTrig();
   // InitInput();
   // SetGameVolume(-1);

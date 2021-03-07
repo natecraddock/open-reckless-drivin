@@ -4,6 +4,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include <arpa/inet.h>
+
+/**
+ * Types and definitions
+ */
+
 /* Common constant string sizes. */
 typedef unsigned char Str15[16];
 typedef unsigned char Str31[32];
@@ -32,5 +38,16 @@ typedef struct Point {
 
 typedef struct GWorldPtr {
 } GWorldPtr;
+
+/**
+ *  Utility macros
+ */
+
+/* Endianness correction */
+#define TO_LITTLE_S(x) ntohs((x))
+#define TO_LITTLE_L(x) ntohl((x))
+
+#define FLIP_SHORT(var) var = ntohs((var))
+#define FLIP_LONG(var) var = ntohl((var))
 
 #endif /* DEFINES_H */

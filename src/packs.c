@@ -1,13 +1,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <arpa/inet.h>
-
-// #include "interface.h"
+#include "defines.h"
 #include "lzrw.h"
 #include "packs.h"
-// #include "register.h"
 #include "resource.h"
+// #include "register.h"
+// #include "interface.h"
 
 typedef struct {
   int16_t id;
@@ -112,32 +111,44 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
 int ComparePackHeaders(const void *p1, const void *p2) {
   tPackHeader pack1 = *(tPackHeader *)p1;
   tPackHeader pack2 = *(tPackHeader *)p2;
+  FLIP_SHORT(pack2.id);
   return pack1.id - pack2.id;
 }
 
+/**
+ * HACK: This was changed a great deal from the original code.
+ * It seems to work okay, but it would be good to revisit the logic
+ * at some point.
+ */
 Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
-  tPackHeader *pack = (tPackHeader *)*gPacks[packNum];
+  tPackHeader pack = *(tPackHeader *)*gPacks[packNum];
+  FLIP_SHORT(pack.id);
+  FLIP_LONG(pack.offs);
+
   tPackHeader key, *found;
   uint32_t offs;
   key.id = entryID;
-  found = bsearch(&key, pack + 1, pack->id, sizeof(tPackHeader),
-                  ComparePackHeaders);
-  if (found) {
-    offs = found->offs;
-    if (size) {
-      if (pack->id == found - pack) {
-        *size = GetHandleSize(gPacks[packNum]) - offs;
-      }
-      else {
-        *size = (found + 1)->offs - offs;
-      }
-    }
-    return (Ptr)pack + offs;
+  found = bsearch(&key, (tPackHeader *)*gPacks[packNum] + 1, pack.id,
+                  sizeof(tPackHeader), ComparePackHeaders);
+  if (!found) {
+    return NULL;
   }
 
-  return 0;
+  offs = found->offs;
+  FLIP_LONG(offs);
+  if (size) {
+    if (pack.id == found - (tPackHeader *)*gPacks[packNum]) {
+      *size = GetHandleSize(gPacks[packNum]) - offs;
+    }
+    else {
+      tPackHeader other = *(found + 1);
+      FLIP_LONG(other.offs);
+      *size = other.offs - offs;
+    }
+  }
+  return (char *)*gPacks[packNum] + offs;
 }
 
 int NumPackEntries(int num) {
-  return gPacks[num] ? (**(tPackHandle)gPacks[num]).id : 0;
+  return gPacks[num] ? TO_LITTLE_S((**(tPackHandle)gPacks[num]).id) : 0;
 }
