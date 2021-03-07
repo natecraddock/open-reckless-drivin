@@ -632,15 +632,15 @@ int XDistortSprite(int id, int startY, int endY, int startX, int endX, int dir,
 
 void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
                      int endY, int dir, float damage) {
-  uint8_t *collumStart;
-  int collum;
-  collumStart = &sprite->data[sprite->xSize * startY + startX];
+  uint8_t *columnStart;
+  int column;
+  columnStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
     damage = 2;
   if (!dir)
-    for (collum = 0; collum < endX; collum++) {
+    for (column = 0; column < endX; column++) {
       int i;
-      float c = (float)collum / endX;
+      float c = (float)column / endX;
       float crunch = (-c * c + c) * (1 + RanFl(-0.5, 0.5)) * endY * damage;
       if (crunch) {
         float crunchFactor = endY / (endY - crunch);
@@ -649,23 +649,23 @@ void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
         float crunchLength = (endY - crunch);
         for (i = endY; i > (int)crunch; i--) {
           uint8_t pixelValue =
-              collumStart[(int)(endY - ((endY - i) * crunchFactor)) *
+              columnStart[(int)(endY - ((endY - i) * crunchFactor)) *
                           sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade =
                 (kLightValues - 1) - maxShade * ((endY - i) / crunchLength);
-            collumStart[i * sprite->xSize] = gLightningTab[shade][pixelValue];
+            columnStart[i * sprite->xSize] = gLightningTab[shade][pixelValue];
           }
         }
         for (i = 0; i <= (int)crunch; i++)
-          collumStart[i * sprite->xSize] = sprite->data[0];
+          columnStart[i * sprite->xSize] = sprite->data[0];
       }
-      collumStart++;
+      columnStart++;
     }
   else
-    for (collum = 0; collum < endX; collum++) {
+    for (column = 0; column < endX; column++) {
       int i;
-      float c = (float)collum / endX;
+      float c = (float)column / endX;
       float crunch = (-c * c + c) * (1 + RanFl(-0.5, 0.5)) * endY * damage;
       if (crunch) {
         float crunchFactor = endY / (endY - crunch);
@@ -674,30 +674,30 @@ void YDistortSprite8(tSpriteHeader *sprite, int startX, int endX, int startY,
         float crunchLength = (endY - crunch);
         for (i = 0; i < endY - (int)crunch; i++) {
           uint8_t pixelValue =
-              collumStart[(int)(i * crunchFactor) * sprite->xSize];
+              columnStart[(int)(i * crunchFactor) * sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
-            collumStart[i * sprite->xSize] = gLightningTab[shade][pixelValue];
+            columnStart[i * sprite->xSize] = gLightningTab[shade][pixelValue];
           }
         }
         for (i = endY; i >= endY - (int)crunch; i--)
-          collumStart[i * sprite->xSize] = sprite->data[0];
+          columnStart[i * sprite->xSize] = sprite->data[0];
       }
-      collumStart++;
+      columnStart++;
     }
 }
 
 void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
                       int endY, int dir, float damage) {
-  uint16_t *collumStart;
-  int collum;
-  collumStart = &sprite->data[sprite->xSize * startY + startX];
+  uint16_t *columnStart;
+  int column;
+  columnStart = &sprite->data[sprite->xSize * startY + startX];
   if (damage > 2)
     damage = 2;
   if (!dir)
-    for (collum = 0; collum < endX; collum++) {
+    for (column = 0; column < endX; column++) {
       int i;
-      float c = (float)collum / endX;
+      float c = (float)column / endX;
       float crunch = (-c * c + c) * (1 + RanFl(-0.5, 0.5)) * endY * damage;
       if (crunch) {
         float crunchFactor = endY / (endY - crunch);
@@ -706,23 +706,23 @@ void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
         float crunchLength = (endY - crunch);
         for (i = endY; i > (int)crunch; i--) {
           uint16_t pixelValue =
-              collumStart[(int)(endY - ((endY - i) * crunchFactor)) *
+              columnStart[(int)(endY - ((endY - i) * crunchFactor)) *
                           sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade =
                 (kLightValues - 1) - maxShade * ((endY - i) / crunchLength);
-            collumStart[i * sprite->xSize] = ShadeRGB16(shade, pixelValue);
+            columnStart[i * sprite->xSize] = ShadeRGB16(shade, pixelValue);
           }
         }
         for (i = 0; i <= (int)crunch; i++)
-          collumStart[i * sprite->xSize] = sprite->data[0];
+          columnStart[i * sprite->xSize] = sprite->data[0];
       }
-      collumStart++;
+      columnStart++;
     }
   else
-    for (collum = 0; collum < endX; collum++) {
+    for (column = 0; column < endX; column++) {
       int i;
-      float c = (float)collum / endX;
+      float c = (float)column / endX;
       float crunch = (-c * c + c) * (1 + RanFl(-0.5, 0.5)) * endY * damage;
       if (crunch) {
         float crunchFactor = endY / (endY - crunch);
@@ -731,16 +731,16 @@ void YDistortSprite16(tSpriteHeader16 *sprite, int startX, int endX, int startY,
         float crunchLength = (endY - crunch);
         for (i = 0; i < endY - (int)crunch; i++) {
           uint16_t pixelValue =
-              collumStart[(int)(i * crunchFactor) * sprite->xSize];
+              columnStart[(int)(i * crunchFactor) * sprite->xSize];
           if (pixelValue != sprite->data[0]) {
             int shade = (kLightValues - 1) - maxShade * (i / crunchLength);
-            collumStart[i * sprite->xSize] = ShadeRGB16(shade, pixelValue);
+            columnStart[i * sprite->xSize] = ShadeRGB16(shade, pixelValue);
           }
         }
         for (i = endY; i >= endY - (int)crunch; i--)
-          collumStart[i * sprite->xSize] = sprite->data[0];
+          columnStart[i * sprite->xSize] = sprite->data[0];
       }
-      collumStart++;
+      columnStart++;
     }
 }
 

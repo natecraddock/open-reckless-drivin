@@ -430,7 +430,7 @@ static void lzrw3a_compress_compress(uint8_t *p_wrk_mem, uint8_t *p_src_first,
   uint8_t **hash = (uint8_t **)ULONG_ALIGN_UP(p_wrk_mem);
 
   /* The following two variables represent the literal buffer. p_h1 points to */
-  /* the partition (i.e. the zero'th (first) element of the partition) */
+  /* the partition (i.e. the zeroth (first) element of the partition) */
   /* corresponding to the youngest literal. p_h2 points to the partition */
   /* corresponding to the second youngest literal. */
   /* The value zero denotes an "empty" buffer value with p_h1=0 => p_h2=0. */
