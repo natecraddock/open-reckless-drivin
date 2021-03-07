@@ -4,19 +4,19 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "defines.h"
+#include "packs.h"
+#include "random.h"
+#include "sprites.h"
+#include "trig.h"
 // #include "error.h"
 // #include "gameinitexit.h"
 // #include "gamesounds.h"
 // #include "input.h"
 // #include "interface.h"
-#include "defines.h"
-#include "packs.h"
 // #include "preferences.h"
-// #include "random.h"
 // #include "register.h"
 // #include "screen.h"
-#include "sprites.h"
-#include "trig.h"
 // #include <Appearance.h>
 // #include <DrawSprocket.h>
 // #include <InputSprocket.h>
@@ -97,7 +97,7 @@ void Init() {
   // InitAE();
   // gAppResFile = CurResFile();
   // DoError(RegisterAppearanceClient());
-  // Randomize();
+  Randomize();
   // LoadPrefs();
   // CheckRegi();
   // if (!gRegistered) {

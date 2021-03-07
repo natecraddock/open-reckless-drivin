@@ -1,4 +1,7 @@
 #include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <time.h>
 
 /* A C-program for TT800 : July 8th 1996 Version */
 /* by M. Matsumoto, email: matumoto@math.keio.ac.jp */
@@ -13,12 +16,12 @@
 #define N 25
 #define M 7
 
-unsigned long x[N]; /* initial 25 seeds, change as you wish */
+uint64_t x[N]; /* initial 25 seeds, change as you wish */
 
-double genrand() {
-  unsigned long y;
+static double genrand() {
+  uint64_t y;
   static int k = 0;
-  static unsigned long mag01[2] = {
+  static uint64_t mag01[2] = {
       0x0, 0x8ebfd028 /* this is magic vector `a', don't change */
   };
   if (k == N) { /* generate N words at one time */
@@ -37,7 +40,7 @@ double genrand() {
   y &= 0xffffffff;             /* you may delete this line if word size = 32 */
                                /*
                                   the following line was added by Makoto Matsumoto in the 1996 version
-                                  to improve lower bit's corellation.
+                                  to improve lower bit's correlation.
                                   Delete this line to o use the code published in 1994.
                                */
   y ^= (y >> 16);              /* added to the 1994 version */
@@ -45,26 +48,27 @@ double genrand() {
   return ((double)y / (unsigned long)0xffffffff);
 }
 
-// APIs to use genrand function
-
-void Randomize()
-// Inits the random seeds
-{
-  int i;
-  SetQDGlobalsRandomSeed(TickCount());
-  for (i = 0; i < N; i++)
-    x[i] = Random();
+/**
+ * Initialize the random seeds.
+ */
+void Randomize() {
+  srand(time(NULL));
+  for (int i = 0; i < N; i++) {
+    x[i] = rand();
+  }
 }
 
-float RanFl(float min, float max)
-// gives a random float evenly distibuted in the intervall [min,max]
-{
+/**
+ * Gives a random float evenly distributed in the interval [min, max]
+ */
+float RanFl(float min, float max) {
   return genrand() * (max - min) + min;
 }
 
-int RanInt(int min, int max)
-// gives a random int evenly distributed in the intervall [min,max-1]
-{
+/**
+ * Gives a random int evenly distributed in the interval [min, max-1]
+ */
+int RanInt(int min, int max) {
   double ran;
   do
     ran = genrand();
@@ -72,9 +76,10 @@ int RanInt(int min, int max)
   return floor(ran * (max - min) + min);
 }
 
-int RanProb(float prob)
-// returns true with a probility of prob
-//(ie. if prob is 1 always returns true, if prob is 0 always returns false)
-{
+/**
+ * Returns true with a probability of prob
+ * (i.e. if prob is is 1 always return true, if prob is 0 always return false)
+ */
+int RanProb(float prob) {
   return genrand() <= prob;
 }
