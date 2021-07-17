@@ -5,6 +5,9 @@
 #include "defines.h"
 #include "resource.h"
 
+/* Game Data */
+#include "data"
+
 struct Resource {
   char type[8];
   uint32_t id;
@@ -13,8 +16,9 @@ struct Resource {
 
 /* Search through the packed resource data for the given resource. */
 static void *FindResource(const char *type, short id, uint32_t *len) {
-  uint8_t *resource_ptr = _binary_data_start;
-  while (resource_ptr != _binary_data_end) {
+  uint8_t *resource_ptr = _game_data;
+  uint8_t *_game_data_end = &_game_data[_game_data_len];
+  while (resource_ptr != _game_data_end) {
     struct Resource *resource = (struct Resource *)resource_ptr;
 
     if ((strcmp(type, resource->type) == 0) && id == resource->id) {

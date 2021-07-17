@@ -5,11 +5,6 @@
 
 #include "defines.h"
 
-/* Linked with data.o */
-extern unsigned char _binary_data_start[];
-extern const unsigned char _binary_data_end[];
-extern unsigned _binary_data_size;
-
 /* Get a resource. */
 Handle GetResource(const char *type, short id);
 
