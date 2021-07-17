@@ -13,7 +13,7 @@
 // #include "gameinitexit.h"
 // #include "gamesounds.h"
 // #include "input.h"
-// #include "interface.h"
+#include "interface.h"
 // #include "preferences.h"
 // #include "register.h"
 // #include "screen.h"
@@ -104,7 +104,7 @@ void Init() {
   //   Register(false);
   // }
   // InitScreen(0);
-  // ShowPicScreen(1003);
+  ShowPicScreen(1003);
   LoadPack(kPackSnds);
   LoadPack(kPackObTy);
   LoadPack(kPackOgrp);

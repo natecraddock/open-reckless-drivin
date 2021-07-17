@@ -16,6 +16,7 @@ endif()
 
 project(open-reckless-drivin)
 
+find_package(SDL2 REQUIRED)
 
 set(EXECUTABLE_OUTPUT_PATH ..)
 

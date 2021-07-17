@@ -3,12 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <arpa/inet.h>
-
+#include "defines.h"
 #include "quickdraw.h"
-
-#define FLIP_SHORT(var) var = ntohs((var))
-#define FLIP_LONG(var) var = ntohl((var))
 
 static uint32_t rect_area(Rect *r) {
   return (r->right - r->left) * (r->bottom - r->top);
