@@ -53,7 +53,6 @@ Handle GetResource(const char *type, short id) {
 void ReleaseResource(Handle resource) {
   char *data = (char *)resource;
   Pointer *ptr = (Pointer *)(data - 8);
-  free(*resource);
   free(ptr);
 }
 

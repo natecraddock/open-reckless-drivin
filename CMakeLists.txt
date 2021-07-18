@@ -18,6 +18,15 @@ project(open-reckless-drivin)
 
 find_package(SDL2 REQUIRED)
 
-set(EXECUTABLE_OUTPUT_PATH ..)
+# set(EXECUTABLE_OUTPUT_PATH ..)
 
 add_subdirectory(src)
+
+# Tests
+
+option(TESTS "Enable testing" ON)
+
+if(${TESTS})
+  enable_testing()
+  add_subdirectory(tests)
+endif()
