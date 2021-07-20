@@ -10,21 +10,23 @@
 
 typedef struct {
   int16_t id;
-  int16_t placeHolder;
-  uint32_t offs;
-} tPackHeader;
-typedef tPackHeader **tPackHandle;
+  int16_t placeholder;
+  uint32_t offset;
+} PackHeader;
+typedef PackHeader **PackHandle;
 
-Handle gPacks[kNumPacks];
-#define kUnCryptedHeader 256
+static Handle packs[kNumPacks];
+
+/* Length of unencrypted header */
+#define UNENCRYPTED_HEADER_LEN 256
 
 /* TODO: Remove once register.c is added */
 uint32_t gKey;
 
 uint32_t CryptData(uint32_t *data, uint32_t len) {
   uint32_t check = 0;
-  data += kUnCryptedHeader / 4;
-  len -= kUnCryptedHeader;
+  data += UNENCRYPTED_HEADER_LEN / 4;
+  len -= UNENCRYPTED_HEADER_LEN;
   while (len >= 4) {
     *data = htonl(ntohl(*data) ^ gKey);
     check += ntohl(*data);
@@ -48,15 +50,15 @@ uint32_t CryptData(uint32_t *data, uint32_t len) {
 
 uint32_t LoadPack(int num) {
   uint32_t check = 0;
-  if (!gPacks[num]) {
-    gPacks[num] = GetResource("Pack", num + 128);
-    if (gPacks[num]) {
+  if (!packs[num]) {
+    packs[num] = GetResource("Pack", num + 128);
+    if (packs[num]) {
       /* TODO */
       if (num >= kEncryptedPack /* || gLevelResFile*/) {
-        check = CryptData((uint32_t *)*gPacks[num], GetHandleSize(gPacks[num]));
+        check = CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
-      LZRWDecodeHandle(&gPacks[num]);
-      /* HLockHi(gPacks[num]); Locks a handle in memory. Unneeded. */
+      LZRWDecodeHandle(&packs[num]);
+      /* HLockHi(packs[num]); Locks a handle in memory. Unneeded. */
     }
   }
   return check;
@@ -66,15 +68,15 @@ uint32_t LoadPack(int num) {
 bool CheckPack(int num, uint32_t check) {
   bool ok = false;
   // UseResFile(gAppResFile);
-  if (!gPacks[num]) {
-    gPacks[num] = GetResource("Pack", num + 128);
-    if (gPacks[num]) {
+  if (!packs[num]) {
+    packs[num] = GetResource("Pack", num + 128);
+    if (packs[num]) {
       if (num >= kEncryptedPack) {
         ok = check ==
-             CryptData((uint32_t *)*gPacks[num], GetHandleSize(gPacks[num]));
+             CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
-      ReleaseResource(gPacks[num]);
-      gPacks[num] = NULL;
+      ReleaseResource(packs[num]);
+      packs[num] = NULL;
     }
   }
   // if (gLevelResFile) {
@@ -84,33 +86,32 @@ bool CheckPack(int num, uint32_t check) {
 }
 
 void UnloadPack(int num) {
-  if (gPacks[num]) {
-    /* Changed this from DisposeHandle(num) due to information found on
-     * https://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Memory/Memory-73.html
-     */
-    ReleaseResource(gPacks[num]);
-    gPacks[num] = NULL;
+  if (packs[num]) {
+    /* Any valid pack has been decompressed, which means it is no longer a resource handle,
+       but a memory handle, so we must use DisposeHandle to free that allocated memory. */
+    DisposeHandle(packs[num]);
+    packs[num] = NULL;
   }
 }
 
 Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
-  tPackHeader *pack = (tPackHeader *)*gPacks[packNum];
+  PackHeader *pack = (PackHeader *)*packs[packNum];
   int startId = pack[1].id;
-  uint32_t offs = pack[entryID - startId + 1].offs;
+  uint32_t offset = pack[entryID - startId + 1].offset;
   if (size) {
     if (entryID - startId + 1 == pack->id) {
-      *size = GetHandleSize(gPacks[packNum]) - offs;
+      *size = GetHandleSize(packs[packNum]) - offset;
     }
     else {
-      *size = pack[entryID - startId + 2].offs - offs;
+      *size = pack[entryID - startId + 2].offset - offset;
     }
   }
-  return (Ptr)pack + offs;
+  return (Ptr)pack + offset;
 }
 
 int ComparePackHeaders(const void *p1, const void *p2) {
-  tPackHeader pack1 = *(tPackHeader *)p1;
-  tPackHeader pack2 = *(tPackHeader *)p2;
+  PackHeader pack1 = *(PackHeader *)p1;
+  PackHeader pack2 = *(PackHeader *)p2;
   FLIP_SHORT(pack2.id);
   return pack1.id - pack2.id;
 }
@@ -121,34 +122,34 @@ int ComparePackHeaders(const void *p1, const void *p2) {
  * at some point.
  */
 Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
-  tPackHeader pack = *(tPackHeader *)*gPacks[packNum];
+  PackHeader pack = *(PackHeader *)*packs[packNum];
   FLIP_SHORT(pack.id);
-  FLIP_LONG(pack.offs);
+  FLIP_LONG(pack.offset);
 
-  tPackHeader key, *found;
-  uint32_t offs;
+  PackHeader key, *found;
+  uint32_t offset;
   key.id = entryID;
-  found = bsearch(&key, (tPackHeader *)*gPacks[packNum] + 1, pack.id,
-                  sizeof(tPackHeader), ComparePackHeaders);
+  found = bsearch(&key, (PackHeader *)*packs[packNum] + 1, pack.id,
+                  sizeof(PackHeader), ComparePackHeaders);
   if (!found) {
     return NULL;
   }
 
-  offs = found->offs;
-  FLIP_LONG(offs);
+  offset = found->offset;
+  FLIP_LONG(offset);
   if (size) {
-    if (pack.id == found - (tPackHeader *)*gPacks[packNum]) {
-      *size = GetHandleSize(gPacks[packNum]) - offs;
+    if (pack.id == found - (PackHeader *)*packs[packNum]) {
+      *size = GetHandleSize(packs[packNum]) - offset;
     }
     else {
-      tPackHeader other = *(found + 1);
-      FLIP_LONG(other.offs);
-      *size = other.offs - offs;
+      PackHeader other = *(found + 1);
+      FLIP_LONG(other.offset);
+      *size = other.offset - offset;
     }
   }
-  return (char *)*gPacks[packNum] + offs;
+  return (char *)*packs[packNum] + offset;
 }
 
 int NumPackEntries(int num) {
-  return gPacks[num] ? TO_LITTLE_S((**(tPackHandle)gPacks[num]).id) : 0;
+  return packs[num] ? TO_LITTLE_S((**(PackHandle)packs[num]).id) : 0;
 }
