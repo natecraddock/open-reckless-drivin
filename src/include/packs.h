@@ -30,7 +30,9 @@ enum {
   kNumPacks
 };
 
-#define kEncryptedPack kPackLevel4
+#define ENCRYPTED_PACK kPackLevel4
+
+extern uint32_t gKey;
 
 uint32_t LoadPack(int);
 void UnloadPack(int);

@@ -78,7 +78,7 @@ void GameEndSequence();
 
 int LoadLevel() {
   int i, sound;
-  if (gLevelID >= kEncryptedPack - kPackLevel1 || gLevelResFile) {
+  if (gLevelID >= ENCRYPTED_PACK - kPackLevel1 || gLevelResFile) {
     if (!gRegistered) {
       ShowPicScreen(1005);
       WaitForPress();

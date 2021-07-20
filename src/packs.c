@@ -54,7 +54,7 @@ uint32_t LoadPack(int num) {
     packs[num] = GetResource("Pack", num + 128);
     if (packs[num]) {
       /* TODO */
-      if (num >= kEncryptedPack /* || gLevelResFile*/) {
+      if (num >= ENCRYPTED_PACK /* || gLevelResFile*/) {
         check = CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
       LZRWDecodeHandle(&packs[num]);
@@ -71,7 +71,7 @@ bool CheckPack(int num, uint32_t check) {
   if (!packs[num]) {
     packs[num] = GetResource("Pack", num + 128);
     if (packs[num]) {
-      if (num >= kEncryptedPack) {
+      if (num >= ENCRYPTED_PACK) {
         ok = check ==
              CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }

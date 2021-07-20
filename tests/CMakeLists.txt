@@ -11,3 +11,4 @@ endfunction()
 
 test(resource_test "resource-loading" resource.c)
 test(lzrw_test "lzrw-decompression" lzrw.c resource.c)
+test(decryption_test "level-decryption" lzrw.c packs.c resource.c)
