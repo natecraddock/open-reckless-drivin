@@ -11,9 +11,9 @@
 // #include "gameframe.h"
 // #include "gameinitexit.h"
 #include "interface.h"
+#include "lzrw.h"
 #include "quickdraw.h"
 #include "resource.h"
-#include "lzrw.h"
 
 typedef struct Display {
   SDL_Window *window;
@@ -26,7 +26,8 @@ Display init_sdl() {
   SDL_Init(SDL_INIT_VIDEO);
 
   Display d;
-  d.window = SDL_CreateWindow("Reckless Drivin'", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, 0);
+  d.window = SDL_CreateWindow("Reckless Drivin'", SDL_WINDOWPOS_CENTERED,
+                              SDL_WINDOWPOS_CENTERED, 640, 480, 0);
   if (!d.window) {
     fprintf(stderr, "Unable to create window\n");
     exit(1);
@@ -38,13 +39,14 @@ Display init_sdl() {
     exit(1);
   }
 
-  d.texture = SDL_CreateTexture(d.renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 640, 480);
+  d.texture = SDL_CreateTexture(d.renderer, SDL_PIXELFORMAT_ARGB8888,
+                                SDL_TEXTUREACCESS_STATIC, 640, 480);
   if (!d.texture) {
     fprintf(stderr, "Unable to create texture\n");
     exit(1);
   }
 
-  d.pixels = calloc(640 * 480, sizeof (uint32_t));
+  d.pixels = calloc(640 * 480, sizeof(uint32_t));
   if (!d.pixels) {
     fprintf(stderr, "Unable to allocate pixel buffer\n");
     exit(1);
@@ -52,7 +54,6 @@ Display init_sdl() {
 
   return d;
 }
-
 
 void cleanup_sdl(Display display) {
   SDL_DestroyRenderer(display.renderer);
@@ -81,7 +82,8 @@ void load_picture(Display display, Handle resource) {
     uint32_t height = direct_bits.dst_rect.bottom;
     for (uint32_t pix = 0; pix < width * height; pix++) {
       RGBValue rgb = direct_bits.pixels[pix];
-      display.pixels[pix] = ((rgb.r * 8) << 16) | ((rgb.g * 8) << 8) | rgb.b * 8;
+      display.pixels[pix] =
+          ((rgb.r * 8) << 16) | ((rgb.g * 8) << 8) | rgb.b * 8;
     }
   }
   /* PackBitsRect */
@@ -91,14 +93,15 @@ void load_picture(Display display, Handle resource) {
     uint32_t height = pack_bits.dst_rect.bottom;
     for (uint32_t pix = 0; pix < width * height; pix++) {
       RGBValue rgb = pack_bits.pixels[pix];
-      display.pixels[pix] = ((rgb.r * 8) << 16) | ((rgb.g * 8) << 8) | rgb.b * 8;
+      display.pixels[pix] =
+          ((rgb.r * 8) << 16) | ((rgb.g * 8) << 8) | rgb.b * 8;
     }
   }
 
   ReleaseResource(resource);
 }
 
-void draw_picture(Display display, int pic_id){
+void draw_picture(Display display, int pic_id) {
   Handle pic = GetResource("PPic", pic_id);
   LZRWDecodeHandle(&pic);
   load_picture(display, pic);
@@ -113,7 +116,8 @@ int main(void) {
   draw_picture(display, 1003);
   SDL_Event event;
   while (!gExit) {
-    SDL_UpdateTexture(display.texture, NULL, display.pixels, 640 * sizeof (uint32_t));
+    SDL_UpdateTexture(display.texture, NULL, display.pixels,
+                      640 * sizeof(uint32_t));
     /* if (gGameOn) { */
     /*   GameFrame(); */
     /* } */

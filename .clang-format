@@ -1,4 +1,3 @@
-
 BasedOnStyle: LLVM
 
 AlignTrailingComments: true
@@ -12,4 +11,4 @@ BreakBeforeBraces: Custom
 BraceWrapping:
   BeforeElse: true
 
-
+ColumnLimit: 80

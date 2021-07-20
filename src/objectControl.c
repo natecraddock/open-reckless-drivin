@@ -1,8 +1,8 @@
 #include <stdlib.h>
 
-#include "objectcontrol.h"
 #include "gamesounds.h"
 #include "input.h"
+#include "objectcontrol.h"
 #include "objects.h"
 #include "random.h"
 #include "roads.h"

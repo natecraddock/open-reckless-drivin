@@ -53,8 +53,6 @@ void ShowPicScreen(int id) {
   /* DisposeHandle(pic); */
   /* SetGWorld(oldGW, oldGD); */
   /* FadeScreen(0); */
-
-
 }
 
 /* void ShowPicScreenNoFade(int id) { */
@@ -85,7 +83,8 @@ void ShowPicScreen(int id) {
 /*     SetEmptyRgn(gButtonRgn); */
 /*     OpenRgn(); */
 /*     HLock((Handle)gButtonList); */
-/*     for (i = 0; i < GetHandleSize((Handle)gButtonList) / sizeof(Rect); i++) */
+/*     for (i = 0; i < GetHandleSize((Handle)gButtonList) / sizeof(Rect); i++)
+ */
 /*       FrameRect((*gButtonList) + i); */
 /*     HUnlock((Handle)gButtonList); */
 /*     CloseRgn(gButtonRgn); */
@@ -101,11 +100,14 @@ void ShowPicScreen(int id) {
 /*   GetGWorld(&oldGW, &oldGD); */
 /*   SetGWorld(screenGW, NULL); */
 /*   if (button != kNoButton) */
-/*     CopyBits(GetPortBitMapForCopyBits(src), GetPortBitMapForCopyBits(screenGW), */
-/*              (*gButtonList) + button, (*gButtonList) + button, srcCopy, NULL); */
+/*     CopyBits(GetPortBitMapForCopyBits(src),
+ * GetPortBitMapForCopyBits(screenGW), */
+/*              (*gButtonList) + button, (*gButtonList) + button, srcCopy,
+ * NULL); */
 /*   else { */
 /*     Rect r = {0, 0, 480, 640}; */
-/*     CopyBits(GetPortBitMapForCopyBits(src), GetPortBitMapForCopyBits(screenGW), */
+/*     CopyBits(GetPortBitMapForCopyBits(src),
+ * GetPortBitMapForCopyBits(screenGW), */
 /*              &r, &r, srcCopy, NULL); */
 /*     ForeColor(whiteColor); */
 /*     TextSize(12); */
@@ -155,7 +157,8 @@ void ShowPicScreen(int id) {
 /* } */
 
 /* void SaveFlushEvents() { */
-/*   int eventMask = mDownMask + mUpMask + keyDownMask + keyUpMask + autoKeyMask; */
+/*   int eventMask = mDownMask + mUpMask + keyDownMask + keyUpMask +
+ * autoKeyMask; */
 /*   EventRecord event; */
 /*   FlushEvents(eventMask, 0); */
 /*   while (WaitNextEvent(eventMask, &event, 0, NULL)) */
@@ -169,11 +172,14 @@ void ShowPicScreen(int id) {
 /*     GDHandle oldGD; */
 /*     Handle pic; */
 /*     SetRect(&gwSize, 0, 0, 640, 480); */
-/*     DoError(NewGWorld(&gMainScreenGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, */
+/*     DoError(NewGWorld(&gMainScreenGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+ */
 /*                       NULL, 0)); */
 /*     DoError( */
-/*         NewGWorld(&gHilitGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, NULL, 0)); */
-/*     DoError(NewGWorld(&gSelectedGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, */
+/*         NewGWorld(&gHilitGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, NULL,
+ * 0)); */
+/*     DoError(NewGWorld(&gSelectedGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+ */
 /*                       NULL, 0)); */
 /*     LockPixels(GetGWorldPixMap(gMainScreenGW)); */
 /*     LockPixels(GetGWorldPixMap(gHilitGW)); */
@@ -308,7 +314,8 @@ void ShowPicScreen(int id) {
 /*     EventRecord event; */
 /*     KeyMap theKeys; */
 /*     GetKeys(theKeys); */
-/*     pressed = theKeys[0] | theKeys[1] | theKeys[2] | theKeys[3] | Button() | */
+/*     pressed = theKeys[0] | theKeys[1] | theKeys[2] | theKeys[3] | Button() |
+ */
 /*               ContinuePress(); */
 /*     WaitNextEvent(everyEvent, &event, 0, NULL); */
 /*   } while (!pressed); */

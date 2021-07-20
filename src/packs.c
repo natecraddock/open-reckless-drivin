@@ -87,8 +87,9 @@ bool CheckPack(int num, uint32_t check) {
 
 void UnloadPack(int num) {
   if (packs[num]) {
-    /* Any valid pack has been decompressed, which means it is no longer a resource handle,
-       but a memory handle, so we must use DisposeHandle to free that allocated memory. */
+    /* Any valid pack has been decompressed, which means it is no longer a
+       resource handle, but a memory handle, so we must use DisposeHandle to
+       free that allocated memory. */
     DisposeHandle(packs[num]);
     packs[num] = NULL;
   }

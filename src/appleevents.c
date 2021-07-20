@@ -77,8 +77,8 @@ pascal OSErr myODOC(AppleEvent *theAppleEvent, AppleEvent *reply, long refCon) {
   // the returned data to an FSSpec record, and open the
   // associated file
   for (index = 1; index <= itemsInList; index++) {
-    myErr = AEGetNthPtr(&docList, index, typeFSS, &keywd, &returnedType,
-                        &myFSS, sizeof(myFSS), &actualSize);
+    myErr = AEGetNthPtr(&docList, index, typeFSS, &keywd, &returnedType, &myFSS,
+                        sizeof(myFSS), &actualSize);
     if (myErr)
       DoError(myErr);
     MyOpenFile(&myFSS);
