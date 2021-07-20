@@ -175,7 +175,12 @@ void lzrw3a_compress(/* Single function interface to compression algorithm. */
 
 #include "defines.h"
 
-/* Decompress the bytes referenced by a handle. */
+/**
+ * Decompress the bytes referenced by a handle.
+ *
+ * On success, the given Resource Handle is converted to a Memory Handle and
+ * will need to be freed with DisposeHandle.
+ */
 void LZRWDecodeHandle(Handle *handle);
 
 #endif /* LZRW_H */

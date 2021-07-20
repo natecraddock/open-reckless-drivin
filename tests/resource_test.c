@@ -18,6 +18,7 @@ int main() {
     return 1;
   }
 
+  /* This handle is still a resource handle, so release the resource */
   ReleaseResource(chck);
   return 0;
 }

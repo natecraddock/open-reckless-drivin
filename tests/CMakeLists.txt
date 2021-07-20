@@ -9,5 +9,5 @@ function(test NAME DESCRIPTION)
   add_test(NAME ${DESCRIPTION} COMMAND ${NAME})
 endfunction()
 
-test(resource_test "resources" resource.c)
+test(resource_test "resource-loading" resource.c)
 test(lzrw_test "lzrw-decompression" lzrw.c resource.c)
