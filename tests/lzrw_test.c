@@ -6,6 +6,9 @@ int main() {
   /* LZRW decode all packs that aren't encrypted */
   for (int i = 0; i < kPackLevel4; i++) {
     Handle resource = GetResource("Pack", 128 + i);
+    if (resource == NULL) {
+      return 1;
+    }
     LZRWDecodeHandle(&resource);
     DisposeHandle(resource);
   }
@@ -13,6 +16,9 @@ int main() {
   /* Repeat for the quickdraw images which are also compressed */
   for (int i = 0; i < 10; i++) {
     Handle resource = GetResource("PPic", 1000 + i);
+    if (resource == NULL) {
+      return 1;
+    }
     LZRWDecodeHandle(&resource);
     DisposeHandle(resource);
   }

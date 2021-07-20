@@ -10,6 +10,10 @@ static const uint32_t CHCK_VALUE = 3285832799;
  */
 int main() {
   Handle chck = GetResource("Chck", 128);
+  if (chck == NULL) {
+    printf("Unable to load resource\n");
+    return 1;
+  }
 
   /* Verify the correct number was read from the file */
   uint32_t check_n = **(uint32_t **)chck;
