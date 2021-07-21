@@ -43,8 +43,6 @@ void ShowHighScores(int hilite) {
   FadeScreen(0);
 }
 
-extern int gOSX;
-
 void SetHighScoreEntry(int index, uint32_t score) {
   DialogPtr highDlg;
   short type;
@@ -52,7 +50,7 @@ void SetHighScoreEntry(int index, uint32_t score) {
   Handle item;
   short hit;
   Str255 text;
-  if (gOSX) {
+  if (false /* gOSX */) {
     FadeScreen(1);
     ScreenMode(kScreenSuspended);
     FadeScreen(0);
@@ -77,7 +75,7 @@ void SetHighScoreEntry(int index, uint32_t score) {
   gPrefs.high[index].score = score;
   GetDateTime(&gPrefs.high[index].time);
 
-  if (gOSX) {
+  if (false /* gOSX */) {
     FadeScreen(1);
     ScreenMode(kScreenRunning);
     FadeScreen(512);

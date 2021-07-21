@@ -110,35 +110,35 @@ void draw_picture(Display display, int pic_id) {
 int main(void) {
   printf("Open Reckless Drivin' 0.0.0\n");
 
-  Display display = init_sdl();
+  /* Display display = init_sdl(); */
 
-  Init(display);
-  draw_picture(display, 1003);
-  SDL_Event event;
+  Init();
+  /* draw_picture(display, 1003); */
+  /* SDL_Event event; */
   while (!gExit) {
-    SDL_UpdateTexture(display.texture, NULL, display.pixels,
-                      640 * sizeof(uint32_t));
-    /* if (gGameOn) { */
-    /*   GameFrame(); */
-    /* } */
-    /* else { */
-    /*   Eventloop(); */
-    /* } */
-    SDL_WaitEvent(&event);
-
-    switch (event.type) {
-    case SDL_QUIT:
-      gExit = true;
-      break;
+    /* SDL_UpdateTexture(display.texture, NULL, display.pixels, */
+    /*                   640 * sizeof(uint32_t)); */
+    if (gGameOn) {
+      GameFrame();
     }
+    else {
+      Eventloop();
+    }
+    /* SDL_WaitEvent(&event); */
 
-    SDL_RenderClear(display.renderer);
-    SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
-    SDL_RenderPresent(display.renderer);
+    /* switch (event.type) { */
+    /* case SDL_QUIT: */
+    /*   gExit = true; */
+    /*   break; */
+    /* } */
+
+    /* SDL_RenderClear(display.renderer); */
+    /* SDL_RenderCopy(display.renderer, display.texture, NULL, NULL); */
+    /* SDL_RenderPresent(display.renderer); */
   }
   Exit();
 
-  cleanup_sdl(display);
+  /* cleanup_sdl(display); */
 
   return 0;
 }

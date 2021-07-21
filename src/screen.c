@@ -121,6 +121,16 @@ void InitScreen() {
   gScreenMode = kScreenSuspended;
 }
 
+/**
+ * FadeGammaIn:
+ * https://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Sprockets/GameSprockets-122.html
+ * FadeGamma:
+ * https://mirror.informatimago.com/next/developer.apple.com/documentation/mac/Sprockets/GameSprockets-120.html
+ *
+ * these functions fade in/out over the period of 1 second.
+ * it is unclear if this happens during the execution of the call, or if the
+ * effect is scheduled
+ */
 void FadeScreen(int out) {
 #if __option(scheduling)
   switch (out) {
@@ -371,8 +381,6 @@ void CopyBits_Interlaced(BitMap *srcPixMapP, BitMap *destPixMapP,
            NULL);
 }
 
-extern int gOSX;
-
 void Blit2Screen() {
   Rect rec;
   GWorldPtr gameGW, screenGW;
@@ -395,7 +403,7 @@ void Blit2Screen() {
       gOddLines = !gOddLines;
     SetGWorld(gameGW, NULL);
   }
-  else if (gOSX) {
+  else if (false /* gOSX */) {
     DoError(
         DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
     DoError(DSpContext_GetFrontBuffer(gDrawContext, &screenGW));

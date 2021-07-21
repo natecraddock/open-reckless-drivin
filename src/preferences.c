@@ -29,7 +29,6 @@ enum {
 };
 
 tPrefs gPrefs;
-extern int gOSX;
 
 short GetPrefsFile(FSSpec *spec) {
   int err;
@@ -111,7 +110,7 @@ void LoadPrefs() {
     DoError(FSClose(refNum));
     WritePrefs(true);
   }
-  if (gOSX)
+  if (false /* gOSX */)
     gPrefs.lineSkip = false;
 }
 
@@ -162,8 +161,6 @@ void Preferences() {
   DoError(SetDialogCancelItem(prefDlg, kCancelButton));
   DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt));
   SetControlValue(cnt, gPrefs.lineSkip);
-  if (gOSX)
-    DoError(DeactivateControl(cnt));
   DoError(GetDialogItemAsControl(prefDlg, kMotionBlurCBox, &cnt));
   SetControlValue(cnt, gPrefs.motionBlur);
   DoError(GetDialogItemAsControl(prefDlg, kEngineSoundCBox, &cnt));

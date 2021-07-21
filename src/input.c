@@ -35,7 +35,6 @@ iS2F_DeviceRef_t giShockList[iS2F_MAX_ISHOCK2_NUM];
 pRecElement *gElements;
 pRecDevice gController;
 int gNumHIDElements = 0;
-extern int gOSX;
 
 int gFFBBlock = 0;
 void FFBJolt(float lMag, float rMag, float duration) {
@@ -137,13 +136,7 @@ void InitHID() {
     TearDownHIDCFM();
 }
 
-uint32_t U32Version(NumVersion v);
-
 void InitInput() {
-  if (ISpGetVersion != kUnresolvedCFragSymbolAddress) {
-    if (U32Version(ISpGetVersion()) >= 0x0110)
-      gInputISp = true;
-  }
   if (gInputISp) {
     ISpNeed **needs;
     int needCount;
@@ -180,8 +173,6 @@ void InitInput() {
     // DoError(ISpElementList_AddElements(gEventElements,kScreenshot,1,&gVirtualElements[kScreenshot]));
     ReleaseResource(GetResource('ISpN', 128));
   }
-  if (gOSX)
-    InitHID();
   if (!iS2F_Init()) {
     gForceFeedback = true;
     DoError(iS2F_GetDevRefList(giShockList));

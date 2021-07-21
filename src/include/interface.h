@@ -4,11 +4,11 @@
 #include "defines.h"
 
 extern int gExit;
-extern short gLevelResFile, gAppResFile;
+extern short gLevelResFile;
 extern Str63 gLevelFileName;
 
 /* void SaveFlushEvents(); */
-/* void Eventloop(); */
+void Eventloop();
 /* void InitInterface(); */
 /* void DisposeInterface(); */
 /* void ScreenUpdate(WindowPtr win); */

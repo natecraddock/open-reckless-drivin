@@ -1,10 +1,9 @@
-// #define CALL_IN_SPOCKETS_BUT_NOT_IN_CARBON 1
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 
 #include "defines.h"
+#include "interface.h"
 #include "packs.h"
 #include "random.h"
 #include "sprites.h"
@@ -13,7 +12,6 @@
 // #include "gameinitexit.h"
 // #include "gamesounds.h"
 // #include "input.h"
-#include "interface.h"
 // #include "preferences.h"
 // #include "register.h"
 // #include "screen.h"
@@ -22,81 +20,19 @@
 // #include <InputSprocket.h>
 // #include <Sound.h>
 
-// #if __option(profile)
-// #include <profiler.h>
-// #endif
+float sine_table[SINE_TABLE_SIZE];
 
-float gSinTab[kSinTabSize];
-int gInitSuccessful = false;
-// int gOSX;
-
-// void InitToolbox() {
-//   /*	InitGraf(&qd.thePort);
-//     InitFonts();
-//     InitWindows();
-//     InitMenus();
-//     TEInit();
-//     InitDialogs(NULL);*/
-//   InitCursor();
-// }
+static int init_successful = false;
 
 #undef sin
 void InitTrig() {
   int i;
-  for (i = 0; i < kSinTabSize; i++) {
-    gSinTab[i] = sin(2 * PI * (float)i / (float)kSinTabSize);
+  for (i = 0; i < SINE_TABLE_SIZE; i++) {
+    sine_table[i] = sin(2 * PI * (float)i / (float)SINE_TABLE_SIZE);
   }
 }
 
-// uint32_t U32Version(NumVersion v) {
-//   return *((uint32_t *)(&v));
-// }
-
-// int ReqCheck() {
-//   int hit;
-//   long resp;
-//   AlertStdAlertParamRec alertParam = {false,
-//                                       false,
-//                                       NULL,
-//                                       "\pExit",
-//                                       NULL,
-//                                       NULL,
-//                                       kAlertStdAlertOKButton,
-//                                       0,
-//                                       kWindowDefaultPosition};
-//   if (RegisterAppearanceClient == kUnresolvedCFragSymbolAddress) {
-//     StopAlert(131, NULL);
-//     return false;
-//   }
-//   if (U32Version(SndSoundManagerVersion()) <= 0x03100000) {
-//     StandardAlert(kAlertStopAlert, "\pYour Sound Manager version is too
-//     old.",
-//                   "\p", &alertParam, &hit);
-//     return false;
-//   }
-//   DoError(Gestalt(gestaltSystemVersion, &resp));
-//   gOSX = resp >= 0x00001000;
-//   if (gOSX & resp < 0x00001002) {
-//     StandardAlert(kAlertStopAlert,
-//                   "\pTo run Reckless Drivin' under Mac OS X you need at least
-//                   " "Mac OS X 10.0.2.",
-//                   "\pUse The Software Update Panel under Sytem preferences to
-//                   " "update your system.", &alertParam, &hit);
-//     return false;
-//   }
-//   return true;
-// }
-
-// void InitAE();
-
 void Init() {
-  // InitToolbox();
-  // if (!ReqCheck()) {
-  //   ExitToShell();
-  // }
-  // InitAE();
-  // gAppResFile = CurResFile();
-  // DoError(RegisterAppearanceClient());
   Randomize();
   // LoadPrefs();
   // CheckRegi();
@@ -126,16 +62,7 @@ void Init() {
   // InitChannels();
   // InitInterface();
 
-  // FSSpec spec;
-  // OSErr err;
-
-  // err = FSMakeFSSpec(0, 0, "\pProfiler Dump", &spec);
-  // DoError(err == fnfErr ? noErr : err);
-  // err = FSpDelete(&spec);
-  // DoError(err == fnfErr ? noErr : err);
-  // DoError(ProfilerInit(collectSummary, bestTimeBase, 200, 5));
-
-  gInitSuccessful = true;
+  init_successful = true;
 }
 
 static void free_packs() {
@@ -154,7 +81,7 @@ static void free_packs() {
 }
 
 void Exit() {
-  if (gInitSuccessful) {
+  if (init_successful) {
     /* Cleanup all loaded packs */
     free_packs();
     //   WritePrefs(false);

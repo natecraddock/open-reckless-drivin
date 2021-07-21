@@ -31,7 +31,7 @@
 /* Rect **gButtonList; */
 /* int gButtonLocation; */
 int gExit;
-/* short gLevelResFile = 0, gAppResFile; */
+/* short gLevelResFile = 0 */
 /* Str63 gLevelFileName; */
 /* RgnHandle gButtonRgn; */
 /* int gInterfaceInited = false; */
@@ -359,42 +359,38 @@ void ShowPicScreen(int id) {
 /*   HandleCommand(GetButtonClick(event->where), event->modifiers); */
 /* } */
 
-/* extern int gOSX; */
-
-/* void Eventloop() { */
-/*   EventRecord event; */
-/*   ShowCursor(); */
-/*   if (WaitNextEvent(everyEvent, &event, 2, gButtonRgn)) { */
-/*     int eventWasProcessed; */
-/*     if (!gOSX) */
-/*       DoError(DSpProcessEvent(&event, &eventWasProcessed)); */
-/*     switch (event.what) { */
-/*     case mouseDown: */
-/*       HandleMouseDown(&event); */
-/*       break; */
-/*     case keyDown: */
-/*       HandleCommand(KeyClick(event.message), event.modifiers); */
-/*       break; */
-/*     case osEvt: */
-/*       switch (event.message >> 24) { */
-/*       case mouseMovedMessage: */
-/*         UpdateButtonLocation(); */
-/*         break; */
-/*       case suspendResumeMessage: */
-/*         if (event.message & resumeFlag) */
-/*           ScreenUpdate(NULL); */
-/*         break; */
-/*       } */
-/*       break; */
-/*     case kHighLevelEvent: */
-/*       DoError(AEProcessAppleEvent(&event)); */
-/*       ScreenUpdate(NULL); */
-/*       break; */
-/*     case updateEvt: */
-/*       ScreenUpdate((WindowPtr)event.message); */
-/*       break; */
-/*     } */
-/*   } */
-/*   if (ContinuePress()) */
-/*     HandleCommand(kStartGameButton, 0); */
-/* } */
+void Eventloop() {
+  /* EventRecord event; */
+  /* ShowCursor(); */
+  /* if (WaitNextEvent(everyEvent, &event, 2, gButtonRgn)) { */
+  /*   int eventWasProcessed; */
+  /*   switch (event.what) { */
+  /*   case mouseDown: */
+  /*     HandleMouseDown(&event); */
+  /*     break; */
+  /*   case keyDown: */
+  /*     HandleCommand(KeyClick(event.message), event.modifiers); */
+  /*     break; */
+  /*   case osEvt: */
+  /*     switch (event.message >> 24) { */
+  /*     case mouseMovedMessage: */
+  /*       UpdateButtonLocation(); */
+  /*       break; */
+  /*     case suspendResumeMessage: */
+  /*       if (event.message & resumeFlag) */
+  /*         ScreenUpdate(NULL); */
+  /*       break; */
+  /*     } */
+  /*     break; */
+  /*   case kHighLevelEvent: */
+  /*     DoError(AEProcessAppleEvent(&event)); */
+  /*     ScreenUpdate(NULL); */
+  /*     break; */
+  /*   case updateEvt: */
+  /*     ScreenUpdate((WindowPtr)event.message); */
+  /*     break; */
+  /*   } */
+  /* } */
+  /* if (ContinuePress()) */
+  /*   HandleCommand(kStartGameButton, 0); */
+}

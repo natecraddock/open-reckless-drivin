@@ -109,14 +109,3 @@ pascal OSErr myQUIT(AppleEvent *theAE, AppleEvent *reply, long refCon) {
   gExit = true;
   return noErr;
 }
-
-void InitAE() {
-  AEInstallEventHandler(kCoreEventClass, kAEOpenApplication,
-                        NewAEEventHandlerUPP(&myOAPP), 0, false);
-  AEInstallEventHandler(kCoreEventClass, kAEOpenDocuments,
-                        NewAEEventHandlerUPP(&myODOC), 0, false);
-  AEInstallEventHandler(kCoreEventClass, kAEPrintDocuments,
-                        NewAEEventHandlerUPP(&myPDOC), 0, false);
-  AEInstallEventHandler(kCoreEventClass, kAEQuitApplication,
-                        NewAEEventHandlerUPP(&myQUIT), 0, false);
-}

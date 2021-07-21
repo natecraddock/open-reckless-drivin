@@ -5,12 +5,14 @@
 
 #define PI 3.1415
 #define kSinMask 0x000003ff
-#define kSinTabSize 1024
+#define SINE_TABLE_SIZE 1024
 
-extern float gSinTab[kSinTabSize];
+extern float sine_table[SINE_TABLE_SIZE];
 
-#define sin(x) gSinTab[(int)((x) * (float)kSinTabSize / (2.0 * PI)) & kSinMask]
+#define sin(x)                                                                 \
+  sine_table[(int)((x) * (float)SINE_TABLE_SIZE / (2.0 * PI)) & kSinMask]
 #define cos(x)                                                                 \
-  gSinTab[(int)(((x) + PI / 2.0) * (float)kSinTabSize / (2.0 * PI)) & kSinMask]
+  sine_table[(int)(((x) + PI / 2.0) * (float)SINE_TABLE_SIZE / (2.0 * PI)) &   \
+             kSinMask]
 
 #endif

@@ -47,8 +47,6 @@ int gGear;
 int gBuggySoundManager;
 UniversalProcPtr gSoundCallBack = NULL;
 
-uint32_t U32Version(NumVersion v);
-
 void SetGameVolume(int volume) {
   ComponentDescription theDesc = {kSoundOutputDeviceType, 0, 0, 0, 0};
   Component theDefaultSoundOutputDevice = FindNextComponent(NULL, &theDesc);
@@ -137,8 +135,6 @@ void InitChannels() {
   gSkidChannel = NULL;
   DoError(SndNewChannel(&gSkidChannel, sampledSynth, init, gSoundCallBack));
   gSkidChannel->userInfo = 0;
-  gBuggySoundManager = U32Version(SndSoundManagerVersion()) < 0x03600000 &&
-                       U32Version(SndSoundManagerVersion()) >= 0x03300000;
 }
 
 #define rateCmd 82
