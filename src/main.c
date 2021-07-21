@@ -8,8 +8,8 @@
 
 #include "initexit.h"
 
-// #include "gameframe.h"
-// #include "gameinitexit.h"
+#include "gameframe.h"
+#include "gameinitexit.h"
 #include "interface.h"
 #include "lzrw.h"
 #include "quickdraw.h"
