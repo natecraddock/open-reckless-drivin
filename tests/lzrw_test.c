@@ -4,7 +4,7 @@
 
 int main() {
   /* LZRW decode all packs that aren't encrypted */
-  for (int i = 0; i < kPackLevel4; i++) {
+  for (int i = 0; i < PACK_LEVEL_04; i++) {
     Handle resource = GetResource("Pack", 128 + i);
     if (resource == NULL) {
       return 1;

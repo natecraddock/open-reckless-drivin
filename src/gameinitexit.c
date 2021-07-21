@@ -63,7 +63,7 @@ Ptr LoadObjs(Ptr dataPos) {
 }
 
 int NumLevels() {
-  int i = kPackLevel1;
+  int i = PACK_LEVEL_01;
   SetResLoad(false);
   for (i = 140; Get1Resource('Pack', i); i++) {
   }
@@ -78,7 +78,7 @@ void GameEndSequence();
 
 int LoadLevel() {
   int i, sound;
-  if (gLevelID >= ENCRYPTED_PACK - kPackLevel1 || gLevelResFile) {
+  if (gLevelID >= PACK_ENCRYPTED - PACK_LEVEL_01 || gLevelResFile) {
     if (!gRegistered) {
       ShowPicScreen(1005);
       WaitForPress();
@@ -99,9 +99,9 @@ int LoadLevel() {
     gLevelID = 0;
   }
 
-  LoadPack(kPackLevel1 + gLevelID);
-  gLevelData = GetSortedPackEntry(kPackLevel1 + gLevelID, 1, NULL);
-  gMarks = GetSortedPackEntry(kPackLevel1 + gLevelID, 2, &gMarkSize);
+  LoadPack(PACK_LEVEL_01 + gLevelID);
+  gLevelData = GetSortedPackEntry(PACK_LEVEL_01 + gLevelID, 1, NULL);
+  gMarks = GetSortedPackEntry(PACK_LEVEL_01 + gLevelID, 2, &gMarkSize);
   gMarkSize /= sizeof(tMarkSeg);
   gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
   gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
@@ -150,7 +150,7 @@ int LoadLevel() {
 }
 
 void DisposeLevel() {
-  UnloadPack(kPackLevel1 + gLevelID);
+  UnloadPack(PACK_LEVEL_01 + gLevelID);
   gPlayerObj = NULL;
   while ((tObject *)gFirstObj->next != gFirstObj) {
     SpriteUnused((*(tObject *)gFirstObj->next).frame);

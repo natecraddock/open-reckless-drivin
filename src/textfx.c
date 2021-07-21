@@ -308,7 +308,7 @@ void DrawTextFX(int xDrawStart, int yDrawStart) {
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
       Ptr theCH =
-          GetSortedPackEntry(kPackcRLE, gTextFX[i].text[ch] - 'A' + 128, NULL) +
+          GetSortedPackEntry(PACK_cRLE, gTextFX[i].text[ch] - 'A' + 128, NULL) +
           8;
       float y = baseY;
       for (line = 0; line < kCharSize; line++) {
@@ -363,7 +363,7 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
     else if (gTextFX[i].effectFlags & kEffectMoveRight)
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
-      Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? kPackcR16 : kPackcRLE,
+      Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? PACK_cRLE_16 : PACK_cRLE,
                                      gTextFX[i].text[ch] - 'A' + 128, NULL) +
                   8;
       float y = baseY;
@@ -394,7 +394,7 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
 void SimpleDrawText(Str255 text, int xPos, int yPos) {
   int ch, line;
   for (ch = 1; ch <= text[0]; ch++) {
-    Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? kPackcR16 : kPackcRLE,
+    Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? PACK_cRLE_16 : PACK_cRLE,
                                    text[ch] - 'A' + 128, NULL) +
                 8;
     int y = yPos;

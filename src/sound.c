@@ -174,7 +174,7 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
     else
       engineVol = 0;
     if (gEngineChannel->userInfo) {
-      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, NULL);
+      tSound *sound = (tSound *)GetSortedPackEntry(PACK_SOUNDS, 132, NULL);
       gEngineChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
       cmd.param2 =
@@ -214,8 +214,8 @@ void SetCarSound(float engine, float skidL, float skidR, float velo) {
     else if (skidR > 1)
       skidR = 1;
     if (gSkidChannel->userInfo) {
-      tSound *sound =
-          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, NULL);
+      tSound *sound = (tSound *)GetSortedPackEntry(
+          PACK_SOUNDS, (*gRoadInfo).skidSound, NULL);
       gSkidChannel->userInfo = 0;
       cmd.cmd = bufferCmd;
       cmd.param2 =
@@ -267,7 +267,7 @@ void StartCarChannels() {
   DoError(SndDoCommand(gEngineChannel, &cmd, false));
   if (gPrefs.engineSound && gPrefs.sound)
     for (i = 0; i < 2; i++) {
-      tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, 132, NULL);
+      tSound *sound = (tSound *)GetSortedPackEntry(PACK_SOUNDS, 132, NULL);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
       cmd.param2 =
@@ -277,8 +277,8 @@ void StartCarChannels() {
       cmd.param1 = 1;
       cmd.param2 = 0;
       DoError(SndDoCommand(gEngineChannel, &cmd, false));
-      sound =
-          (tSound *)GetSortedPackEntry(kPackSnds, (*gRoadInfo).skidSound, NULL);
+      sound = (tSound *)GetSortedPackEntry(PACK_SOUNDS, (*gRoadInfo).skidSound,
+                                           NULL);
       cmd.cmd = bufferCmd;
       cmd.param1 = 0;
       cmd.param2 =
@@ -294,7 +294,7 @@ void StartCarChannels() {
 
 void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
   if (gPrefs.sound) {
-    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, NULL);
+    tSound *sound = (tSound *)GetSortedPackEntry(PACK_SOUNDS, id, NULL);
     SndChannelPtr chan;
     SndCommand cmd;
     int i;
@@ -363,7 +363,7 @@ void PlaySound(t2DPoint pos, t2DPoint velo, float freq, float vol, int id) {
 
 void SimplePlaySound(int id) {
   if (gPrefs.sound) {
-    tSound *sound = (tSound *)GetSortedPackEntry(kPackSnds, id, NULL);
+    tSound *sound = (tSound *)GetSortedPackEntry(PACK_SOUNDS, id, NULL);
     SndChannelPtr chan;
     SndCommand cmd;
     int i;

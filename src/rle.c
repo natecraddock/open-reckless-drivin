@@ -13,7 +13,7 @@
 
 void DrawRLE8(int h, int v, int id) {
   int rowBytes = gRowBytes;
-  uint8_t *spritePos = GetSortedPackEntry(kPacksRLE, id, NULL) + sizeof(Rect);
+  uint8_t *spritePos = GetSortedPackEntry(PACK_RLE, id, NULL) + sizeof(Rect);
   uint8_t *lineStart = gBaseAddr + h + v * rowBytes;
   uint8_t *dst = lineStart;
   int stop = 0;
@@ -56,7 +56,7 @@ void DrawRLE8(int h, int v, int id) {
 
 void DrawRLE16(int h, int v, int id) {
   int rowBytes = gRowBytes;
-  uint8_t *spritePos = GetSortedPackEntry(kPacksR16, id, NULL) + sizeof(Rect);
+  uint8_t *spritePos = GetSortedPackEntry(PACK_RLE_16, id, NULL) + sizeof(Rect);
   uint8_t *lineStart = gBaseAddr + h * 2 + v * rowBytes;
   uint16_t *dst = lineStart;
   int stop = 0;
@@ -96,7 +96,7 @@ void DrawRLE16(int h, int v, int id) {
 
 void DrawRLEYClip8(int h, int v, int id) {
   int rowBytes = gRowBytes;
-  uint8_t *spritePos = GetSortedPackEntry(kPacksRLE, id, NULL) + sizeof(Rect);
+  uint8_t *spritePos = GetSortedPackEntry(PACK_RLE, id, NULL) + sizeof(Rect);
   uint8_t *lineStart = gBaseAddr + h + v * rowBytes;
   uint8_t *dst = lineStart;
   int stop = 0;
@@ -144,7 +144,7 @@ void DrawRLEYClip8(int h, int v, int id) {
 
 void DrawRLEYClip16(int h, int v, int id) {
   int rowBytes = gRowBytes;
-  uint8_t *spritePos = GetSortedPackEntry(kPacksR16, id, NULL) + sizeof(Rect);
+  uint8_t *spritePos = GetSortedPackEntry(PACK_RLE_16, id, NULL) + sizeof(Rect);
   uint8_t *lineStart = gBaseAddr + h * 2 + v * rowBytes;
   uint16_t *dst = lineStart;
   int stop = 0;

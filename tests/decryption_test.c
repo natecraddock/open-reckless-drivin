@@ -21,7 +21,7 @@ int main() {
    * code rather than being hard-coded.
    */
   gKey = 0x1E42A71F;
-  if (!CheckPack(ENCRYPTED_PACK, check)) {
+  if (!CheckPack(PACK_ENCRYPTED, check)) {
     return 1;
   }
 

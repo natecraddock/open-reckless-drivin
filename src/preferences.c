@@ -51,22 +51,22 @@ void ReInitGraphics() {
   ScreenMode(kScreenStopped);
   InitScreen(0);
   ShowPicScreen(1003);
-  UnloadPack(kPacksR16);
-  UnloadPack(kPackcR16);
-  UnloadPack(kPackTx16);
-  UnloadPack(kPacksRLE);
-  UnloadPack(kPackcRLE);
-  UnloadPack(kPackTxtR);
+  UnloadPack(PACK_RLE_16);
+  UnloadPack(PACK_cRLE_16);
+  UnloadPack(PACK_TEXTURES_16);
+  UnloadPack(PACK_RLE);
+  UnloadPack(PACK_cRLE);
+  UnloadPack(PACK_TEXTURES);
   UnloadSprites();
   if (gPrefs.hiColor) {
-    LoadPack(kPacksR16);
-    LoadPack(kPackcR16);
-    LoadPack(kPackTx16);
+    LoadPack(PACK_RLE_16);
+    LoadPack(PACK_cRLE_16);
+    LoadPack(PACK_TEXTURES_16);
   }
   else {
-    LoadPack(kPacksRLE);
-    LoadPack(kPackcRLE);
-    LoadPack(kPackTxtR);
+    LoadPack(PACK_RLE);
+    LoadPack(PACK_cRLE);
+    LoadPack(PACK_TEXTURES);
   }
   LoadSprites();
   InitInterface();

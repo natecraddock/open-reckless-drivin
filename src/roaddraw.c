@@ -98,11 +98,11 @@ void DrawRoad(int xDrawStart,int yDrawStart)
         int rowBytesSkip=gRowBytes-gXSize;
         Ptr drawPos=gBaseAddr;
         Ptr
-backgrTex=GetUnsortedPackEntry(kPackTxtR,(*gRoadInfo).backgroundTex); Ptr
-roadTex=GetUnsortedPackEntry(kPackTxtR,(*gRoadInfo).foregroundTex); Ptr
-leftBorder=GetUnsortedPackEntry(kPackTxtR,(*gRoadInfo).roadLeftBorder); Ptr
-rightBorder=GetUnsortedPackEntry(kPackTxtR,(*gRoadInfo).roadRightBorder); tRoad
-roadData=gRoadData+yDrawStart/2; if(gPrefs.lineSkip) if(!gOddLines)
+backgrTex=GetUnsortedPackEntry(PACK_TEXTURES,(*gRoadInfo).backgroundTex); Ptr
+roadTex=GetUnsortedPackEntry(PACK_TEXTURES,(*gRoadInfo).foregroundTex); Ptr
+leftBorder=GetUnsortedPackEntry(PACK_TEXTURES,(*gRoadInfo).roadLeftBorder); Ptr
+rightBorder=GetUnsortedPackEntry(PACK_TEXTURES,(*gRoadInfo).roadRightBorder);
+tRoad roadData=gRoadData+yDrawStart/2; if(gPrefs.lineSkip) if(!gOddLines)
 for(y=yDrawStart;y>yDrawStart-gYSize+(gFinishDelay?0:kInvLines);y--)
                 {
                         drawPos=DrawBorderLine(drawPos,xDrawStart,0x80000000,(*roadData)[0],y,backgrTex,leftBorder,rightBorder);
@@ -228,12 +228,13 @@ void DrawRoadZoomed(float xDrawStart, float yDrawStart, float zoom) {
   int rowBytesSkip = gRowBytes - gXSize;
   Ptr drawPos = gBaseAddr;
   Ptr backgrTex =
-      GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).backgroundTex, 0);
-  Ptr roadTex = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).foregroundTex, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).backgroundTex, 0);
+  Ptr roadTex =
+      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).foregroundTex, 0);
   Ptr leftBorder =
-      GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).roadLeftBorder, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).roadLeftBorder, 0);
   Ptr rightBorder =
-      GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).roadRightBorder, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).roadRightBorder, 0);
   if (gPrefs.lineSkip)
     rowBytesSkip += gRowBytes;
   for (screenY = 0; screenY < gYSize; screenY += (gPrefs.lineSkip ? 2 : 1)) {
@@ -364,12 +365,13 @@ void DrawRoadZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   int rowBytesSkip = gRowBytes - gXSize * 2;
   Ptr drawPos = gBaseAddr;
   Ptr backgrTex =
-      GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).backgroundTex, 0);
-  Ptr roadTex = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).foregroundTex, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).backgroundTex, 0);
+  Ptr roadTex =
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).foregroundTex, 0);
   Ptr leftBorder =
-      GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).roadLeftBorder, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).roadLeftBorder, 0);
   Ptr rightBorder =
-      GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).roadRightBorder, 0);
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).roadRightBorder, 0);
   if (gPrefs.lineSkip)
     rowBytesSkip += gRowBytes;
   for (screenY = 0; screenY < gYSize; screenY += (gPrefs.lineSkip ? 2 : 1)) {

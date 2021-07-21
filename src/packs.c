@@ -15,7 +15,8 @@ typedef struct {
 } PackHeader;
 typedef PackHeader **PackHandle;
 
-static Handle packs[kNumPacks];
+/* Stores handles to loaded packs */
+static Handle packs[PACK_NUM_PACKS];
 
 /* Length of unencrypted header */
 #define UNENCRYPTED_HEADER_LEN 256
@@ -23,7 +24,7 @@ static Handle packs[kNumPacks];
 /* TODO: Remove once register.c is added */
 uint32_t gKey;
 
-uint32_t CryptData(uint32_t *data, uint32_t len) {
+static uint32_t CryptData(uint32_t *data, uint32_t len) {
   uint32_t check = 0;
   data += UNENCRYPTED_HEADER_LEN / 4;
   len -= UNENCRYPTED_HEADER_LEN;
@@ -54,7 +55,7 @@ uint32_t LoadPack(int num) {
     packs[num] = GetResource("Pack", num + 128);
     if (packs[num]) {
       /* TODO */
-      if (num >= ENCRYPTED_PACK /* || gLevelResFile*/) {
+      if (num >= PACK_ENCRYPTED /* || gLevelResFile*/) {
         check = CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
       LZRWDecodeHandle(&packs[num]);
@@ -71,7 +72,7 @@ bool CheckPack(int num, uint32_t check) {
   if (!packs[num]) {
     packs[num] = GetResource("Pack", num + 128);
     if (packs[num]) {
-      if (num >= ENCRYPTED_PACK) {
+      if (num >= PACK_ENCRYPTED) {
         ok = check ==
              CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
@@ -110,7 +111,7 @@ Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
   return (Ptr)pack + offset;
 }
 
-int ComparePackHeaders(const void *p1, const void *p2) {
+static int ComparePackHeaders(const void *p1, const void *p2) {
   PackHeader pack1 = *(PackHeader *)p1;
   PackHeader pack2 = *(PackHeader *)p2;
   FLIP_SHORT(pack2.id);

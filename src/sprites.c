@@ -1003,8 +1003,8 @@ void SpriteUnused(int id) {
 }
 
 void LoadSprites() {
-  // int spritePack = gPrefs.hiColor ? kPackSp16 : kPackSprt;
-  int spritePack = kPackSprt;
+  // int spritePack = gPrefs.hiColor ? PACK_SPRITES_16 : PACK_SPRITES;
+  int spritePack = PACK_SPRITES;
   LoadPack(spritePack);
   for (int i = 128; i < 128 + kNumSprites; i++) {
     int size;

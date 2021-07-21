@@ -1,45 +1,47 @@
-#ifndef __PACKS
-#define __PACKS
+#ifndef __PACKS_H
+#define __PACKS_H
 
 #include <stdbool.h>
 #include <stdint.h>
 
-enum {
-  kPackObTy,
-  kPackSprt,
-  kPackOgrp,
-  kPacksRLE,
-  kPackcRLE,
-  kPackTxtR,
-  kPackSnds,
-  kPackRoad,
-  kPackTx16,
-  kPackSp16,
-  kPacksR16,
-  kPackcR16,
-  kPackLevel1,
-  kPackLevel2,
-  kPackLevel3,
-  kPackLevel4,
-  kPackLevel5,
-  kPackLevel6,
-  kPackLevel7,
-  kPackLevel8,
-  kPackLevel9,
-  kPackLevel10,
-  kNumPacks
-};
+#include "defines.h"
 
-#define ENCRYPTED_PACK kPackLevel4
+/* TODO: Start this enum at 128 and remove the `128 + _` references elsewhere */
+typedef enum {
+  PACK_OBJECT_TYPE,
+  PACK_SPRITES,
+  PACK_OBJECT_GROUPS,
+  PACK_RLE,
+  PACK_cRLE,
+  PACK_TEXTURES,
+  PACK_SOUNDS,
+  PACK_ROAD,
+  PACK_TEXTURES_16,
+  PACK_SPRITES_16,
+  PACK_RLE_16,
+  PACK_cRLE_16,
+  PACK_LEVEL_01,
+  PACK_LEVEL_02,
+  PACK_LEVEL_03,
+  PACK_LEVEL_04,
+  PACK_LEVEL_05,
+  PACK_LEVEL_06,
+  PACK_LEVEL_07,
+  PACK_LEVEL_08,
+  PACK_LEVEL_09,
+  PACK_LEVEL_10,
+  PACK_NUM_PACKS
+} Packs;
+
+#define PACK_ENCRYPTED PACK_LEVEL_04
 
 extern uint32_t gKey;
 
 uint32_t LoadPack(int);
+bool CheckPack(int num, uint32_t check);
 void UnloadPack(int);
 Ptr GetSortedPackEntry(int, int, int *);
 Ptr GetUnsortedPackEntry(int, int, int *);
 int NumPackEntries(int);
-bool CheckPack(int num, uint32_t check);
-uint32_t BlockChecksum(uint32_t *data, uint32_t len);
 
-#endif
+#endif /* __PACKS_H */

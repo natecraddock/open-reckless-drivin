@@ -105,19 +105,19 @@ void Init() {
   // }
   // InitScreen(0);
   ShowPicScreen(1003);
-  LoadPack(kPackSnds);
-  LoadPack(kPackObTy);
-  LoadPack(kPackOgrp);
-  LoadPack(kPackRoad);
+  LoadPack(PACK_SOUNDS);
+  LoadPack(PACK_OBJECT_TYPE);
+  LoadPack(PACK_OBJECT_GROUPS);
+  LoadPack(PACK_ROAD);
   // if (gPrefs.hiColor) {
-  LoadPack(kPacksR16);
-  LoadPack(kPackcR16);
-  LoadPack(kPackTx16);
+  LoadPack(PACK_RLE_16);
+  LoadPack(PACK_cRLE_16);
+  LoadPack(PACK_TEXTURES_16);
   // }
   // else {
-  LoadPack(kPacksRLE);
-  LoadPack(kPackcRLE);
-  LoadPack(kPackTxtR);
+  LoadPack(PACK_RLE);
+  LoadPack(PACK_cRLE);
+  LoadPack(PACK_TEXTURES);
   // }
   LoadSprites();
   InitTrig();
@@ -139,16 +139,16 @@ void Init() {
 }
 
 static void free_packs() {
-  UnloadPack(kPackSnds);
-  UnloadPack(kPackObTy);
-  UnloadPack(kPackOgrp);
-  UnloadPack(kPackRoad);
-  UnloadPack(kPacksR16);
-  UnloadPack(kPackcR16);
-  UnloadPack(kPackTx16);
-  UnloadPack(kPacksRLE);
-  UnloadPack(kPackcRLE);
-  UnloadPack(kPackTxtR);
+  UnloadPack(PACK_SOUNDS);
+  UnloadPack(PACK_OBJECT_TYPE);
+  UnloadPack(PACK_OBJECT_GROUPS);
+  UnloadPack(PACK_ROAD);
+  UnloadPack(PACK_RLE_16);
+  UnloadPack(PACK_cRLE_16);
+  UnloadPack(PACK_TEXTURES_16);
+  UnloadPack(PACK_RLE);
+  UnloadPack(PACK_cRLE);
+  UnloadPack(PACK_TEXTURES);
 
   UnloadSprites();
 }

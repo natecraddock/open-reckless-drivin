@@ -280,7 +280,8 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  uint8_t *textures = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).tracks, 0);
+  uint8_t *textures =
+      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).tracks, 0);
   for (i = 0; i < gTrackCount; i++) {
     if (gTracks[i].p2.y <= yDrawStart + size && gTracks[i].p1.y > y1Clip &&
         gTracks[i].time + kTrackLifeTime + kTrackDeathDuration > gFrameCount) {
@@ -369,7 +370,7 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  uint8_t *texture = GetUnsortedPackEntry(kPackTxtR, (*gRoadInfo).marks, 0);
+  uint8_t *texture = GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).marks, 0);
   int l = 0, r = gMarkSize;
   while (r - 1 > l)
     if (gMarks[(l + r) / 2].p1.y + gMarks[(l + r) / 2].p2.y >
@@ -509,7 +510,8 @@ void DrawTracksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  uint16_t *textures = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).tracks, 0);
+  uint16_t *textures =
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).tracks, 0);
   for (i = 0; i < gTrackCount; i++) {
     if (gTracks[i].p2.y <= yDrawStart + size && gTracks[i].p1.y > y1Clip &&
         gTracks[i].time + kTrackLifeTime + kTrackDeathDuration > gFrameCount) {
@@ -599,7 +601,8 @@ void DrawMarksZoomed16(float xDrawStart, float yDrawStart, float zoom) {
   uint32_t shiftClip = gXSize - size << 16;
   int i;
   int y1Clip = yDrawStart - (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
-  uint16_t *texture = GetUnsortedPackEntry(kPackTx16, (*gRoadInfo).marks, 0);
+  uint16_t *texture =
+      GetUnsortedPackEntry(PACK_TEXTURES_16, (*gRoadInfo).marks, 0);
   int l = 0, r = gMarkSize;
   while (r - 1 > l)
     if (gMarks[(l + r) / 2].p1.y + gMarks[(l + r) / 2].p2.y >
