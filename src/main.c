@@ -112,7 +112,11 @@ int main(void) {
 
   /* Display display = init_sdl(); */
 
-  Init();
+  if (!Init()) {
+    /* Failed to init */
+    return 1;
+  }
+
   /* draw_picture(display, 1003); */
   /* SDL_Event event; */
   while (!gExit) {

@@ -22,8 +22,6 @@
 
 float sine_table[SINE_TABLE_SIZE];
 
-static int init_successful = false;
-
 #undef sin
 void InitTrig() {
   int i;
@@ -32,7 +30,7 @@ void InitTrig() {
   }
 }
 
-void Init() {
+bool Init() {
   Randomize();
   // LoadPrefs();
   // CheckRegi();
@@ -62,7 +60,8 @@ void Init() {
   // InitChannels();
   // InitInterface();
 
-  init_successful = true;
+  /* TODO: exit early on failure */
+  return true;
 }
 
 static void free_packs() {
@@ -81,16 +80,14 @@ static void free_packs() {
 }
 
 void Exit() {
-  if (init_successful) {
-    /* Cleanup all loaded packs */
-    free_packs();
-    //   WritePrefs(false);
-    //   FadeScreen(1);
-    //   ScreenMode(kScreenSuspended);
-    //   SetSystemVolume();
-    //   FadeScreen(256);
-    //   FadeScreen(0);
-    //   ScreenMode(kScreenStopped);
-    //   InputMode(kInputStopped);
-  }
+  /* Cleanup all loaded packs */
+  free_packs();
+  //   WritePrefs(false);
+  //   FadeScreen(1);
+  //   ScreenMode(kScreenSuspended);
+  //   SetSystemVolume();
+  //   FadeScreen(256);
+  //   FadeScreen(0);
+  //   ScreenMode(kScreenStopped);
+  //   InputMode(kInputStopped);
 }
