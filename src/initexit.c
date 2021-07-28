@@ -20,18 +20,9 @@
 // #include <InputSprocket.h>
 // #include <Sound.h>
 
-float sine_table[SINE_TABLE_SIZE];
-
-#undef sin
-void InitTrig() {
-  int i;
-  for (i = 0; i < SINE_TABLE_SIZE; i++) {
-    sine_table[i] = sin(2 * PI * (float)i / (float)SINE_TABLE_SIZE);
-  }
-}
-
 bool Init() {
   Randomize();
+  InitTrig();
   // LoadPrefs();
   // CheckRegi();
   // if (!gRegistered) {
@@ -54,7 +45,6 @@ bool Init() {
   LoadPack(PACK_TEXTURES);
   // }
   LoadSprites();
-  InitTrig();
   // InitInput();
   // SetGameVolume(-1);
   // InitChannels();

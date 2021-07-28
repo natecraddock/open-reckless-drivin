@@ -9,6 +9,7 @@ add_executable(open-reckless-drivin
                quickdraw.c
                random.c
                resource.c
-               sprites.c)
+               sprites.c
+               trig.c)
 target_include_directories(open-reckless-drivin PUBLIC "include")
 target_link_libraries(open-reckless-drivin m SDL2)
