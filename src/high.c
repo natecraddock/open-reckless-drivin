@@ -22,7 +22,7 @@ void ShowHighScores(int hilite) {
   TextSize(24);
   TextFont(3);
   ForeColor(cyanColor);
-  for (i = 0; i < kNumHighScoreEntries; i++) {
+  for (i = 0; i < PREFS_NUM_HIGH_SCORE_ENTRIES; i++) {
     Str255 scoreString;
     if (i == hilite)
       TextFace(bold + underline);
@@ -86,11 +86,12 @@ void CheckHighScore(uint32_t score) {
   int i;
   if (gLevelResFile)
     return;
-  for (i = kNumHighScoreEntries; score > gPrefs.high[i - 1].score && i > 0; i--)
+  for (i = PREFS_NUM_HIGH_SCORE_ENTRIES;
+       score > gPrefs.high[i - 1].score && i > 0; i--)
     ;
-  if (i < kNumHighScoreEntries) {
+  if (i < PREFS_NUM_HIGH_SCORE_ENTRIES) {
     BlockMoveData(gPrefs.high + i, gPrefs.high + i + 1,
-                  sizeof(tScoreRecord) * (kNumHighScoreEntries - i - 1));
+                  sizeof(ScoreRecord) * (PREFS_NUM_HIGH_SCORE_ENTRIES - i - 1));
     SimplePlaySound(153);
     SetHighScoreEntry(i, score);
     WritePrefs(false);
@@ -100,8 +101,8 @@ void CheckHighScore(uint32_t score) {
 
 void ClearHighScores() {
   Handle prefDefault = GetResource('Pref', 128);
-  BlockMoveData(&(((tPrefs *)*prefDefault)->high), &(gPrefs.high),
-                sizeof(tScoreRecord) * kNumHighScoreEntries);
+  BlockMoveData(&(((Preferences *)*prefDefault)->high), &(gPrefs.high),
+                sizeof(ScoreRecord) * PREFS_NUM_HIGH_SCORE_ENTRIES);
   ReleaseResource(prefDefault);
   WritePrefs(false);
 }

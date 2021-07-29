@@ -5,6 +5,7 @@
 #include "defines.h"
 #include "interface.h"
 #include "packs.h"
+#include "preferences.h"
 #include "random.h"
 #include "sprites.h"
 #include "trig.h"
@@ -12,7 +13,6 @@
 // #include "gameinitexit.h"
 // #include "gamesounds.h"
 // #include "input.h"
-// #include "preferences.h"
 // #include "register.h"
 // #include "screen.h"
 // #include <Appearance.h>
@@ -23,7 +23,9 @@
 bool Init() {
   Randomize();
   InitTrig();
-  // LoadPrefs();
+  if (!PREFS_load_preferences()) {
+    return false;
+  }
   // CheckRegi();
   // if (!gRegistered) {
   //   Register(false);

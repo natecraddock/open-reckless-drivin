@@ -1,19 +1,20 @@
-#ifndef __PREFERENCES
-#define __PREFERENCES
+#ifndef __PREFERENCES_H
+#define __PREFERENCES_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include "defines.h"
 #include "input.h"
 
-#define kNumHighScoreEntries 10
-#define kPrefsVersion 4
+#define PREFS_NUM_HIGH_SCORE_ENTRIES 10
+#define PREFS_VERSION 4
 
 typedef struct {
   Str15 name;
   uint32_t time;
   uint32_t score;
-} tScoreRecord;
+} ScoreRecord;
 
 typedef struct {
   uint16_t version;
@@ -22,16 +23,15 @@ typedef struct {
   uint8_t lineSkip, motionBlur, hiColor;
   uint8_t hidElements[kNumElements];
   uint8_t unused[11];
-  tScoreRecord high[kNumHighScoreEntries];
+  ScoreRecord high[PREFS_NUM_HIGH_SCORE_ENTRIES];
   float lapRecords[10];
   Str255 name, code;
   uint8_t keyCodes[kNumElements];
   Str255 lastName;
-} tPrefs;
+} Preferences;
 
-extern tPrefs gPrefs;
-void Preferences();
-void LoadPrefs();
-void WritePrefs(int reset);
+extern Preferences gPrefs;
+/* void Preferences(); */
+bool PREFS_load_preferences();
 
-#endif
+#endif /* __PREFERENCES_H */
