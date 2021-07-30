@@ -9,6 +9,10 @@ AllowShortLoopsOnASingleLine: false
 
 BreakBeforeBraces: Custom
 BraceWrapping:
+  AfterCaseLabel: false
+  AfterControlStatement: Never
   BeforeElse: true
+  IndentBraces: false
 
 ColumnLimit: 80
+IndentCaseLabels: true

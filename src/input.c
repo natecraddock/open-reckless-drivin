@@ -69,16 +69,16 @@ void FFBStop() {
 void InputMode(int mode) {
   if (gInputISp) {
     switch (mode) {
-    case kInputRunning:
-      DoError(ISpResume());
-      DoError(ISpElementList_Flush(gEventElements));
-      break;
-    case kInputSuspended:
-      DoError(ISpSuspend());
-      break;
-    case kInputStopped:
-      DoError(ISpStop());
-      break;
+      case kInputRunning:
+        DoError(ISpResume());
+        DoError(ISpElementList_Flush(gEventElements));
+        break;
+      case kInputSuspended:
+        DoError(ISpSuspend());
+        break;
+      case kInputStopped:
+        DoError(ISpStop());
+        break;
     }
   }
   else {
@@ -288,58 +288,58 @@ void Input(tInputData **data) {
   if (GetElement(kBackward))
     axState = -1;
   switch (axState) {
-  case 1:
-    if (!gInputData.reverse) {
-      gInputData.throttle += 3 * kFrameDuration;
-      if (gInputData.throttle > 1)
-        gInputData.throttle = 1;
+    case 1:
+      if (!gInputData.reverse) {
+        gInputData.throttle += 3 * kFrameDuration;
+        if (gInputData.throttle > 1)
+          gInputData.throttle = 1;
+        gInputData.brake = 0;
+        if (playerVelo < 0) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+      }
+      else {
+        gInputData.brake += kFrameDuration * 6;
+        if (gInputData.brake > 1)
+          gInputData.brake = 1;
+        gInputData.throttle = ThrottleReset(gInputData.throttle);
+        if (!playerVelo)
+          switchRequest = true;
+        if (playerVelo > 0) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+      }
+      break;
+    case -1:
+      if (gInputData.reverse) {
+        gInputData.throttle -= 3 * kFrameDuration;
+        if (gInputData.throttle < -1)
+          gInputData.throttle = -1;
+        gInputData.brake = 0;
+        if (playerVelo > 0) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+      }
+      else {
+        gInputData.brake += kFrameDuration * 6;
+        if (gInputData.brake > 1)
+          gInputData.brake = 1;
+        gInputData.throttle = ThrottleReset(gInputData.throttle);
+        if (!playerVelo)
+          switchRequest = true;
+        if (playerVelo < 0) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+      }
+      break;
+    case 0:
       gInputData.brake = 0;
-      if (playerVelo < 0) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-    }
-    else {
-      gInputData.brake += kFrameDuration * 6;
-      if (gInputData.brake > 1)
-        gInputData.brake = 1;
       gInputData.throttle = ThrottleReset(gInputData.throttle);
-      if (!playerVelo)
-        switchRequest = true;
-      if (playerVelo > 0) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-    }
-    break;
-  case -1:
-    if (gInputData.reverse) {
-      gInputData.throttle -= 3 * kFrameDuration;
-      if (gInputData.throttle < -1)
-        gInputData.throttle = -1;
-      gInputData.brake = 0;
-      if (playerVelo > 0) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-    }
-    else {
-      gInputData.brake += kFrameDuration * 6;
-      if (gInputData.brake > 1)
-        gInputData.brake = 1;
-      gInputData.throttle = ThrottleReset(gInputData.throttle);
-      if (!playerVelo)
-        switchRequest = true;
-      if (playerVelo < 0) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-    }
-    break;
-  case 0:
-    gInputData.brake = 0;
-    gInputData.throttle = ThrottleReset(gInputData.throttle);
-    break;
+      break;
   }
   if (GetElement(kKickdown) && axState != -1) {
     gInputData.kickdown = true;
@@ -355,60 +355,60 @@ void Input(tInputData **data) {
   if (GetElement(kLeft))
     axState = -1;
   switch (axState) {
-  case 1:
-    gInputData.steering += (gInputData.steering < 0) ? 8 : 3 * kFrameDuration;
-    if (gInputData.steering > 1)
-      gInputData.steering = 1;
-    break;
-  case -1:
-    gInputData.steering -= (gInputData.steering > 0) ? 8 : 3 * kFrameDuration;
-    if (gInputData.steering < -1)
-      gInputData.steering = -1;
-    break;
-  case 0:
-    if (gInputData.steering > 0) {
-      gInputData.steering -= 8 * kFrameDuration;
-      if (gInputData.steering < 0)
-        gInputData.steering = 0;
-    }
-    else {
-      gInputData.steering += 8 * kFrameDuration;
-      if (gInputData.steering > 0)
-        gInputData.steering = 0;
-    }
-    break;
+    case 1:
+      gInputData.steering += (gInputData.steering < 0) ? 8 : 3 * kFrameDuration;
+      if (gInputData.steering > 1)
+        gInputData.steering = 1;
+      break;
+    case -1:
+      gInputData.steering -= (gInputData.steering > 0) ? 8 : 3 * kFrameDuration;
+      if (gInputData.steering < -1)
+        gInputData.steering = -1;
+      break;
+    case 0:
+      if (gInputData.steering > 0) {
+        gInputData.steering -= 8 * kFrameDuration;
+        if (gInputData.steering < 0)
+          gInputData.steering = 0;
+      }
+      else {
+        gInputData.steering += 8 * kFrameDuration;
+        if (gInputData.steering > 0)
+          gInputData.steering = 0;
+      }
+      break;
   }
   while (GetEvent(&element, &eventData))
     switch (element) {
-    case kForward:
-      if (!playerVelo && gInputData.reverse && eventData) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-      break;
-    case kBackward:
-      if (!playerVelo && !gInputData.reverse && eventData) {
-        switchRequest = true;
-        gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
-      }
-      break;
-    case kMissile:
-      gMissile = eventData;
-      break;
-    case kFire:
-      gFire = eventData;
-      break;
-    case kAbort:
-      gEndGame = true;
-      break;
-      /*			case kScreenshot:
-                                      if(eventData)
-                                              TakeScreenshot();
-                                      break;*/
-    case kPause:
-      if (eventData)
-        PauseGame();
-      break;
+      case kForward:
+        if (!playerVelo && gInputData.reverse && eventData) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+        break;
+      case kBackward:
+        if (!playerVelo && !gInputData.reverse && eventData) {
+          switchRequest = true;
+          gSwitchDelayStart = gFrameCount - kMinSwitchDelay;
+        }
+        break;
+      case kMissile:
+        gMissile = eventData;
+        break;
+      case kFire:
+        gFire = eventData;
+        break;
+      case kAbort:
+        gEndGame = true;
+        break;
+        /*			case kScreenshot:
+                                        if(eventData)
+                                                TakeScreenshot();
+                                        break;*/
+      case kPause:
+        if (eventData)
+          PauseGame();
+        break;
     };
   if (switchRequest && gFrameCount >= gSwitchDelayStart + kMinSwitchDelay)
     gInputData.reverse = !gInputData.reverse;

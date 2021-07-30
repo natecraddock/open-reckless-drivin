@@ -98,13 +98,13 @@ void EnterCode() {
       if (WaitNextEvent(everyEvent, &event, 60, NULL)) {
         if (event.what == keyDown)
           switch ((event.message & keyCodeMask) >> 8) {
-          case 0x24:
-          case 0x4c:
-            hit = kCodeOKButton;
-            break;
-          case 0x35:
-            hit = kCodeCancelButton;
-            break;
+            case 0x24:
+            case 0x4c:
+              hit = kCodeOKButton;
+              break;
+            case 0x35:
+              hit = kCodeCancelButton;
+              break;
           }
         if (!hit) {
           if (IsDialogEvent(&event))
@@ -184,43 +184,44 @@ void Register(int fullscreen) {
     } while (hit > kCancelButton);
     DisposeDialog(regDlg);
     switch (hit) {
-    case kRegAppButton: {
-      int err;
-      /*err=RR_Launch();
-      if(err==memFullErr)
-              DoError(StandardAlert(kAlertStopAlert,
-                      "\pNot enough memory to launch Register.",
-                      "\pPlease quit Reckless Drivin' and launch Register from
-      the Finder.", &alertParam, &alertHit)); else if(err==dskFulErr)
-              DoError(StandardAlert(kAlertStopAlert,
-                      "\pNot enough free space to put Register on your drive.",
-                      "\pPlease delete some files.",
-                      &alertParam,
-                      &alertHit));
-      else DoError(err);*/
-    } break;
-    case kOnlineButton: {
-      ICInstance inst;
-      int icFailed = true;
-      Str255 url = "\phttp://order.kagi.com/?F6";
-      long start = 0, end = url[0];
-      if (ICStart != kUnresolvedCFragSymbolAddress)
-        if (!ICStart(&inst, kCreator)) {
-          icFailed = false;
-          DoError(ICLaunchURL(inst, "\p", url + 1, url[0], &start, &end));
-          DoError(ICStop(inst));
-        }
-      if (icFailed)
-        DoError(StandardAlert(kAlertStopAlert,
-                              "\pUnable to access Internet Config",
-                              "\pPlease manually enter the URL "
-                              "'http://order.kagi.com/?F6' into your browser.",
-                              &alertParam, &alertHit));
-      Exit();
-    } break;
-    case kCodeButton:
-      EnterCode();
-      break;
+      case kRegAppButton: {
+        int err;
+        /*err=RR_Launch();
+        if(err==memFullErr)
+                DoError(StandardAlert(kAlertStopAlert,
+                        "\pNot enough memory to launch Register.",
+                        "\pPlease quit Reckless Drivin' and launch Register
+        from the Finder.", &alertParam, &alertHit)); else if(err==dskFulErr)
+                DoError(StandardAlert(kAlertStopAlert,
+                        "\pNot enough free space to put Register on your
+        drive.",
+                        "\pPlease delete some files.",
+                        &alertParam,
+                        &alertHit));
+        else DoError(err);*/
+      } break;
+      case kOnlineButton: {
+        ICInstance inst;
+        int icFailed = true;
+        Str255 url = "\phttp://order.kagi.com/?F6";
+        long start = 0, end = url[0];
+        if (ICStart != kUnresolvedCFragSymbolAddress)
+          if (!ICStart(&inst, kCreator)) {
+            icFailed = false;
+            DoError(ICLaunchURL(inst, "\p", url + 1, url[0], &start, &end));
+            DoError(ICStop(inst));
+          }
+        if (icFailed)
+          DoError(StandardAlert(
+              kAlertStopAlert, "\pUnable to access Internet Config",
+              "\pPlease manually enter the URL "
+              "'http://order.kagi.com/?F6' into your browser.",
+              &alertParam, &alertHit));
+        Exit();
+      } break;
+      case kCodeButton:
+        EnterCode();
+        break;
     }
   }
   else {

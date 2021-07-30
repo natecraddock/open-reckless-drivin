@@ -126,35 +126,35 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
       int border = RanInt(0, 4);
       if ((*roadData)[1] == (*roadData)[2])
         switch (border) {
-        case 0:
-        case 2:
-          pos.x = (*roadData)[0] + RanFl(minOffs, maxOffs);
-          ok = (*roadData)[3] >= pos.x + minOffs;
-          break;
-        case 1:
-        case 3:
-          pos.x = (*roadData)[3] - RanFl(minOffs, maxOffs);
-          ok = (*roadData)[0] <= pos.x - minOffs;
-          break;
+          case 0:
+          case 2:
+            pos.x = (*roadData)[0] + RanFl(minOffs, maxOffs);
+            ok = (*roadData)[3] >= pos.x + minOffs;
+            break;
+          case 1:
+          case 3:
+            pos.x = (*roadData)[3] - RanFl(minOffs, maxOffs);
+            ok = (*roadData)[0] <= pos.x - minOffs;
+            break;
         }
       else
         switch (border) {
-        case 0:
-        case 2:
-          pos.x = (*roadData)[border] + RanFl(minOffs, maxOffs);
-          if (minOffs >= 0)
-            ok = (*roadData)[border + 1] >= pos.x + minOffs;
-          else
-            ok = (border == 2) ? (*roadData)[1] <= pos.x + minOffs : true;
-          break;
-        case 1:
-        case 3:
-          pos.x = (*roadData)[border] - RanFl(minOffs, maxOffs);
-          if (minOffs >= 0)
-            ok = (*roadData)[border - 1] <= pos.x - minOffs;
-          else
-            ok = (border == 1) ? (*roadData)[2] >= pos.x - minOffs : true;
-          break;
+          case 0:
+          case 2:
+            pos.x = (*roadData)[border] + RanFl(minOffs, maxOffs);
+            if (minOffs >= 0)
+              ok = (*roadData)[border + 1] >= pos.x + minOffs;
+            else
+              ok = (border == 2) ? (*roadData)[1] <= pos.x + minOffs : true;
+            break;
+          case 1:
+          case 3:
+            pos.x = (*roadData)[border] - RanFl(minOffs, maxOffs);
+            if (minOffs >= 0)
+              ok = (*roadData)[border - 1] <= pos.x - minOffs;
+            else
+              ok = (border == 1) ? (*roadData)[2] >= pos.x - minOffs : true;
+            break;
         }
       *dir = kObjectNoInput;
     }

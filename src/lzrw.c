@@ -117,12 +117,12 @@ static void lzrw3a_compress_decompress(uint8_t *, uint8_t *, uint32_t,
 void lzrw3a_compress(uint16_t action, uint8_t *wrk_mem, uint8_t *src_adr,
                      uint32_t src_len, uint8_t *dst_adr, uint64_t *p_dst_len) {
   switch (action) {
-  case COMPRESS_ACTION_COMPRESS:
-    lzrw3a_compress_compress(wrk_mem, src_adr, src_len, dst_adr, p_dst_len);
-    break;
-  case COMPRESS_ACTION_DECOMPRESS:
-    lzrw3a_compress_decompress(wrk_mem, src_adr, src_len, dst_adr, p_dst_len);
-    break;
+    case COMPRESS_ACTION_COMPRESS:
+      lzrw3a_compress_compress(wrk_mem, src_adr, src_len, dst_adr, p_dst_len);
+      break;
+    case COMPRESS_ACTION_DECOMPRESS:
+      lzrw3a_compress_decompress(wrk_mem, src_adr, src_len, dst_adr, p_dst_len);
+      break;
   }
 }
 

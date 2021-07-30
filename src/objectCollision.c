@@ -135,77 +135,78 @@ void MakeDebris(tObject *theObj, int damagePos, float damage, float maxDamage) {
   if (damagePos != kMotor && RanProb(kDebrisProbility * damage / maxDamage)) {
     tObject *debrisObj;
     switch (damagePos) {
-    case kFrontBumper:
-      debrisObj = NewObject(theObj, 1014);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(sin(theObj->dir) * ySize, cos(theObj->dir) * ySize));
-      debrisObj->dir = theObj->dir;
-      break;
-    case kBackBumper:
-      debrisObj = NewObject(theObj, 1014);
-      debrisObj->pos = VEC2D_Sum(theObj->pos, P2D(-sin(theObj->dir) * ySize,
-                                                  -cos(theObj->dir) * ySize));
-      debrisObj->dir = theObj->dir + PI;
-      break;
-    case kFrontLeftTire:
-      debrisObj = NewObject(theObj, 1012);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(sin(theObj->dir) * ySize, cos(theObj->dir) * ySize));
-      debrisObj->pos =
-          VEC2D_Sum(debrisObj->pos,
-                    P2D(-cos(theObj->dir) * xSize, -sin(theObj->dir) * xSize));
-      debrisObj->dir = RanFl(0, 2 * PI);
-      break;
-    case kFrontRightTire:
-      debrisObj = NewObject(theObj, 1012);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(sin(theObj->dir) * ySize, cos(theObj->dir) * ySize));
-      debrisObj->pos = VEC2D_Sum(debrisObj->pos, P2D(cos(theObj->dir) * xSize,
-                                                     sin(theObj->dir) * xSize));
-      debrisObj->dir = RanFl(0, 2 * PI);
-      break;
-    case kBackLeftTire:
-      debrisObj = NewObject(theObj, 1012);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(-sin(theObj->dir) * (*objType).length * kScale,
-                           -cos(theObj->dir) * (*objType).length * kScale));
-      ;
-      debrisObj->pos = VEC2D_Sum(
-          debrisObj->pos, P2D(-cos(theObj->dir) * (*objType).width * kScale,
-                              -sin(theObj->dir) * (*objType).width * kScale));
-      ;
-      debrisObj->dir = RanFl(0, 2 * PI);
-      break;
-    case kBackRightTire:
-      debrisObj = NewObject(theObj, 1012);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(-sin(theObj->dir) * (*objType).length * kScale,
-                           -cos(theObj->dir) * (*objType).length * kScale));
-      ;
-      debrisObj->pos = VEC2D_Sum(
-          debrisObj->pos, P2D(cos(theObj->dir) * (*objType).width * kScale,
-                              sin(theObj->dir) * (*objType).width * kScale));
-      ;
-      debrisObj->dir = RanFl(0, 2 * PI);
-      break;
-    case kLeftDoor:
-      debrisObj = NewObject(theObj, 1015);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(-cos(theObj->dir) * (*objType).width * kScale,
-                           -sin(theObj->dir) * (*objType).width * kScale));
-      ;
-      debrisObj->dir = theObj->dir;
-      debrisObj->rotVelo = -2 * PI;
-      break;
-    case kRightDoor:
-      debrisObj = NewObject(theObj, 1016);
-      debrisObj->pos = VEC2D_Sum(
-          theObj->pos, P2D(cos(theObj->dir) * (*objType).width * kScale,
-                           sin(theObj->dir) * (*objType).width * kScale));
-      ;
-      debrisObj->dir = theObj->dir;
-      debrisObj->rotVelo = 2 * PI;
-      break;
+      case kFrontBumper:
+        debrisObj = NewObject(theObj, 1014);
+        debrisObj->pos = VEC2D_Sum(theObj->pos, P2D(sin(theObj->dir) * ySize,
+                                                    cos(theObj->dir) * ySize));
+        debrisObj->dir = theObj->dir;
+        break;
+      case kBackBumper:
+        debrisObj = NewObject(theObj, 1014);
+        debrisObj->pos = VEC2D_Sum(theObj->pos, P2D(-sin(theObj->dir) * ySize,
+                                                    -cos(theObj->dir) * ySize));
+        debrisObj->dir = theObj->dir + PI;
+        break;
+      case kFrontLeftTire:
+        debrisObj = NewObject(theObj, 1012);
+        debrisObj->pos = VEC2D_Sum(theObj->pos, P2D(sin(theObj->dir) * ySize,
+                                                    cos(theObj->dir) * ySize));
+        debrisObj->pos =
+            VEC2D_Sum(debrisObj->pos, P2D(-cos(theObj->dir) * xSize,
+                                          -sin(theObj->dir) * xSize));
+        debrisObj->dir = RanFl(0, 2 * PI);
+        break;
+      case kFrontRightTire:
+        debrisObj = NewObject(theObj, 1012);
+        debrisObj->pos = VEC2D_Sum(theObj->pos, P2D(sin(theObj->dir) * ySize,
+                                                    cos(theObj->dir) * ySize));
+        debrisObj->pos =
+            VEC2D_Sum(debrisObj->pos,
+                      P2D(cos(theObj->dir) * xSize, sin(theObj->dir) * xSize));
+        debrisObj->dir = RanFl(0, 2 * PI);
+        break;
+      case kBackLeftTire:
+        debrisObj = NewObject(theObj, 1012);
+        debrisObj->pos = VEC2D_Sum(
+            theObj->pos, P2D(-sin(theObj->dir) * (*objType).length * kScale,
+                             -cos(theObj->dir) * (*objType).length * kScale));
+        ;
+        debrisObj->pos = VEC2D_Sum(
+            debrisObj->pos, P2D(-cos(theObj->dir) * (*objType).width * kScale,
+                                -sin(theObj->dir) * (*objType).width * kScale));
+        ;
+        debrisObj->dir = RanFl(0, 2 * PI);
+        break;
+      case kBackRightTire:
+        debrisObj = NewObject(theObj, 1012);
+        debrisObj->pos = VEC2D_Sum(
+            theObj->pos, P2D(-sin(theObj->dir) * (*objType).length * kScale,
+                             -cos(theObj->dir) * (*objType).length * kScale));
+        ;
+        debrisObj->pos = VEC2D_Sum(
+            debrisObj->pos, P2D(cos(theObj->dir) * (*objType).width * kScale,
+                                sin(theObj->dir) * (*objType).width * kScale));
+        ;
+        debrisObj->dir = RanFl(0, 2 * PI);
+        break;
+      case kLeftDoor:
+        debrisObj = NewObject(theObj, 1015);
+        debrisObj->pos = VEC2D_Sum(
+            theObj->pos, P2D(-cos(theObj->dir) * (*objType).width * kScale,
+                             -sin(theObj->dir) * (*objType).width * kScale));
+        ;
+        debrisObj->dir = theObj->dir;
+        debrisObj->rotVelo = -2 * PI;
+        break;
+      case kRightDoor:
+        debrisObj = NewObject(theObj, 1016);
+        debrisObj->pos = VEC2D_Sum(
+            theObj->pos, P2D(cos(theObj->dir) * (*objType).width * kScale,
+                             sin(theObj->dir) * (*objType).width * kScale));
+        ;
+        debrisObj->dir = theObj->dir;
+        debrisObj->rotVelo = 2 * PI;
+        break;
     }
     debrisObj->velo = VEC2D_Sum(
         theObj->velo, P2D(sin(debrisObj->dir) * 10, cos(debrisObj->dir) * 10));
@@ -256,45 +257,45 @@ void DamageObj(tObject *theObj, float damage, t2DPoint diff) {
     else
       theObj->damageFlags |= damagePos;
     switch (damagePos) {
-    case kFrontBumper:
-    case kMotor:
-      theObj->frame = YDistortSprite(theObj->frame, -xSize, xSize, -ySize - 1,
-                                     -ySize + 10, 0, damage / maxDamage * 20);
-      break;
-    case kBackBumper:
-      theObj->frame = YDistortSprite(theObj->frame, -xSize, xSize, ySize - 10,
-                                     ySize + 1, 1, damage / maxDamage * 20);
-      break;
-    case kFrontLeftTire:
-      theObj->frame =
-          XDistortSprite(theObj->frame, -ySize, -ySize * 0.3, -xSize - 1,
-                         -xSize + 10, 0, damage / maxDamage * 20);
-      break;
-    case kFrontRightTire:
-      theObj->frame =
-          XDistortSprite(theObj->frame, -ySize, -ySize * 0.3, xSize - 10,
-                         xSize + 1, 1, damage / maxDamage * 20);
-      break;
-    case kBackLeftTire:
-      theObj->frame =
-          XDistortSprite(theObj->frame, ySize * 0.3, ySize, -xSize - 1,
-                         -xSize + 10, 0, damage / maxDamage * 20);
-      break;
-    case kBackRightTire:
-      theObj->frame =
-          XDistortSprite(theObj->frame, ySize * 0.3, ySize, xSize - 10,
-                         xSize + 1, 1, damage / maxDamage * 20);
-      break;
-    case kLeftDoor:
-      theObj->frame =
-          XDistortSprite(theObj->frame, -ySize * 0.4, ySize * 0.4, -xSize - 1,
-                         -xSize + 10, 0, damage / maxDamage * 20);
-      break;
-    case kRightDoor:
-      theObj->frame =
-          XDistortSprite(theObj->frame, -ySize * 0.4, ySize * 0.4, xSize - 10,
-                         xSize + 1, 1, damage / maxDamage * 20);
-      break;
+      case kFrontBumper:
+      case kMotor:
+        theObj->frame = YDistortSprite(theObj->frame, -xSize, xSize, -ySize - 1,
+                                       -ySize + 10, 0, damage / maxDamage * 20);
+        break;
+      case kBackBumper:
+        theObj->frame = YDistortSprite(theObj->frame, -xSize, xSize, ySize - 10,
+                                       ySize + 1, 1, damage / maxDamage * 20);
+        break;
+      case kFrontLeftTire:
+        theObj->frame =
+            XDistortSprite(theObj->frame, -ySize, -ySize * 0.3, -xSize - 1,
+                           -xSize + 10, 0, damage / maxDamage * 20);
+        break;
+      case kFrontRightTire:
+        theObj->frame =
+            XDistortSprite(theObj->frame, -ySize, -ySize * 0.3, xSize - 10,
+                           xSize + 1, 1, damage / maxDamage * 20);
+        break;
+      case kBackLeftTire:
+        theObj->frame =
+            XDistortSprite(theObj->frame, ySize * 0.3, ySize, -xSize - 1,
+                           -xSize + 10, 0, damage / maxDamage * 20);
+        break;
+      case kBackRightTire:
+        theObj->frame =
+            XDistortSprite(theObj->frame, ySize * 0.3, ySize, xSize - 10,
+                           xSize + 1, 1, damage / maxDamage * 20);
+        break;
+      case kLeftDoor:
+        theObj->frame =
+            XDistortSprite(theObj->frame, -ySize * 0.4, ySize * 0.4, -xSize - 1,
+                           -xSize + 10, 0, damage / maxDamage * 20);
+        break;
+      case kRightDoor:
+        theObj->frame =
+            XDistortSprite(theObj->frame, -ySize * 0.4, ySize * 0.4, xSize - 10,
+                           xSize + 1, 1, damage / maxDamage * 20);
+        break;
     }
     MakeDebris(theObj, damagePos, damage, maxDamage);
   }
@@ -436,66 +437,66 @@ void BonusObject(tObject *theObj) {
     int ok = false;
     do {
       switch (RanInt(0, 8)) {
-      case 0:
-        if (!(gPlayerAddOns & kAddOnLock)) {
-          tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveLeft, 0,
-                            "\pADDONShLOCKEDf"};
+        case 0:
+          if (!(gPlayerAddOns & kAddOnLock)) {
+            tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveLeft, 0,
+                              "\pADDONShLOCKEDf"};
+            NewTextEffect(&fx);
+            gPlayerAddOns |= kAddOnLock;
+            ok = true;
+          }
+          break;
+        case 1: {
+          tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveDown, 0,
+                            "\pMINESee"};
           NewTextEffect(&fx);
-          gPlayerAddOns |= kAddOnLock;
+          gNumMines += 5;
           ok = true;
-        }
-        break;
-      case 1: {
-        tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveDown, 0,
-                          "\pMINESee"};
-        NewTextEffect(&fx);
-        gNumMines += 5;
-        ok = true;
-      } break;
-      case 2: {
-        tTextEffect fx = {320, 240, kEffectExplode, 0, "\pMISSILESe"};
-        NewTextEffect(&fx);
-        gNumMissiles += 5;
-        ok = true;
-      } break;
-      case 3:
-        if (!(gPlayerAddOns & kAddOnSpikes)) {
-          tTextEffect fx = {320, 240, kEffectExplode, 0, "\pSPIKESe"};
+        } break;
+        case 2: {
+          tTextEffect fx = {320, 240, kEffectExplode, 0, "\pMISSILESe"};
           NewTextEffect(&fx);
-          gPlayerAddOns |= kAddOnSpikes;
+          gNumMissiles += 5;
           ok = true;
-        }
-        break;
-      case 4:
-        if (!(gPlayerAddOns & kAddOnCop)) {
-          tTextEffect fx = {320, 240, kEffectSinLines, 0, "\pPOLICEhJAMMER"};
+        } break;
+        case 3:
+          if (!(gPlayerAddOns & kAddOnSpikes)) {
+            tTextEffect fx = {320, 240, kEffectExplode, 0, "\pSPIKESe"};
+            NewTextEffect(&fx);
+            gPlayerAddOns |= kAddOnSpikes;
+            ok = true;
+          }
+          break;
+        case 4:
+          if (!(gPlayerAddOns & kAddOnCop)) {
+            tTextEffect fx = {320, 240, kEffectSinLines, 0, "\pPOLICEhJAMMER"};
+            NewTextEffect(&fx);
+            gPlayerAddOns |= kAddOnCop;
+            ok = true;
+          }
+          break;
+        case 5:
+          if (!(gPlayerAddOns & kAddOnTurbo)) {
+            tTextEffect fx = {320, 240, kEffectExplode, 0, "\pTURBOhENGINEeee"};
+            NewTextEffect(&fx);
+            gPlayerAddOns |= kAddOnTurbo;
+            ok = true;
+          }
+          break;
+        case 6: {
+          tTextEffect fx = {320, 240, kEffectExplode, 0, "\p][[[hAWARDEDf"};
           NewTextEffect(&fx);
-          gPlayerAddOns |= kAddOnCop;
+          gPlayerScore += 2000;
           ok = true;
-        }
-        break;
-      case 5:
-        if (!(gPlayerAddOns & kAddOnTurbo)) {
-          tTextEffect fx = {320, 240, kEffectExplode, 0, "\pTURBOhENGINEeee"};
+        } break;
+        case 7: {
+          tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveUp, 0,
+                            "\pEXTRAhLIFEee"};
           NewTextEffect(&fx);
-          gPlayerAddOns |= kAddOnTurbo;
+          gPlayerLives++;
+          SimplePlaySound(154);
           ok = true;
-        }
-        break;
-      case 6: {
-        tTextEffect fx = {320, 240, kEffectExplode, 0, "\p][[[hAWARDEDf"};
-        NewTextEffect(&fx);
-        gPlayerScore += 2000;
-        ok = true;
-      } break;
-      case 7: {
-        tTextEffect fx = {320, 240, kEffectSinLines + kEffectMoveUp, 0,
-                          "\pEXTRAhLIFEee"};
-        NewTextEffect(&fx);
-        gPlayerLives++;
-        SimplePlaySound(154);
-        ok = true;
-      } break;
+        } break;
       }
     } while (!ok);
   }

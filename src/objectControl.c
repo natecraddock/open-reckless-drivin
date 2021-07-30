@@ -259,23 +259,24 @@ void ObjectControl(tObject *theObj, tInputData *input) {
   else if (!((*theObj->type).flags2 & kObjectDamageble) ||
            theObj->damage < (*theObj->type).maxDamage)
     switch (theObj->control) {
-    case kObjectNoInput:
-      theObj->input.brake = 0;
-      theObj->input.throttle = 0;
-      theObj->input.steering = 0;
-      break;
-    case kObjectDriveUp:
-      ObjectFollow(theObj, &gTrackUp->track[theObj->target], &theObj->input);
-      break;
-    case kObjectDriveDown:
-      ObjectFollow(theObj, &gTrackDown->track[theObj->target], &theObj->input);
-      break;
-    case kObjectCrossRoad:
-      ObjectCrossRoad(theObj, &theObj->input);
-      break;
-    case kObjectCopControl:
-      CopFollow(theObj, &theObj->input);
-      break;
+      case kObjectNoInput:
+        theObj->input.brake = 0;
+        theObj->input.throttle = 0;
+        theObj->input.steering = 0;
+        break;
+      case kObjectDriveUp:
+        ObjectFollow(theObj, &gTrackUp->track[theObj->target], &theObj->input);
+        break;
+      case kObjectDriveDown:
+        ObjectFollow(theObj, &gTrackDown->track[theObj->target],
+                     &theObj->input);
+        break;
+      case kObjectCrossRoad:
+        ObjectCrossRoad(theObj, &theObj->input);
+        break;
+      case kObjectCopControl:
+        CopFollow(theObj, &theObj->input);
+        break;
     }
   else {
     theObj->input.brake = 0;

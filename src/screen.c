@@ -134,12 +134,12 @@ void InitScreen() {
 void FadeScreen(int out) {
 #if __option(scheduling)
   switch (out) {
-  case 1:
-    DoError(DSpContext_FadeGammaOut(gDrawContext, 0));
-    break;
-  case 0:
-    DoError(DSpContext_FadeGammaIn(gDrawContext, 0));
-    break;
+    case 1:
+      DoError(DSpContext_FadeGammaOut(gDrawContext, 0));
+      break;
+    case 0:
+      DoError(DSpContext_FadeGammaIn(gDrawContext, 0));
+      break;
   }
   if (out >= 256)
     DSpContext_FadeGamma(gDrawContext, (out - 256) / 256.0 * 100, NULL);
@@ -152,28 +152,28 @@ void ScreenMode(int mode) {
   GWorldPtr gameGW;
   // if(gScreenMode!=mode)
   switch (mode) {
-  case kScreenRunning:
-    DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Active));
-    DoError(
-        DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal, &gameGW));
-    gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(gameGW));
-    gRowBytes = (**GetGWorldPixMap(gameGW)).rowBytes & 0x3FFF;
-    SetGWorld(gameGW, NULL);
-    if (gScreenMode == kScreenSuspended)
-      SetScreenClut(8);
-    break;
-  case kScreenPaused:
-    DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Paused));
-    if (gScreenMode == kScreenSuspended)
-      SetScreenClut(8);
-    break;
-  case kScreenSuspended:
-    DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Inactive));
-    break;
-  case kScreenStopped:
-    DoError(DSpContext_Release(gDrawContext));
-    DoError(DSpShutdown());
-    break;
+    case kScreenRunning:
+      DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Active));
+      DoError(DSpContext_GetBackBuffer(gDrawContext, kDSpBufferKind_Normal,
+                                       &gameGW));
+      gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(gameGW));
+      gRowBytes = (**GetGWorldPixMap(gameGW)).rowBytes & 0x3FFF;
+      SetGWorld(gameGW, NULL);
+      if (gScreenMode == kScreenSuspended)
+        SetScreenClut(8);
+      break;
+    case kScreenPaused:
+      DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Paused));
+      if (gScreenMode == kScreenSuspended)
+        SetScreenClut(8);
+      break;
+    case kScreenSuspended:
+      DoError(DSpContext_SetState(gDrawContext, kDSpContextState_Inactive));
+      break;
+    case kScreenStopped:
+      DoError(DSpContext_Release(gDrawContext));
+      DoError(DSpShutdown());
+      break;
   }
   gScreenMode = mode;
 }

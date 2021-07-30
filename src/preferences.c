@@ -257,7 +257,8 @@ bool PREFS_load_preferences() {
       case PREF_ERR:
         break;
       case PREF_BOOL:
-        printf("Read bool pref `%s=%s`\n", pref.key, pref.value.b ? "true" : "false");
+        printf("Read bool pref `%s=%s`\n", pref.key,
+               pref.value.b ? "true" : "false");
         break;
       case PREF_INT:
         printf("Read int pref `%s=%d`\n", pref.key, pref.value.i);

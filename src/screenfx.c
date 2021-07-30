@@ -222,24 +222,24 @@ void GameOverAnim() {
     msTime -= animStart;
     t = msTime / 1000000.0;
     switch (type) {
-    case kSpinIn:
-      size = t * t;
-      xPos = gXSize / 2;
-      yPos = gYSize / 2;
-      dir = (side ? 1 : -1) * 2 * PI * t;
-      break;
-    case kFlyIn:
-      size = t * t;
-      xPos = gXSize / 2;
-      if (side)
-        yPos = (gYSize / 2) * (4.0 / 3.0) * (1.0 / (-t - 1.0) + 1.0);
-      else
-        yPos = gYSize - (gYSize / 2) * (4.0 / 3.0) * (1.0 / (-t - 1.0) + 1.0);
-      dir = 0;
-      break;
-      /*		case kBlur:
-                              BlurScreen();
-                              break;*/
+      case kSpinIn:
+        size = t * t;
+        xPos = gXSize / 2;
+        yPos = gYSize / 2;
+        dir = (side ? 1 : -1) * 2 * PI * t;
+        break;
+      case kFlyIn:
+        size = t * t;
+        xPos = gXSize / 2;
+        if (side)
+          yPos = (gYSize / 2) * (4.0 / 3.0) * (1.0 / (-t - 1.0) + 1.0);
+        else
+          yPos = gYSize - (gYSize / 2) * (4.0 / 3.0) * (1.0 / (-t - 1.0) + 1.0);
+        dir = 0;
+        break;
+        /*		case kBlur:
+                                BlurScreen();
+                                break;*/
     }
     DrawSprite(kGameOverSprite, xPos, yPos, dir, size);
     if (t > kFadeStart)

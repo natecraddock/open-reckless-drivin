@@ -54,41 +54,41 @@ void DrawZoomedCharLine8(uint8_t **data, int32_t x, int32_t y, uint32_t zoom) {
   while (!stop) {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int i = 0;
-      uint8_t *src = spritePos + 4;
-      spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
-      while (tokenData > i) {
-        uint8_t *dst = lineBase + (x >> 16);
-        *dst = *(src + i);
-        i++;
-        x += zoom;
-      }
-    } break;
-    case kSkipPixelsToken:
-      x += tokenData * zoom;
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int i = 0;
+        uint8_t *src = spritePos + 4;
+        spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
+        while (tokenData > i) {
+          uint8_t *dst = lineBase + (x >> 16);
+          *dst = *(src + i);
+          i++;
+          x += zoom;
+        }
+      } break;
+      case kSkipPixelsToken:
+        x += tokenData * zoom;
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   }
 noDrawZoomed:
   while (!stop) {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken:
-      spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
-      break;
-    case kSkipPixelsToken:
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken:
+        spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
+        break;
+      case kSkipPixelsToken:
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   }
 
@@ -108,46 +108,46 @@ void DrawCharLine8(uint8_t **data, int32_t x, int32_t y) {
   do {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int i = 0;
-      uint8_t *src = spritePos + 4;
-      spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
-      while (tokenData - (int)sizeof(long) >= i) {
-        *((long *)(dst + i)) = *((long *)(src + i));
-        i += sizeof(long);
-      }
-      if (tokenData - (int)sizeof(short) >= i) {
-        *((short *)(dst + i)) = *((short *)(src + i));
-        i += sizeof(short);
-      }
-      if (tokenData - (int)sizeof(char) >= i)
-        *((char *)(dst + i)) = *((char *)(src + i));
-      dst += tokenData;
-    } break;
-    case kSkipPixelsToken:
-      dst += tokenData;
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int i = 0;
+        uint8_t *src = spritePos + 4;
+        spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
+        while (tokenData - (int)sizeof(long) >= i) {
+          *((long *)(dst + i)) = *((long *)(src + i));
+          i += sizeof(long);
+        }
+        if (tokenData - (int)sizeof(short) >= i) {
+          *((short *)(dst + i)) = *((short *)(src + i));
+          i += sizeof(short);
+        }
+        if (tokenData - (int)sizeof(char) >= i)
+          *((char *)(dst + i)) = *((char *)(src + i));
+        dst += tokenData;
+      } break;
+      case kSkipPixelsToken:
+        dst += tokenData;
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   } while (!stop);
 noDraw:
   do {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken:
-      spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
-      break;
-    case kSkipPixelsToken:
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken:
+        spritePos += 4 + tokenData + (tokenData & 3 ? (4 - tokenData & 3) : 0);
+        break;
+      case kSkipPixelsToken:
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   } while (!stop);
   *data = spritePos + 4;
@@ -166,43 +166,43 @@ void DrawZoomedCharLine16(uint8_t **data, int32_t x, int32_t y, uint32_t zoom) {
   while (!stop) {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int i = 0;
-      uint16_t *src = spritePos + 4;
-      int tokenSize = tokenData * 2;
-      spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
-      while (tokenData > i) {
-        uint16_t *dst = lineBase + ((x >> 15) & 0xfffe);
-        *dst = *(src + i);
-        i++;
-        x += zoom;
-      }
-    } break;
-    case kSkipPixelsToken:
-      x += tokenData * zoom;
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int i = 0;
+        uint16_t *src = spritePos + 4;
+        int tokenSize = tokenData * 2;
+        spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
+        while (tokenData > i) {
+          uint16_t *dst = lineBase + ((x >> 15) & 0xfffe);
+          *dst = *(src + i);
+          i++;
+          x += zoom;
+        }
+      } break;
+      case kSkipPixelsToken:
+        x += tokenData * zoom;
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   }
 noDrawZoomed:
   while (!stop) {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int tokenSize = tokenData * 2;
-      spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
-    } break;
-    case kSkipPixelsToken:
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int tokenSize = tokenData * 2;
+        spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
+      } break;
+      case kSkipPixelsToken:
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   }
   *data = spritePos + 4;
@@ -221,44 +221,44 @@ void DrawCharLine16(uint8_t **data, int32_t x, int32_t y) {
   do {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int i = 0;
-      uint16_t *src = spritePos + 4;
-      int tokenSize = tokenData * 2;
-      spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
-      while (tokenData - 2 >= i) {
-        *((long *)(dst + i)) = *((long *)(src + i));
-        i += 2;
-      }
-      if (tokenData - (int)sizeof(char) >= i)
-        *((char *)(dst + i)) = *((char *)(src + i));
-      dst += tokenData;
-    } break;
-    case kSkipPixelsToken:
-      dst += tokenData;
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int i = 0;
+        uint16_t *src = spritePos + 4;
+        int tokenSize = tokenData * 2;
+        spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
+        while (tokenData - 2 >= i) {
+          *((long *)(dst + i)) = *((long *)(src + i));
+          i += 2;
+        }
+        if (tokenData - (int)sizeof(char) >= i)
+          *((char *)(dst + i)) = *((char *)(src + i));
+        dst += tokenData;
+      } break;
+      case kSkipPixelsToken:
+        dst += tokenData;
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   } while (!stop);
 noDraw:
   do {
     int32_t tokenData = (*((unsigned long *)spritePos)) & 0x00ffffff;
     switch (*spritePos) {
-    case kDrawPixelsToken: {
-      int tokenSize = tokenData * 2;
-      spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
-    } break;
-    case kSkipPixelsToken:
-      spritePos += 4;
-      break;
-    case kLineStartToken:
-    case kEndShapeToken:
-      stop = true;
-      break;
+      case kDrawPixelsToken: {
+        int tokenSize = tokenData * 2;
+        spritePos += 4 + tokenSize + (tokenSize & 3 ? (4 - tokenSize & 3) : 0);
+      } break;
+      case kSkipPixelsToken:
+        spritePos += 4;
+        break;
+      case kLineStartToken:
+      case kEndShapeToken:
+        stop = true;
+        break;
     }
   } while (!stop);
   *data = spritePos + 4;
