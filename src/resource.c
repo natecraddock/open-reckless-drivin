@@ -21,7 +21,7 @@ static void *FindResource(const char *type, short id, uint32_t *len) {
   while (resource_ptr != _game_data_end) {
     struct Resource *resource = (struct Resource *)resource_ptr;
 
-    if ((strcmp(type, resource->type) == 0) && id == resource->id) {
+    if (STREQ(type, resource->type) && id == resource->id) {
       *len = resource->length;
       return resource_ptr + sizeof(struct Resource);
     }

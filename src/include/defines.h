@@ -50,4 +50,6 @@ typedef struct GWorldPtr {
 #define FLIP_SHORT(var) var = ntohs((var))
 #define FLIP_LONG(var) var = ntohl((var))
 
+#define STREQ(a, b) (strcmp(a, b) == 0)
+
 #endif /* DEFINES_H */

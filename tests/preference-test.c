@@ -91,7 +91,7 @@ int main() {
       return print_err(pref, expected);
     }
 
-    if (strcmp(pref.key, expected.key) != 0) {
+    if (!STREQ(pref.key, expected.key)) {
       return print_err(pref, expected);
     }
 
@@ -109,7 +109,7 @@ int main() {
         }
         break;
       case PREF_STR:
-        if (strcmp(pref.value.s, expected.value.s) != 0) {
+        if (!STREQ(pref.value.s, expected.value.s)) {
           return print_err(pref, expected);
         }
         break;

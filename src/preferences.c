@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "defines.h"
 #include "error.h"
 #include "gamesounds.h"
 #include "input.h"
@@ -149,11 +150,11 @@ bool parse_int(char *value, Pref *pref) {
 
 bool parse_value(char *value, Pref *pref) {
   /* Booleans */
-  if (strcmp(value, "true") == 0) {
+  if (STREQ(value, "true")) {
     pref->type = PREF_BOOL;
     pref->value.b = true;
   }
-  else if (strcmp(value, "false") == 0) {
+  else if (STREQ(value, "false")) {
     pref->type = PREF_BOOL;
     pref->value.b = false;
   }
@@ -179,7 +180,7 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
       /* Line was too long for the buffer */
       continue;
     }
-    else if (strcmp(line, "\n") == 0 || line[0] == '#') {
+    else if (STREQ(line, "\n") || line[0] == '#') {
       /* Ignore comments and blank lines */
       continue;
     }
