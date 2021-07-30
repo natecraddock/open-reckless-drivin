@@ -104,24 +104,29 @@ const int MAX_KEY = 64;
 const int MAX_VALUE = 512;
 
 static bool read_key(char *line, char *key, int *index) {
+  int start = *index;
+
   while (*line && ((*line >= 'a' && *line <= 'z') ||
                    (*line >= 'A' && *line <= 'Z') || *line == '_')) {
-    key[*index] = *line;
-    (*index)++;
-    line++;
-
+    /* Test for too-long key */
     if (*index == MAX_KEY - 1) {
       return false;
     }
+
+    key[*index] = *line;
+    (*index)++;
+    line++;
   }
 
-  if (*line != ' ' || *line != '=') {
-    false;
+  /* No key was read */
+  if (*index == start) {
+    return false;
   }
 
-  if (*index == MAX_KEY) {
-    *index = MAX_KEY - 1;
+  if (*line != ' ' && *line != '=') {
+    return false;
   }
+
   key[*index] = 0;
 
   return true;
@@ -148,13 +153,14 @@ static bool read_value(char *line, char *value, int *index) {
   int start = *index;
 
   while (*line) {
-    value[*index - start] = *line;
-    (*index)++;
-    line++;
-
+    /* test for too-long value */
     if (*index - start == MAX_VALUE - 1) {
       return false;
     }
+
+    value[*index - start] = *line;
+    (*index)++;
+    line++;
   }
 
   /* No value was read */
@@ -162,9 +168,6 @@ static bool read_value(char *line, char *value, int *index) {
     return false;
   }
 
-  if (*index - start == MAX_VALUE) {
-    *index -= 1;
-  }
   value[*index - start] = 0;
 
   return true;
