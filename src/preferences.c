@@ -128,15 +128,20 @@ static bool read_key(char *line, char *key, int *index) {
 }
 
 static bool read_assignment(char *line, int *index) {
-  bool found_equals = false;
-  while (*line && (*line == ' ' || *line == '=')) {
-    if (*line == '=') {
-      found_equals = true;
-    }
+  while (*line == ' ') {
     (*index)++;
     line++;
   }
-  return found_equals;
+  if (*line != '=') {
+    return false;
+  }
+  (*index)++;
+  line++;
+  while (*line == ' ') {
+    (*index)++;
+    line++;
+  }
+  return true;
 }
 
 static bool read_value(char *line, char *value, int *index) {
