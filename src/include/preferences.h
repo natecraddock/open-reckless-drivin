@@ -8,6 +8,9 @@
 #include "defines.h"
 #include "input.h"
 
+#define PREFS_MAX_KEY 64
+#define PREFS_MAX_VALUE 512
+
 typedef enum {
   PREF_ERR, /* TODO: report type of error */
   PREF_BOOL,
@@ -17,11 +20,11 @@ typedef enum {
 
 typedef struct {
   PrefType type;
-  char key[256];
+  char key[PREFS_MAX_KEY];
   union {
     int i;
     bool b;
-    char s[1024];
+    char s[PREFS_MAX_VALUE];
   } value;
 } Pref;
 

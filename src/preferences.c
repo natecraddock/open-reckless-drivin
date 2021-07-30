@@ -69,39 +69,7 @@ static FILE *get_prefs_file() {
   return prefs_file;
 }
 
-/* short GetPrefsFile(FSSpec *spec) { */
-/*   int err; */
-/*   long dirID; */
-/*   short vRef; */
-/*   DoError(FindFolder(kOnSystemDisk, kPreferencesFolderType, kCreateFolder, */
-/*                      &vRef, &dirID)); */
-/*   err = FSMakeFSSpec(vRef, dirID, "\pReckless Drivin' Prefs", spec); */
-/*   if (err == fnfErr) { */
-/*     DoError(FSpCreate(spec, '????', 'pref', smSystemScript)); */
-/*     WritePrefs(true); */
-/*   } */
-/*   else */
-/*     DoError(err); */
-/* } */
-
-/* void FirstRun() { */
-/*   Handle prefDefault; */
-/*   int32_t cpuSpeed; */
-/*   OSErr err; */
-/*   err = Gestalt(gestaltProcClkSpeed, &cpuSpeed); */
-/*   if (((uint32_t)cpuSpeed < 120000000) || err) */
-/*     prefDefault = GetResource('Pref', 128); */
-/*   else if ((uint32_t)cpuSpeed < 250000000) */
-/*     prefDefault = GetResource('Pref', 129); */
-/*   else */
-/*     prefDefault = GetResource('Pref', 130); */
-/*   BlockMoveData(*prefDefault, &gPrefs, sizeof(Preferences)); */
-/*   ReleaseResource(prefDefault); */
-/* } */
-
 const int MAX_LINE = 1024;
-const int MAX_KEY = 64;
-const int MAX_VALUE = 512;
 
 static bool read_key(char *line, char *key, int *index) {
   int start = *index;
@@ -109,7 +77,7 @@ static bool read_key(char *line, char *key, int *index) {
   while (*line && ((*line >= 'a' && *line <= 'z') ||
                    (*line >= 'A' && *line <= 'Z') || *line == '_')) {
     /* Test for too-long key */
-    if (*index == MAX_KEY - 1) {
+    if (*index == PREFS_MAX_KEY - 1) {
       return false;
     }
 
@@ -154,7 +122,7 @@ static bool read_value(char *line, char *value, int *index) {
 
   while (*line) {
     /* test for too-long value */
-    if (*index - start == MAX_VALUE - 1) {
+    if (*index - start == PREFS_MAX_VALUE - 1) {
       return false;
     }
 
@@ -196,7 +164,7 @@ bool parse_value(char *value, Pref *pref) {
   /* Strings */
   else {
     pref->type = PREF_STR;
-    strncpy(pref->value.s, value, MAX_VALUE);
+    strncpy(pref->value.s, value, PREFS_MAX_VALUE);
   }
 
   return true;
@@ -223,17 +191,17 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
     }
 
     int index = 0;
-    char key[MAX_KEY];
+    char key[PREFS_MAX_KEY];
     if (!read_key(line, key, &index)) {
       continue;
     }
-    strncpy(pref->key, key, MAX_KEY);
+    strncpy(pref->key, key, PREFS_MAX_KEY);
 
     if (!read_assignment(line + index, &index)) {
       continue;
     }
 
-    char value[MAX_VALUE];
+    char value[PREFS_MAX_VALUE];
     if (!read_value(line + index, value, &index)) {
       continue;
     }
@@ -271,31 +239,6 @@ bool PREFS_load_preferences() {
         break;
     }
   }
-
-  /* FSSpec spec; */
-  /* short refNum; */
-  /* long count = sizeof(Preferences), eof; */
-  /* GetPrefsFile(&spec); */
-  /* DoError(FSpOpenDF(&spec, fsRdWrPerm, &refNum)); */
-  /* DoError(GetEOF(refNum, &eof)); */
-  /* if (eof == count) { */
-  /*   DoError(FSRead(refNum, &count, &gPrefs)); */
-  /*   DoError(FSClose(refNum)); */
-  /*   if (gPrefs.version != PREFS_VERSION) */
-  /*     WritePrefs(true); */
-  /* } */
-  /* else if (eof < count) { */
-  /*   FirstRun(); */
-  /*   DoError(FSRead(refNum, &eof, &gPrefs)); */
-  /*   gPrefs.version = PREFS_VERSION; */
-  /*   DoError(FSClose(refNum)); */
-  /* } */
-  /* else { */
-  /*   DoError(FSClose(refNum)); */
-  /*   WritePrefs(true); */
-  /* } */
-  /* if (false /1* gOSX *1/) */
-  /*   gPrefs.lineSkip = false; */
 
   return true;
 }
