@@ -41,75 +41,6 @@ const int MAX_PATH = 4096;
 const char *PREFS_DIR = "open-reckless-drivin";
 const char *PREFS_FILE = "prefs.ini";
 
-/* TODO: add standard paths for OSX and Windows */
-static bool get_prefs_path(char *buf, const int size) {
-  const char *config_home = getenv("XDG_CONFIG_HOME");
-  if (config_home) {
-    strncpy(buf, config_home, size);
-    snprintf(buf, size, "%s/%s/%s", config_home, PREFS_DIR, PREFS_FILE);
-    return true;
-  }
-
-  const char *home = getenv("HOME");
-  if (home == NULL) {
-    return false;
-  }
-
-  snprintf(buf, size, "%s/.config/%s/%s", home, PREFS_DIR, PREFS_FILE);
-  return true;
-}
-
-/* Set the default preferences for writing the preference file and as fallback
- * values when a preference is missing from the config file. */
-static void set_default_prefs() {
-  gPrefs.name[0] = 0;
-  gPrefs.code[0] = 0;
-  gPrefs.full_color = true;
-  gPrefs.sound = true;
-  gPrefs.volume = 100;
-}
-
-static bool write_default_prefs() {
-  char prefs_path[MAX_PATH];
-  if (!get_prefs_path(prefs_path, MAX_PATH)) {
-    return false;
-  }
-
-  FILE *prefs_file = fopen(prefs_path, "w");
-  if (!prefs_file) {
-    return false;
-  }
-
-  fprintf(prefs_file,
-          "# Open Reckless Drivin' Preferences\n"
-          "\n"
-          "# Registration\n"
-          "name=%s\n"
-          "code=%s\n"
-          "\n"
-          "# Graphics\n"
-          "full_color=%s\n"
-          "\n"
-          "# Sound\n"
-          "sound=%s\n"
-          "volume=%d\n",
-          gPrefs.name, gPrefs.code, BOOL_STR(gPrefs.full_color),
-          BOOL_STR(gPrefs.sound), gPrefs.volume);
-  fclose(prefs_file);
-
-  return true;
-}
-
-static FILE *get_prefs_file() {
-  char prefs_path[MAX_PATH];
-  if (!get_prefs_path(prefs_path, MAX_PATH)) {
-    return false;
-  }
-
-  FILE *prefs_file = fopen(prefs_path, "r");
-  return prefs_file;
-}
-
 const int MAX_LINE = 1024;
 
 static bool read_key(char *line, char *key, int *index) {
@@ -255,6 +186,75 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
 
   /* EOF reached */
   return false;
+}
+
+/* Set the default preferences for writing the preference file and as fallback
+ * values when a preference is missing from the config file. */
+static void set_default_prefs() {
+  gPrefs.name[0] = 0;
+  gPrefs.code[0] = 0;
+  gPrefs.full_color = true;
+  gPrefs.sound = true;
+  gPrefs.volume = 100;
+}
+
+/* TODO: add standard paths for OSX and Windows */
+static bool get_prefs_path(char *buf, const int size) {
+  const char *config_home = getenv("XDG_CONFIG_HOME");
+  if (config_home) {
+    strncpy(buf, config_home, size);
+    snprintf(buf, size, "%s/%s/%s", config_home, PREFS_DIR, PREFS_FILE);
+    return true;
+  }
+
+  const char *home = getenv("HOME");
+  if (home == NULL) {
+    return false;
+  }
+
+  snprintf(buf, size, "%s/.config/%s/%s", home, PREFS_DIR, PREFS_FILE);
+  return true;
+}
+
+static bool write_default_prefs() {
+  char prefs_path[MAX_PATH];
+  if (!get_prefs_path(prefs_path, MAX_PATH)) {
+    return false;
+  }
+
+  FILE *prefs_file = fopen(prefs_path, "w");
+  if (!prefs_file) {
+    return false;
+  }
+
+  fprintf(prefs_file,
+          "# Open Reckless Drivin' Preferences\n"
+          "\n"
+          "# Registration\n"
+          "name=%s\n"
+          "code=%s\n"
+          "\n"
+          "# Graphics\n"
+          "full_color=%s\n"
+          "\n"
+          "# Sound\n"
+          "sound=%s\n"
+          "volume=%d\n",
+          gPrefs.name, gPrefs.code, BOOL_STR(gPrefs.full_color),
+          BOOL_STR(gPrefs.sound), gPrefs.volume);
+  fclose(prefs_file);
+
+  return true;
+}
+
+static FILE *get_prefs_file() {
+  char prefs_path[MAX_PATH];
+  if (!get_prefs_path(prefs_path, MAX_PATH)) {
+    return false;
+  }
+
+  FILE *prefs_file = fopen(prefs_path, "r");
+  return prefs_file;
 }
 
 bool PREFS_load_preferences() {
