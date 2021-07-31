@@ -772,7 +772,7 @@ void RenderFrame() {
   int preSpecBlit = gScreenBlitSpecial;
   if (gFinishDelay)
     yDrawStart = gLevelData->levelEnd + gYSize * kYCameraScreenPos * zoom;
-  if (gPrefs.hiColor) {
+  if (gPrefs.full_color) {
     DrawRoadZoomed16(xDrawStart, yDrawStart, zoom);
     DrawMarksZoomed16(xDrawStart, yDrawStart, zoom);
     DrawTracksZoomed16(xDrawStart, yDrawStart, zoom);

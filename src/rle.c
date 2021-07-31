@@ -188,14 +188,14 @@ void DrawRLEYClip16(int h, int v, int id) {
 }
 
 void DrawRLE(int h, int v, int id) {
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     DrawRLE16(h, v, id);
   else
     DrawRLE8(h, v, id);
 }
 
 void DrawRLEYClip(int h, int v, int id) {
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     DrawRLEYClip16(h, v, id);
   else
     DrawRLEYClip8(h, v, id);

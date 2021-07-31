@@ -146,7 +146,7 @@ void ShiftInPicture() {
     float size, xPos, yPos, dir;
     msTime -= animStart;
     t = msTime / 1000000.0;
-    if (gPrefs.hiColor)
+    if (gPrefs.full_color)
       ShiftInPictureFrame16(t / kShiftInDuration);
     else
       ShiftInPictureFrame8(t / kShiftInDuration);

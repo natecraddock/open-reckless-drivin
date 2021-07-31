@@ -39,16 +39,16 @@ bool Init() {
   LoadPack(PACK_OBJECT_TYPE);
   LoadPack(PACK_OBJECT_GROUPS);
   LoadPack(PACK_ROAD);
-  // if (gPrefs.hiColor) {
-  LoadPack(PACK_RLE_16);
-  LoadPack(PACK_cRLE_16);
-  LoadPack(PACK_TEXTURES_16);
-  // }
-  // else {
-  LoadPack(PACK_RLE);
-  LoadPack(PACK_cRLE);
-  LoadPack(PACK_TEXTURES);
-  // }
+  if (gPrefs.full_color) {
+    LoadPack(PACK_RLE_16);
+    LoadPack(PACK_cRLE_16);
+    LoadPack(PACK_TEXTURES_16);
+  }
+  else {
+    LoadPack(PACK_RLE);
+    LoadPack(PACK_cRLE);
+    LoadPack(PACK_TEXTURES);
+  }
   LoadSprites();
   // InitInput();
   // SetGameVolume(-1);

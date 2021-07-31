@@ -38,7 +38,7 @@ void NewParticleFX(t2DPoint pos, t2DPoint velo, int num, uint8_t color,
     fx->layer = layer;
     fx->fxStartFrame = gFrameCount;
     fx->pos = pos;
-    if (gPrefs.hiColor)
+    if (gPrefs.full_color)
       fx->color16 = ((uint16_t *)*g16BitClut)[color];
     else
       fx->color = color;
@@ -64,7 +64,7 @@ void DrawParticleFXZoomed(float xDrawStart, float yDrawStart, float zoom,
       if (numDrawParticles > 4 * kMaxParticles)
         numDrawParticles = 4 * kMaxParticles;
       if (dt < kParticleDuration)
-        if (gPrefs.hiColor)
+        if (gPrefs.full_color)
           for (i = 0; i < numDrawParticles; i++) {
             float epdt = -pow(E, -dt);
             t2DPoint pos =

@@ -96,14 +96,14 @@ void InitScreen() {
   inDesiredAttributes.reserved1 = 0;
   inDesiredAttributes.reserved2 = 0;
   inDesiredAttributes.colorNeeds = kDSpColorNeeds_Request;
-  inDesiredAttributes.colorTable = gPrefs.hiColor ? NULL : GetCTable(8);
+  inDesiredAttributes.colorTable = gPrefs.full_color ? NULL : GetCTable(8);
   inDesiredAttributes.contextOptions = 0;
   inDesiredAttributes.backBufferDepthMask =
-      gPrefs.hiColor ? kDSpDepthMask_16 : kDSpDepthMask_8;
+      gPrefs.full_color ? kDSpDepthMask_16 : kDSpDepthMask_8;
   inDesiredAttributes.displayDepthMask =
-      gPrefs.hiColor ? kDSpDepthMask_16 : kDSpDepthMask_8;
-  inDesiredAttributes.backBufferBestDepth = gPrefs.hiColor ? 16 : 8;
-  inDesiredAttributes.displayBestDepth = gPrefs.hiColor ? 16 : 8;
+      gPrefs.full_color ? kDSpDepthMask_16 : kDSpDepthMask_8;
+  inDesiredAttributes.backBufferBestDepth = gPrefs.full_color ? 16 : 8;
+  inDesiredAttributes.displayBestDepth = gPrefs.full_color ? 16 : 8;
   inDesiredAttributes.pageCount = 0;
   inDesiredAttributes.gameMustConfirmSwitch = false;
   inDesiredAttributes.reserved3[0] = 0;
@@ -194,7 +194,7 @@ inline RGBColor FadeColor(RGBColor pRGBColor, float fade) {
 }
 
 void SetScreenClut(int id) {
-  if (!gPrefs.hiColor) {
+  if (!gPrefs.full_color) {
     long bright, color, bestScore, bestIndex, score, testIndex;
     RGBColor optColor, testColor;
     CTabHandle ct = GetCTable(id);

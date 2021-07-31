@@ -172,13 +172,13 @@ void ShowPicScreen(int id) {
 /*     GDHandle oldGD; */
 /*     Handle pic; */
 /*     SetRect(&gwSize, 0, 0, 640, 480); */
-/*     DoError(NewGWorld(&gMainScreenGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+/*     DoError(NewGWorld(&gMainScreenGW, gPrefs.full_color ? 16 : 8, &gwSize, NULL,
  */
 /*                       NULL, 0)); */
 /*     DoError( */
-/*         NewGWorld(&gHilitGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL, NULL,
+/*         NewGWorld(&gHilitGW, gPrefs.full_color ? 16 : 8, &gwSize, NULL, NULL,
  * 0)); */
-/*     DoError(NewGWorld(&gSelectedGW, gPrefs.hiColor ? 16 : 8, &gwSize, NULL,
+/*     DoError(NewGWorld(&gSelectedGW, gPrefs.full_color ? 16 : 8, &gwSize, NULL,
  */
 /*                       NULL, 0)); */
 /*     LockPixels(GetGWorldPixMap(gMainScreenGW)); */

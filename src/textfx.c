@@ -266,14 +266,14 @@ noDraw:
 
 inline void DrawZoomedCharLine(uint8_t **data, int32_t x, int32_t y,
                                uint32_t zoom) {
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     DrawZoomedCharLine16(data, x, y, zoom);
   else
     DrawZoomedCharLine8(data, x, y, zoom);
 }
 
 inline void DrawCharLine(uint8_t **data, int32_t x, int32_t y) {
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     DrawCharLine16(data, x, y);
   else
     DrawCharLine8(data, x, y);
@@ -363,7 +363,7 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
     else if (gTextFX[i].effectFlags & kEffectMoveRight)
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
-      Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? PACK_cRLE_16 : PACK_cRLE,
+      Ptr theCH = GetSortedPackEntry(gPrefs.full_color ? PACK_cRLE_16 : PACK_cRLE,
                                      gTextFX[i].text[ch] - 'A' + 128, NULL) +
                   8;
       float y = baseY;
@@ -394,7 +394,7 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
 void SimpleDrawText(Str255 text, int xPos, int yPos) {
   int ch, line;
   for (ch = 1; ch <= text[0]; ch++) {
-    Ptr theCH = GetSortedPackEntry(gPrefs.hiColor ? PACK_cRLE_16 : PACK_cRLE,
+    Ptr theCH = GetSortedPackEntry(gPrefs.full_color ? PACK_cRLE_16 : PACK_cRLE,
                                    text[ch] - 'A' + 128, NULL) +
                 8;
     int y = yPos;

@@ -225,11 +225,17 @@ bool PREFS_load_preferences() {
 
   Pref pref;
   while (PREFS_read_prefs(prefs_file, &pref)) {
+    /* TODO: While this does work, it would be better to have some sort of
+       automated method of assigning the preferences and also validating (min,
+       max, length, etc) */
     if (pref.type == PREF_STR && STREQ(pref.key, "name")) {
       memcpy(gPrefs.name, pref.value.s, sizeof(gPrefs.name));
     }
     else if (pref.type == PREF_STR && STREQ(pref.key, "code")) {
       memcpy(gPrefs.code, pref.value.s, sizeof(gPrefs.code));
+    }
+    else if (pref.type == PREF_BOOL && STREQ(pref.key, "full_color")) {
+      gPrefs.full_color = pref.value.b;
     }
   }
 
@@ -262,7 +268,7 @@ bool PREFS_load_preferences() {
 /*   UnloadPack(PACK_cRLE); */
 /*   UnloadPack(PACK_TEXTURES); */
 /*   UnloadSprites(); */
-/*   if (gPrefs.hiColor) { */
+/*   if (gPrefs.full_color) { */
 /*     LoadPack(PACK_RLE_16); */
 /*     LoadPack(PACK_cRLE_16); */
 /*     LoadPack(PACK_TEXTURES_16); */
@@ -320,7 +326,7 @@ bool PREFS_load_preferences() {
 /*   DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt)); */
 /*   SetControlValue(cnt, gPrefs.volume); */
 /*   DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.hiColor); */
+/*   SetControlValue(cnt, gPrefs.full_color); */
 /*   DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt)); */
 /*   SetControlValue(cnt, gPrefs.sound); */
 /*   if (!gPrefs.sound) */
@@ -369,9 +375,9 @@ bool PREFS_load_preferences() {
 /*     DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt)); */
 /*     gPrefs.sound = GetControlValue(cnt); */
 /*     DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt)); */
-/*     if (gPrefs.hiColor != GetControlValue(cnt)) */
+/*     if (gPrefs.full_color != GetControlValue(cnt)) */
 /*       modeSwitch = true; */
-/*     gPrefs.hiColor = GetControlValue(cnt); */
+/*     gPrefs.full_color = GetControlValue(cnt); */
 /*     WritePrefs(false); */
 /*     InitChannels(); */
 /*   } */

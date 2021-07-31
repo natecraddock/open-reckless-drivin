@@ -418,7 +418,7 @@ void DrawSprite(int id, float cx, float cy, float dir, float zoom) {
     int dvdx = -dirSin * 256 / zoom;
     dirCos *= zoom;
     dirSin *= zoom;
-    if (gPrefs.hiColor)
+    if (gPrefs.full_color)
       if (sprite->drawMode & kDrawModeTransparent)
         if (SlopeInit(cx, cy, &y, &y2, dirCos, dirSin, sprite, dudx, dvdx))
           DrawSpriteRotatedClippedTranslucent16(sprite, dudx, dvdx, y, y2);
@@ -454,7 +454,7 @@ void DrawSpriteTranslucent(int id, float cx, float cy, float dir, float zoom) {
       return;
     dirCos *= zoom;
     dirSin *= zoom;
-    if (gPrefs.hiColor)
+    if (gPrefs.full_color)
       if (SlopeInit(cx, cy, &y, &y2, dirCos, dirSin, sprite, dudx, dvdx))
         DrawSpriteRotatedClippedTranslucent16(sprite, dudx, dvdx, y, y2);
       else
@@ -623,7 +623,7 @@ int XDistortSprite(int id, int startY, int endY, int startX, int endX, int dir,
   if (startY + endY >= sprite->ySize) {
     endY -= startY + endY + 1 - sprite->ySize;
   }
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     XDistortSprite16(sprite, startY, endY, startX, endX, dir, damage);
   else
     XDistortSprite8(sprite, startY, endY, startX, endX, dir, damage);
@@ -783,7 +783,7 @@ int YDistortSprite(int id, int startX, int endX, int startY, int endY, int dir,
   if (startY + endY >= sprite->ySize) {
     endY -= startY + endY + 1 - sprite->ySize;
   }
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     YDistortSprite16(sprite, startX, endX, startY, endY, dir, damage);
   else
     YDistortSprite8(sprite, startX, endX, startY, endY, dir, damage);
@@ -934,7 +934,7 @@ int BulletHitSprite(int id, int x, int y) {
   x += sprite->xSize / 2;
   y -= sprite->ySize / 2;
   y = -y;
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     BulletHitSprite16(sprite, x, y, size);
   else
     BulletHitSprite8(sprite, x, y, size);
@@ -987,7 +987,7 @@ void DrawLifeBar16(int cy, int cx, int shift) {
 }
 
 void DrawLifeBar(int cx, int cy, int shift) {
-  if (gPrefs.hiColor)
+  if (gPrefs.full_color)
     DrawLifeBar16(cy, cx, shift);
   else
     DrawLifeBar8(cy, cx, shift);
@@ -1003,7 +1003,7 @@ void SpriteUnused(int id) {
 }
 
 void LoadSprites() {
-  // int spritePack = gPrefs.hiColor ? PACK_SPRITES_16 : PACK_SPRITES;
+  // int spritePack = gPrefs.full_color ? PACK_SPRITES_16 : PACK_SPRITES;
   int spritePack = PACK_SPRITES;
   LoadPack(spritePack);
   for (int i = 128; i < 128 + kNumSprites; i++) {
