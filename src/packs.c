@@ -4,8 +4,8 @@
 #include "defines.h"
 #include "lzrw.h"
 #include "packs.h"
+#include "register.h"
 #include "resource.h"
-// #include "register.h"
 // #include "interface.h"
 
 typedef struct {
@@ -20,9 +20,6 @@ static Handle packs[PACK_NUM_PACKS];
 
 /* Length of unencrypted header */
 #define UNENCRYPTED_HEADER_LEN 256
-
-/* TODO: Remove once register.c is added */
-uint32_t gKey;
 
 static uint32_t CryptData(uint32_t *data, uint32_t len) {
   uint32_t check = 0;

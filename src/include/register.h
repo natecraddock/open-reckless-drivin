@@ -1,12 +1,12 @@
-#ifndef __REGISTER
-#define __REGISTER
+#ifndef __REGISTER_H
+#define __REGISTER_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 extern uint32_t gKey;
 extern int gRegistered;
 
-void Register(int fullscreen);
-int CheckRegi();
+bool REG_check_registration();
 
-#endif
+#endif /* __REGISTER_H */

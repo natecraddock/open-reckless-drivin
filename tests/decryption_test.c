@@ -1,7 +1,12 @@
+#include <stdint.h>
+
 #include "defines.h"
 #include "lzrw.h"
 #include "packs.h"
+#include "register.h"
 #include "resource.h"
+
+uint32_t gKey;
 
 int main() {
   /* Get check value for verifying decryption */
@@ -21,9 +26,5 @@ int main() {
    * code rather than being hard-coded.
    */
   gKey = 0x1E42A71F;
-  if (!CheckPack(PACK_ENCRYPTED, check)) {
-    return 1;
-  }
-
-  return 0;
+  return !CheckPack(PACK_ENCRYPTED, check);
 }

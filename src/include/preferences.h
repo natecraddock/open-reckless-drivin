@@ -48,7 +48,8 @@ typedef struct {
   uint8_t hidElements[kNumElements];
   ScoreRecord high[PREFS_NUM_HIGH_SCORE_ENTRIES];
   float lapRecords[10];
-  Str255 name, code;
+  char name[256];
+  char code[16];
   uint8_t keyCodes[kNumElements];
   Str255 lastName;
 } Preferences;

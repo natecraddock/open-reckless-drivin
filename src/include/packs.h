@@ -35,8 +35,6 @@ typedef enum {
 
 #define PACK_ENCRYPTED PACK_LEVEL_04
 
-extern uint32_t gKey;
-
 uint32_t LoadPack(int);
 bool CheckPack(int num, uint32_t check);
 void UnloadPack(int);

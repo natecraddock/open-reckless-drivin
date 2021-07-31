@@ -225,19 +225,11 @@ bool PREFS_load_preferences() {
 
   Pref pref;
   while (PREFS_read_prefs(prefs_file, &pref)) {
-    switch (pref.type) {
-      case PREF_ERR:
-        break;
-      case PREF_BOOL:
-        printf("Read bool pref `%s=%s`\n", pref.key,
-               pref.value.b ? "true" : "false");
-        break;
-      case PREF_INT:
-        printf("Read int pref `%s=%d`\n", pref.key, pref.value.i);
-        break;
-      case PREF_STR:
-        printf("Read str pref `%s=%s`\n", pref.key, pref.value.s);
-        break;
+    if (pref.type == PREF_STR && STREQ(pref.key, "name")) {
+      memcpy(gPrefs.name, pref.value.s, sizeof(gPrefs.name));
+    }
+    else if (pref.type == PREF_STR && STREQ(pref.key, "code")) {
+      memcpy(gPrefs.code, pref.value.s, sizeof(gPrefs.code));
     }
   }
 

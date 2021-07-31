@@ -9,6 +9,7 @@ add_executable(open-reckless-drivin
                preferences.c
                quickdraw.c
                random.c
+               register.c
                resource.c
                sprites.c
                trig.c

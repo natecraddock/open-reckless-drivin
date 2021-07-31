@@ -7,13 +7,13 @@
 #include "packs.h"
 #include "preferences.h"
 #include "random.h"
+#include "register.h"
 #include "sprites.h"
 #include "trig.h"
 // #include "error.h"
 // #include "gameinitexit.h"
 // #include "gamesounds.h"
 // #include "input.h"
-// #include "register.h"
 // #include "screen.h"
 // #include <Appearance.h>
 // #include <DrawSprocket.h>
@@ -26,10 +26,13 @@ bool Init() {
   if (!PREFS_load_preferences()) {
     return false;
   }
-  // CheckRegi();
-  // if (!gRegistered) {
-  //   Register(false);
-  // }
+  if (!REG_check_registration()) {
+    printf("Invalid registration %s %s\n", gPrefs.name, gPrefs.code);
+    /* Register(false); */
+  }
+  else {
+    printf("Registered to %s\n", gPrefs.name);
+  }
   // InitScreen(0);
   ShowPicScreen(1003);
   LoadPack(PACK_SOUNDS);

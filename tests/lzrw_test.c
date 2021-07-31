@@ -1,5 +1,6 @@
 #include "lzrw.h"
 #include "packs.h"
+#include "register.h"
 #include "resource.h"
 
 int main() {
