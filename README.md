@@ -10,6 +10,10 @@ The original source may be found at https://github.com/jechter/RecklessDrivin.
 
 ## Current Status
 
+**TL;DR:** The game is not playable. Binary data loading, decompression, decryption, and reading is working.
+Preferences are read from a file. The source code has been restructured and uses CMake. Currently working on
+using SDL2 for drawing sprites.
+
 The original source contained a file called `Data` containing the resource fork. This has been converted into
 a header file (`src/include/data`) to be embedded in the executable directly. This file contains various "Packs"
 of data including Apple QuickDraw images, sounds, sprites, and fonts. Work has been done to reliably read,
@@ -17,11 +21,20 @@ decompress, decrypt, and interpret the data from this resource fork.
 
 As an indicator of progress, PPic Packs 1000 through 1008 (the Apple QuickDraw images) have been read from the
 resource fork. This verifies that the lzrw-3a decompression is working, and is a exciting marker of progress!
-See the images on the wiki: https://github.com/natecraddock/open-reckless-drivin/wiki/QuickDraw-Pictures-(PPic)
+See the images on the [wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/QuickDraw-Pictures-(PPic)).
 
 The source code layout has been reorganized, with CMake as a build-system generator.
 
-A small test with SDL was done to open a window with the loading screen.
+A small test with SDL was done to open a window with the loading screen, but has been disabled for now.
+
+The preference file reading and writing is working well now. Because I'm developing on Linux, the paths are
+Linux-specific, but I have structured the code to make it easy to update when I start testing on other platforms.
+The format is INI for simplicity, and the expected file path is `~/.config/open-reckless-drivin/prefs.ini`. (or
+`$XDG_CONFIG_HOME/open-reckless-drivin/prefs.ini` if set). The `open-reckless-drivin` directory must exist and will not
+be created if it doesn't exist.
+
+The **name** and **code** preferences are read for checking for a registered copy of the game, allowing for
+decryption of levels 4 through 10.
 
 Currently I am adding game loop code one function at a time. This is a slow going process. There are many
 Macintosh system calls in each file that need to either be removed because they play no role in the game,
@@ -53,4 +66,5 @@ information is:
 Name: Free<br>
 Code: B3FB09B1EB
 
-Registration keys can also be generated in your name using a Python script. See [the wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/Decryption) for more info.
+Registration keys can also be generated in your name using a Python script.
+See [the wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/Decryption) for more info.
