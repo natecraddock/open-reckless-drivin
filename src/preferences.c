@@ -59,12 +59,52 @@ static bool get_prefs_path(char *buf, const int size) {
   return true;
 }
 
+/* Set the default preferences for writing the preference file and as fallback
+ * values when a preference is missing from the config file. */
+static void set_default_prefs() {
+  gPrefs.name[0] = 0;
+  gPrefs.code[0] = 0;
+  gPrefs.full_color = true;
+  gPrefs.sound = true;
+  gPrefs.volume = 100;
+}
+
+static bool write_default_prefs() {
+  char prefs_path[MAX_PATH];
+  if (!get_prefs_path(prefs_path, MAX_PATH)) {
+    return false;
+  }
+
+  FILE *prefs_file = fopen(prefs_path, "w");
+  if (!prefs_file) {
+    return false;
+  }
+
+  fprintf(prefs_file,
+          "# Open Reckless Drivin' Preferences\n"
+          "\n"
+          "# Registration\n"
+          "name=%s\n"
+          "code=%s\n"
+          "\n"
+          "# Graphics\n"
+          "full_color=%s\n"
+          "\n"
+          "# Sound\n"
+          "sound=%s\n"
+          "volume=%d\n",
+          gPrefs.name, gPrefs.code, BOOL_STR(gPrefs.full_color),
+          BOOL_STR(gPrefs.sound), gPrefs.volume);
+  fclose(prefs_file);
+
+  return true;
+}
+
 static FILE *get_prefs_file() {
   char prefs_path[MAX_PATH];
   if (!get_prefs_path(prefs_path, MAX_PATH)) {
     return false;
   }
-  printf("DEBUG: %s\n", prefs_path);
 
   FILE *prefs_file = fopen(prefs_path, "r");
   return prefs_file;
@@ -218,9 +258,11 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
 }
 
 bool PREFS_load_preferences() {
+  set_default_prefs();
+
   FILE *prefs_file = get_prefs_file();
   if (!prefs_file) {
-    return false;
+    return write_default_prefs();
   }
 
   Pref pref;
@@ -238,6 +280,7 @@ bool PREFS_load_preferences() {
       gPrefs.full_color = pref.value.b;
     }
   }
+  fclose(prefs_file);
 
   return true;
 }

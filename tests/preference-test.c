@@ -15,7 +15,7 @@ void print_pref(Pref pref) {
     case PREF_ERR:
       break;
     case PREF_BOOL:
-      printf("`(bool) %s=%s`", pref.key, pref.value.b ? "true" : "false");
+      printf("`(bool) %s=%s`", pref.key, BOOL_STR(pref.value.b));
       break;
     case PREF_INT:
       printf("`(int) %s=%d`", pref.key, pref.value.i);

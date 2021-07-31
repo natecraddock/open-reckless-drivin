@@ -8,6 +8,8 @@
 #include "defines.h"
 #include "input.h"
 
+#define BOOL_STR(b) (b ? "true" : "false")
+
 #define PREFS_MAX_KEY 64
 #define PREFS_MAX_VALUE 512
 
@@ -42,8 +44,7 @@ typedef struct {
 
 typedef struct {
   uint16_t version;
-  uint16_t volume;
-  uint8_t sound, engineSound, hqSound;
+  uint8_t engineSound, hqSound;
   uint8_t lineSkip, motionBlur;
   uint8_t hidElements[kNumElements];
   ScoreRecord high[PREFS_NUM_HIGH_SCORE_ENTRIES];
@@ -51,6 +52,8 @@ typedef struct {
   char name[256];
   char code[16];
   bool full_color;
+  bool sound;
+  uint16_t volume;
   uint8_t keyCodes[kNumElements];
   Str255 lastName;
 } Preferences;

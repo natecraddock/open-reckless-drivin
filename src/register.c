@@ -70,6 +70,14 @@ static void upper_string(char *str) {
 bool REG_check_registration() {
   char name[256];
   memcpy(name, gPrefs.name, 256);
+
+  /* The last 4 chars of the name are interpreted as a 32-bit integer and used
+   * for decryption, which requires a registration name of at least 4
+   * characters. */
+  if (strlen(name) < 4) {
+    return false;
+  }
+
   upper_string(name);
   remove_spaces(name);
   uint32_t name_num = FLIP_LONG(*(uint32_t *)(name + strlen(name) - 4));
