@@ -216,15 +216,15 @@ static bool get_prefs_path(char *buf, const int size) {
   return true;
 }
 
-static bool write_default_prefs() {
+static void write_default_prefs() {
   char prefs_path[MAX_PATH];
   if (!get_prefs_path(prefs_path, MAX_PATH)) {
-    return false;
+    return;
   }
 
   FILE *prefs_file = fopen(prefs_path, "w");
   if (!prefs_file) {
-    return false;
+    return;
   }
 
   fprintf(prefs_file,
@@ -243,8 +243,6 @@ static bool write_default_prefs() {
           gPrefs.name, gPrefs.code, BOOL_STR(gPrefs.full_color),
           BOOL_STR(gPrefs.sound), gPrefs.volume);
   fclose(prefs_file);
-
-  return true;
 }
 
 static FILE *get_prefs_file() {
@@ -257,12 +255,13 @@ static FILE *get_prefs_file() {
   return prefs_file;
 }
 
-bool PREFS_load_preferences() {
+void PREFS_load_preferences() {
   set_default_prefs();
 
   FILE *prefs_file = get_prefs_file();
   if (!prefs_file) {
-    return write_default_prefs();
+    write_default_prefs();
+    return;
   }
 
   Pref pref;
@@ -281,8 +280,6 @@ bool PREFS_load_preferences() {
     }
   }
   fclose(prefs_file);
-
-  return true;
 }
 
 /* static void WritePrefs(bool reset) { */

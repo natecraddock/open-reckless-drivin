@@ -60,6 +60,6 @@ typedef struct {
 
 extern Preferences gPrefs;
 /* void Preferences(); */
-bool PREFS_load_preferences();
+void PREFS_load_preferences();
 
 #endif /* __PREFERENCES_H */

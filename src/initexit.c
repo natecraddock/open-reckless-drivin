@@ -23,9 +23,8 @@
 bool Init() {
   Randomize();
   InitTrig();
-  if (!PREFS_load_preferences()) {
-    return false;
-  }
+  PREFS_load_preferences();
+
   if (!REG_check_registration()) {
     printf("Invalid registration %s %s\n", gPrefs.name, gPrefs.code);
     /* Register(false); */
