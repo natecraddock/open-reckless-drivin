@@ -6,11 +6,9 @@
 
 #include <arpa/inet.h>
 
-/**
- * Types and definitions
- */
+// Types and definitions
 
-/* Common constant string sizes. */
+// Common constant string sizes.
 typedef unsigned char Str15[16];
 typedef unsigned char Str31[32];
 typedef unsigned char Str63[64];
@@ -27,7 +25,7 @@ typedef unsigned char *StringPtr;
 
 typedef int16_t OSErr;
 
-/* TODO: update these. */
+// TODO: update these.
 typedef struct WindowPtr {
 } WindowPtr;
 
@@ -39,11 +37,9 @@ typedef struct Point {
 typedef struct GWorldPtr {
 } GWorldPtr;
 
-/**
- *  Utility macros
- */
+// Utility macros
 
-/* Endianness correction */
+// Endianness correction
 #define TO_LITTLE_S(x) ntohs((x))
 #define TO_LITTLE_L(x) ntohl((x))
 
@@ -52,4 +48,4 @@ typedef struct GWorldPtr {
 
 #define STREQ(a, b) (strcmp(a, b) == 0)
 
-#endif /* DEFINES_H */
+#endif // DEFINES_H

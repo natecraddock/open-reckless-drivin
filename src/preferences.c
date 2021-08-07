@@ -30,14 +30,14 @@ enum {
   kHiColorCBox
 };
 
-/* TODO: Replace with local static global and have a PREFS_get() function
-   to access the preferences for better encapsulation */
+// TODO: Replace with local static global and have a PREFS_get() function to
+// access the preferences for better encapsulation
 Preferences gPrefs;
 
-/* 4096 bytes should be sufficient for a config path */
+// 4096 bytes should be sufficient for a config path
 const int MAX_PATH = 4096;
 
-/* Store the config in a directory for future-proofing */
+// Store the config in a directory for future-proofing
 const char *PREFS_DIR = "open-reckless-drivin";
 const char *PREFS_FILE = "prefs.ini";
 
@@ -48,7 +48,7 @@ static bool read_key(char *line, char *key, int *index) {
 
   while (*line && ((*line >= 'a' && *line <= 'z') ||
                    (*line >= 'A' && *line <= 'Z') || *line == '_')) {
-    /* Test for too-long key */
+    // Test for too-long key
     if (*index == PREFS_MAX_KEY - 1) {
       return false;
     }
@@ -58,7 +58,7 @@ static bool read_key(char *line, char *key, int *index) {
     line++;
   }
 
-  /* No key was read */
+  // No key was read
   if (*index == start) {
     return false;
   }
@@ -93,7 +93,7 @@ static bool read_value(char *line, char *value, int *index) {
   int start = *index;
 
   while (*line) {
-    /* test for too-long value */
+    // test for too-long value
     if (*index - start == PREFS_MAX_VALUE - 1) {
       return false;
     }
@@ -103,7 +103,7 @@ static bool read_value(char *line, char *value, int *index) {
     line++;
   }
 
-  /* No value was read */
+  // No value was read
   if (start == *index) {
     return false;
   }
@@ -120,7 +120,7 @@ bool parse_int(char *value, Pref *pref) {
 }
 
 bool parse_value(char *value, Pref *pref) {
-  /* Booleans */
+  // Booleans
   if (STREQ(value, "true")) {
     pref->type = PREF_BOOL;
     pref->value.b = true;
@@ -129,11 +129,11 @@ bool parse_value(char *value, Pref *pref) {
     pref->type = PREF_BOOL;
     pref->value.b = false;
   }
-  /* Integers */
+  // Integers
   else if (parse_int(value, pref)) {
     pref->type = PREF_INT;
   }
-  /* Strings */
+  // Strings
   else {
     pref->type = PREF_STR;
     strncpy(pref->value.s, value, PREFS_MAX_VALUE);
@@ -148,15 +148,15 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
   while (fgets(line, MAX_LINE, stream)) {
     int length = strlen(line);
     if (line[length - 1] != '\n') {
-      /* Line was too long for the buffer */
+      // Line was too long for the buffer
       continue;
     }
     else if (STREQ(line, "\n") || line[0] == '#') {
-      /* Ignore comments and blank lines */
+      // Ignore comments and blank lines
       continue;
     }
 
-    /* Strip trailing whitespace characters */
+    // Strip trailing whitespace characters
     while (line[length - 1] == '\n' || line[length - 1] == ' ') {
       line[length - 1] = 0;
       length--;
@@ -184,12 +184,12 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref) {
     return true;
   }
 
-  /* EOF reached */
+  // EOF reached
   return false;
 }
 
-/* Set the default preferences for writing the preference file and as fallback
- * values when a preference is missing from the config file. */
+// Set the default preferences for writing the preference file and as fallback
+// values when a preference is missing from the config file.
 static void set_default_prefs() {
   gPrefs.name[0] = 0;
   gPrefs.code[0] = 0;
@@ -198,7 +198,7 @@ static void set_default_prefs() {
   gPrefs.volume = 100;
 }
 
-/* TODO: add standard paths for OSX and Windows */
+// TODO: add standard paths for OSX and Windows
 static bool get_prefs_path(char *buf, const int size) {
   const char *config_home = getenv("XDG_CONFIG_HOME");
   if (config_home) {
@@ -266,9 +266,9 @@ void PREFS_load_preferences() {
 
   Pref pref;
   while (PREFS_read_prefs(prefs_file, &pref)) {
-    /* TODO: While this does work, it would be better to have some sort of
-       automated method of assigning the preferences and also validating (min,
-       max, length, etc) */
+    // TODO: While this does work, it would be better to have some sort of
+    // automated method of assigning the preferences and also validating (min,
+    // max, length, etc)
     if (pref.type == PREF_STR && STREQ(pref.key, "name")) {
       memcpy(gPrefs.name, pref.value.s, sizeof(gPrefs.name));
     }
@@ -282,153 +282,153 @@ void PREFS_load_preferences() {
   fclose(prefs_file);
 }
 
-/* static void WritePrefs(bool reset) { */
-/*   FSSpec spec; */
-/*   short refNum; */
-/*   long count = sizeof(Preferences); */
-/*   GetPrefsFile(&spec); */
-/*   if (reset) */
-/*     FirstRun(); */
-/*   DoError(FSpOpenDF(&spec, fsRdWrPerm, &refNum)); */
-/*   DoError(SetEOF(refNum, sizeof(Preferences))); */
-/*   DoError(FSWrite(refNum, &count, &gPrefs)); */
-/*   DoError(FSClose(refNum)); */
-/* } */
+// static void WritePrefs(bool reset) {
+//   FSSpec spec;
+//   short refNum;
+//   long count = sizeof(Preferences);
+//   GetPrefsFile(&spec);
+//   if (reset)
+//     FirstRun();
+//   DoError(FSpOpenDF(&spec, fsRdWrPerm, &refNum));
+//   DoError(SetEOF(refNum, sizeof(Preferences)));
+//   DoError(FSWrite(refNum, &count, &gPrefs));
+//   DoError(FSClose(refNum));
+// }
 
-/* TODO: Allow setting preferences from a UI */
-/* void ReInitGraphics() { */
-/*   DisposeInterface(); */
-/*   ScreenMode(kScreenStopped); */
-/*   InitScreen(0); */
-/*   ShowPicScreen(1003); */
-/*   UnloadPack(PACK_RLE_16); */
-/*   UnloadPack(PACK_cRLE_16); */
-/*   UnloadPack(PACK_TEXTURES_16); */
-/*   UnloadPack(PACK_RLE); */
-/*   UnloadPack(PACK_cRLE); */
-/*   UnloadPack(PACK_TEXTURES); */
-/*   UnloadSprites(); */
-/*   if (gPrefs.full_color) { */
-/*     LoadPack(PACK_RLE_16); */
-/*     LoadPack(PACK_cRLE_16); */
-/*     LoadPack(PACK_TEXTURES_16); */
-/*   } */
-/*   else { */
-/*     LoadPack(PACK_RLE); */
-/*     LoadPack(PACK_cRLE); */
-/*     LoadPack(PACK_TEXTURES); */
-/*   } */
-/*   LoadSprites(); */
-/*   InitInterface(); */
-/*   ScreenUpdate(NULL); */
-/* } */
+// TODO: Allow setting preferences from a UI
+// void ReInitGraphics() {
+//   DisposeInterface();
+//   ScreenMode(kScreenStopped);
+//   InitScreen(0);
+//   ShowPicScreen(1003);
+//   UnloadPack(PACK_RLE_16);
+//   UnloadPack(PACK_cRLE_16);
+//   UnloadPack(PACK_TEXTURES_16);
+//   UnloadPack(PACK_RLE);
+//   UnloadPack(PACK_cRLE);
+//   UnloadPack(PACK_TEXTURES);
+//   UnloadSprites();
+//   if (gPrefs.full_color) {
+//     LoadPack(PACK_RLE_16);
+//     LoadPack(PACK_cRLE_16);
+//     LoadPack(PACK_TEXTURES_16);
+//   }
+//   else {
+//     LoadPack(PACK_RLE);
+//     LoadPack(PACK_cRLE);
+//     LoadPack(PACK_TEXTURES);
+//   }
+//   LoadSprites();
+//   InitInterface();
+//   ScreenUpdate(NULL);
+// }
 
-/* void DeactivateSubControls(ControlHandle cnt) { */
-/*   uint16_t i, max; */
-/*   DoError(CountSubControls(cnt, &max)); */
-/*   for (i = 1; i <= max; i++) { */
-/*     ControlHandle subCnt; */
-/*     DoError(GetIndexedSubControl(cnt, i, &subCnt)); */
-/*     DoError(DeactivateControl(subCnt)); */
-/*   } */
-/* } */
+// void DeactivateSubControls(ControlHandle cnt) {
+//   uint16_t i, max;
+//   DoError(CountSubControls(cnt, &max));
+//   for (i = 1; i <= max; i++) {
+//     ControlHandle subCnt;
+//     DoError(GetIndexedSubControl(cnt, i, &subCnt));
+//     DoError(DeactivateControl(subCnt));
+//   }
+// }
 
-/* void ActivateSubControls(ControlHandle cnt) { */
-/*   uint16_t i, max; */
-/*   DoError(CountSubControls(cnt, &max)); */
-/*   for (i = 1; i <= max; i++) { */
-/*     ControlHandle subCnt; */
-/*     DoError(GetIndexedSubControl(cnt, i, &subCnt)); */
-/*     DoError(ActivateControl(subCnt)); */
-/*   } */
-/* } */
+// void ActivateSubControls(ControlHandle cnt) {
+//   uint16_t i, max;
+//   DoError(CountSubControls(cnt, &max));
+//   for (i = 1; i <= max; i++) {
+//     ControlHandle subCnt;
+//     DoError(GetIndexedSubControl(cnt, i, &subCnt));
+//     DoError(ActivateControl(subCnt));
+//   }
+// }
 
-/* void Preferences() { */
-/*   DialogPtr prefDlg; */
-/*   short hit; */
-/*   int modeSwitch = false; */
-/*   uint8_t soundOn = gPrefs.sound; */
-/*   ControlHandle cnt; */
-/*   FadeScreen(1); */
-/*   ScreenMode(kScreenSuspended); */
-/*   FadeScreen(0); */
-/*   prefDlg = GetNewDialog(128, NULL, (WindowPtr)-1L); */
-/*   DoError(SetDialogDefaultItem(prefDlg, kOKButton)); */
-/*   DoError(SetDialogCancelItem(prefDlg, kCancelButton)); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.lineSkip); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kMotionBlurCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.motionBlur); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kEngineSoundCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.engineSound); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kHQSoundCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.hqSound); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.volume); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.full_color); */
-/*   DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt)); */
-/*   SetControlValue(cnt, gPrefs.sound); */
-/*   if (!gPrefs.sound) */
-/*     DeactivateSubControls(cnt); */
-/*   gPrefs.sound = true; */
-/*   do { */
-/*     short type; */
-/*     Rect box; */
-/*     Handle item; */
-/*     ModalDialog(NULL, &hit); */
-/*     GetDialogItem(prefDlg, hit, &type, &item, &box); */
-/*     if (hit == kSoundBox) */
-/*       if (!GetControlValue((ControlHandle)item)) */
-/*         ActivateSubControls((ControlHandle)item); */
-/*       else */
-/*         DeactivateSubControls((ControlHandle)item); */
-/*     if (type == chkCtrl + ctrlItem || hit == kSoundBox) */
-/*       SetControlValue((ControlHandle)item, */
-/*                       !GetControlValue((ControlHandle)item)); */
-/*     if (hit == kControlConfButton) { */
-/*       HideWindow(prefDlg); */
-/*       ConfigureInput(); */
-/*       ShowWindow(prefDlg); */
-/*       SelectWindow(prefDlg); */
-/*     } */
-/*     if (hit == kVolumeSlider) { */
-/*       int hq = gPrefs.hqSound; */
-/*       gPrefs.hqSound = false; */
-/*       DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt)); */
-/*       SetGameVolume(GetControlValue(cnt)); */
-/*       SimplePlaySound(129); */
-/*       gPrefs.hqSound = hq; */
-/*     } */
-/*   } while (hit != kOKButton && hit != kCancelButton); */
-/*   if (hit == kOKButton) { */
-/*     DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt)); */
-/*     gPrefs.lineSkip = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kMotionBlurCBox, &cnt)); */
-/*     gPrefs.motionBlur = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kEngineSoundCBox, &cnt)); */
-/*     gPrefs.engineSound = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kHQSoundCBox, &cnt)); */
-/*     gPrefs.hqSound = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt)); */
-/*     gPrefs.volume = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt)); */
-/*     gPrefs.sound = GetControlValue(cnt); */
-/*     DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt)); */
-/*     if (gPrefs.full_color != GetControlValue(cnt)) */
-/*       modeSwitch = true; */
-/*     gPrefs.full_color = GetControlValue(cnt); */
-/*     WritePrefs(false); */
-/*     InitChannels(); */
-/*   } */
-/*   else */
-/*     gPrefs.sound = soundOn; */
-/*   SetGameVolume(-1); */
-/*   DisposeDialog(prefDlg); */
-/*   if (modeSwitch) */
-/*     ReInitGraphics(); */
-/*   FadeScreen(1); */
-/*   ScreenMode(kScreenRunning); */
-/*   ScreenUpdate(NULL); */
-/*   FadeScreen(0); */
-/* } */
+// void Preferences() {
+//   DialogPtr prefDlg;
+//   short hit;
+//   int modeSwitch = false;
+//   uint8_t soundOn = gPrefs.sound;
+//   ControlHandle cnt;
+//   FadeScreen(1);
+//   ScreenMode(kScreenSuspended);
+//   FadeScreen(0);
+//   prefDlg = GetNewDialog(128, NULL, (WindowPtr)-1L);
+//   DoError(SetDialogDefaultItem(prefDlg, kOKButton));
+//   DoError(SetDialogCancelItem(prefDlg, kCancelButton));
+//   DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt));
+//   SetControlValue(cnt, gPrefs.lineSkip);
+//   DoError(GetDialogItemAsControl(prefDlg, kMotionBlurCBox, &cnt));
+//   SetControlValue(cnt, gPrefs.motionBlur);
+//   DoError(GetDialogItemAsControl(prefDlg, kEngineSoundCBox, &cnt));
+//   SetControlValue(cnt, gPrefs.engineSound);
+//   DoError(GetDialogItemAsControl(prefDlg, kHQSoundCBox, &cnt));
+//   SetControlValue(cnt, gPrefs.hqSound);
+//   DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt));
+//   SetControlValue(cnt, gPrefs.volume);
+//   DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt));
+//   SetControlValue(cnt, gPrefs.full_color);
+//   DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt));
+//   SetControlValue(cnt, gPrefs.sound);
+//   if (!gPrefs.sound)
+//     DeactivateSubControls(cnt);
+//   gPrefs.sound = true;
+//   do {
+//     short type;
+//     Rect box;
+//     Handle item;
+//     ModalDialog(NULL, &hit);
+//     GetDialogItem(prefDlg, hit, &type, &item, &box);
+//     if (hit == kSoundBox)
+//       if (!GetControlValue((ControlHandle)item))
+//         ActivateSubControls((ControlHandle)item);
+//       else
+//         DeactivateSubControls((ControlHandle)item);
+//     if (type == chkCtrl + ctrlItem || hit == kSoundBox)
+//       SetControlValue((ControlHandle)item,
+//                       !GetControlValue((ControlHandle)item));
+//     if (hit == kControlConfButton) {
+//       HideWindow(prefDlg);
+//       ConfigureInput();
+//       ShowWindow(prefDlg);
+//       SelectWindow(prefDlg);
+//     }
+//     if (hit == kVolumeSlider) {
+//       int hq = gPrefs.hqSound;
+//       gPrefs.hqSound = false;
+//       DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt));
+//       SetGameVolume(GetControlValue(cnt));
+//       SimplePlaySound(129);
+//       gPrefs.hqSound = hq;
+//     }
+//   } while (hit != kOKButton && hit != kCancelButton);
+//   if (hit == kOKButton) {
+//     DoError(GetDialogItemAsControl(prefDlg, kLineSkipCBox, &cnt));
+//     gPrefs.lineSkip = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kMotionBlurCBox, &cnt));
+//     gPrefs.motionBlur = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kEngineSoundCBox, &cnt));
+//     gPrefs.engineSound = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kHQSoundCBox, &cnt));
+//     gPrefs.hqSound = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kVolumeSlider, &cnt));
+//     gPrefs.volume = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kSoundBox, &cnt));
+//     gPrefs.sound = GetControlValue(cnt);
+//     DoError(GetDialogItemAsControl(prefDlg, kHiColorCBox, &cnt));
+//     if (gPrefs.full_color != GetControlValue(cnt))
+//       modeSwitch = true;
+//     gPrefs.full_color = GetControlValue(cnt);
+//     WritePrefs(false);
+//     InitChannels();
+//   }
+//   else
+//     gPrefs.sound = soundOn;
+//   SetGameVolume(-1);
+//   DisposeDialog(prefDlg);
+//   if (modeSwitch)
+//     ReInitGraphics();
+//   FadeScreen(1);
+//   ScreenMode(kScreenRunning);
+//   ScreenUpdate(NULL);
+//   FadeScreen(0);
+// }

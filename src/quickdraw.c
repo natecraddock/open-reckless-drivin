@@ -33,7 +33,7 @@ void QD_flip_endianness(QuickDrawHeader *header) {
   flip_endianness_rect(&header->optimal_rectangle);
   FLIP_LONG(header->reserved_2);
 
-  /* Hardcoded comment */
+  // Hardcoded comment
   FLIP_SHORT(header->long_comment);
   FLIP_SHORT(header->comment_type);
   FLIP_SHORT(header->comment_length);
@@ -133,8 +133,8 @@ static void CT_read_array(char **bytes, ColorTable *color_table) {
     color_spec.value = short_read(bytes);
     FLIP_SHORT(color_spec.value);
 
-    /* The two bytes read for the rbg components are identical so for our
-     * purposes it is safe to just store them in a byte. */
+    // The two bytes read for the rbg components are identical so for our
+    // purposes it is safe to just store them in a byte.
     color_spec.rgb.g = short_read(bytes);
     color_spec.rgb.r = short_read(bytes);
     color_spec.rgb.b = short_read(bytes);
@@ -147,7 +147,7 @@ static ColorTable CT_read(char **bytes) {
   ColorTable color_table;
   color_table.seed = int_read(bytes);
   color_table.flags = short_read(bytes);
-  /* Size stores one less than number of entries */
+  // Size stores one less than number of entries
   color_table.size = short_read(bytes);
   CT_flip_endianness(&color_table);
 
@@ -164,7 +164,7 @@ static uint16_t read_scanline(char **bytes, PixMap *pix_map, RGBValue *pixels,
   const bool indexed = pix_map->pixel_type == 0;
 
   uint16_t byte_count = 0;
-  /* Mask out top two bits */
+  // Mask out top two bits
   uint16_t row_bytes = (pix_map->row_bytes & 0x3FFF);
 
   if (row_bytes > 250) {
@@ -172,20 +172,20 @@ static uint16_t read_scanline(char **bytes, PixMap *pix_map, RGBValue *pixels,
     FLIP_SHORT(byte_count);
   }
   else {
-    /* I don't think this will apply to any images in reckless drivin' */
+    // I don't think this will apply to any images in reckless drivin'
     byte_count = byte_read(bytes);
   }
 
-  /* Allocate enough memory to expand the line */
+  // Allocate enough memory to expand the line
   uint8_t *buf = malloc(row_bytes);
   uint16_t index = 0;
 
-  /* Run length decode the PackBits */
+  // Run length decode the PackBits
   while (index < row_bytes) {
     uint8_t control = byte_read(bytes);
     uint8_t repeat = 1;
     if (0 <= control && control <= 127) {
-      /* Interpret next control+1 bytes literally */
+      // Interpret next control+1 bytes literally
       repeat = control + 1;
       if (packed_bytes) {
         for (uint8_t i = 0; i < repeat; i++, index++) {
@@ -200,10 +200,10 @@ static uint16_t read_scanline(char **bytes, PixMap *pix_map, RGBValue *pixels,
       }
     }
     else if (control == 128) {
-      /* skip this byte */
+      // skip this byte
     }
     else {
-      /* Repeat the next byte 257-control times */
+      // Repeat the next byte 257-control times
       repeat = 257 - control;
 
       if (packed_bytes) {
@@ -280,9 +280,9 @@ DirectBitsRect DBR_read(char **bytes) {
 
 PackBitsRect PBR_read(char **bytes) {
   PackBitsRect pack_bits;
-  /* The pack bits doesn't have the first field of the PixMap for some reason...
-    The simplest solution is to just move back 4 bytes then read "junk" for that
-    first field.*/
+  // The pack bits doesn't have the first field of the PixMap for some reason...
+  // The simplest solution is to just move back 4 bytes then read "junk" for
+  // that first field.
   *bytes -= sizeof(uint32_t);
   pack_bits.pix_map = PM_read(bytes);
   pack_bits.color_table = CT_read(bytes);

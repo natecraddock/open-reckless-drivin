@@ -363,9 +363,10 @@ void DrawTextFXZoomed(float xDrawStart, float yDrawStart, float zoom) {
     else if (gTextFX[i].effectFlags & kEffectMoveRight)
       baseX += 0.5 * dt * dt * kEffectAccel;
     for (ch = 1; ch <= gTextFX[i].text[0]; ch++) {
-      Ptr theCH = GetSortedPackEntry(gPrefs.full_color ? PACK_cRLE_16 : PACK_cRLE,
-                                     gTextFX[i].text[ch] - 'A' + 128, NULL) +
-                  8;
+      Ptr theCH =
+          GetSortedPackEntry(gPrefs.full_color ? PACK_cRLE_16 : PACK_cRLE,
+                             gTextFX[i].text[ch] - 'A' + 128, NULL) +
+          8;
       float y = baseY;
       for (line = 0; line < kCharSize; line++) {
         float x =

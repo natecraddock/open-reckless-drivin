@@ -4,7 +4,7 @@
 #include "resource.h"
 
 int main() {
-  /* LZRW decode all packs that aren't encrypted */
+  // LZRW decode all packs that aren't encrypted
   for (int i = 0; i < PACK_LEVEL_04; i++) {
     Handle resource = GetResource("Pack", 128 + i);
     if (resource == NULL) {
@@ -14,7 +14,7 @@ int main() {
     DisposeHandle(resource);
   }
 
-  /* Repeat for the quickdraw images which are also compressed */
+  // Repeat for the quickdraw images which are also compressed
   for (int i = 0; i < 10; i++) {
     Handle resource = GetResource("PPic", 1000 + i);
     if (resource == NULL) {

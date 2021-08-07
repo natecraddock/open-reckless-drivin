@@ -119,12 +119,11 @@ enum { kGroundLayer = 0, kCarLayer, kTreeLayer, kFlyLayer, kNumLayers };
 #define kLowCalcRatio 4
 #define kLowFrameDuration (kLowCalcRatio / kCalcFPS)
 #define kLowCalcFPS (kCalcFPS / kLowCalcRatio)
-/* Pixels per meter. */
+// Pixels per meter.
 #define kScale 9.0
-/* Minimum distance cars try to keep from each other in meters. */
+// Minimum distance cars try to keep from each other in meters.
 #define kMinCarDist 25
-/* Distance from player in which environment is accuratly simulated in pixels.
- */
+// Distance from player in which environment is accuratly simulated in pixels.
 #define kVisDist 1500
 
 #define kNormalPlayerCarID 128

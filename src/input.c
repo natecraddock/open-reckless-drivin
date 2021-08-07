@@ -401,10 +401,10 @@ void Input(tInputData **data) {
       case kAbort:
         gEndGame = true;
         break;
-        /*			case kScreenshot:
-                                        if(eventData)
-                                                TakeScreenshot();
-                                        break;*/
+      // case kScreenshot:
+      //   if (eventData)
+      //     TakeScreenshot();
+      //   break;
       case kPause:
         if (eventData)
           PauseGame();

@@ -6,7 +6,7 @@
 
 #include "defines.h"
 
-/* TODO: Start this enum at 128 and remove the `128 + _` references elsewhere */
+// TODO: Start this enum at 128 and remove the `128 + _` references elsewhere
 typedef enum {
   PACK_OBJECT_TYPE,
   PACK_SPRITES,
@@ -42,4 +42,4 @@ Ptr GetSortedPackEntry(int, int, int *);
 Ptr GetUnsortedPackEntry(int, int, int *);
 int NumPackEntries(int);
 
-#endif /* __PACKS_H */
+#endif // __PACKS_H

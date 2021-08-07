@@ -5,16 +5,16 @@
 
 #include "defines.h"
 
-/* Get a resource. */
+// Get a resource.
 Handle GetResource(const char *type, short id);
 
-/* Free a resource. */
+// Free a resource.
 void ReleaseResource(Handle resource);
 
-/* Print resource data. */
+// Print resource data.
 void PrintResource();
 
-/* TODO: These should be moved */
+// TODO: These should be moved
 
 void PtrToHandle(Ptr src, Handle *dst, uint32_t size);
 
@@ -22,4 +22,4 @@ int GetHandleSize(Handle handle);
 void SetHandleSize(Handle handle, int size);
 void DisposeHandle(Handle handle);
 
-#endif /* RESOURCE_H */
+#endif // RESOURCE_H

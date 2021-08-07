@@ -50,7 +50,7 @@ void SetHighScoreEntry(int index, uint32_t score) {
   Handle item;
   short hit;
   Str255 text;
-  if (false /* gOSX */) {
+  if (false) { // gOSX
     FadeScreen(1);
     ScreenMode(kScreenSuspended);
     FadeScreen(0);
@@ -75,7 +75,7 @@ void SetHighScoreEntry(int index, uint32_t score) {
   gPrefs.high[index].score = score;
   GetDateTime(&gPrefs.high[index].time);
 
-  if (false /* gOSX */) {
+  if (false) { // gOSX
     FadeScreen(1);
     ScreenMode(kScreenRunning);
     FadeScreen(512);

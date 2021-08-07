@@ -154,55 +154,53 @@ void ShiftInPicture() {
   ResumeFrameCount();
 }
 
-/*void BlurScreen()
-{
-        GWorldPtr screenGW=GetScreenGW();
-        short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
-        uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
-        uint8_t *row=baseAddr+(gYSize-1)*rowBytes;
-        uint8_t *upperRow=row-rowBytes;
-        uint8_t *trTab=*gTranslucenceTab;
-        int x,y;
-        for(y=gYSize;y>0;y--)
-        {
-                for(x=0;x<gXSize;x++)
-                        *(row+x)=trTab[(*(row+x)<<8)+*(upperRow+x)];
-                row=upperRow;
-                upperRow-=rowBytes;
-        }
-        for(y=gYSize;y>0;y--)
-        {
-                for(x=0;x<gXSize;x++)
-                        *(upperRow+x)=trTab[(*(row+x)<<8)+*(upperRow+x)];
-                upperRow=row;
-                row+=rowBytes;
-        }
-}
+// void BlurScreen() {
+//         GWorldPtr screenGW=GetScreenGW();
+//         short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
+//         uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
+//         uint8_t *row=baseAddr+(gYSize-1)*rowBytes;
+//         uint8_t *upperRow=row-rowBytes;
+//         uint8_t *trTab=*gTranslucenceTab;
+//         int x,y;
+//         for(y=gYSize;y>0;y--)
+//         {
+//                 for(x=0;x<gXSize;x++)
+//                         *(row+x)=trTab[(*(row+x)<<8)+*(upperRow+x)];
+//                 row=upperRow;
+//                 upperRow-=rowBytes;
+//         }
+//         for(y=gYSize;y>0;y--)
+//         {
+//                 for(x=0;x<gXSize;x++)
+//                         *(upperRow+x)=trTab[(*(row+x)<<8)+*(upperRow+x)];
+//                 upperRow=row;
+//                 row+=rowBytes;
+//         }
+// }
 
-void BlurScreen16()
-{
-        GWorldPtr screenGW=GetScreenGW();
-        short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
-        uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
-        uint16_t *row=baseAddr+(gYSize-1)*rowBytes;
-        uint16_t *upperRow=row-rowBytes;
-        int x,y;
-        for(y=gYSize;y>0;y--)
-        {
-                for(x=0;x<gXSize;x++)
-                        *(row+x)=BlendRGB16(*(row+x),*(upperRow+x));
-                row=upperRow;
-                upperRow-=rowBytes/2;
-        }
-        for(y=gYSize;y>0;y--)
-        {
-                for(x=0;x<gXSize;x++)
-                        *(upperRow+x)=BlendRGB16(*(row+x),*(upperRow+x));
-                upperRow=row;
-                row+=rowBytes/2;
-        }
-}
-*/
+// void BlurScreen16() {
+//         GWorldPtr screenGW=GetScreenGW();
+//         short rowBytes=(**GetGWorldPixMap(screenGW)).rowBytes&0x3fff;
+//         uint8_t *baseAddr=GetPixBaseAddr(GetGWorldPixMap(screenGW));
+//         uint16_t *row=baseAddr+(gYSize-1)*rowBytes;
+//         uint16_t *upperRow=row-rowBytes;
+//         int x,y;
+//         for(y=gYSize;y>0;y--)
+//         {
+//                 for(x=0;x<gXSize;x++)
+//                         *(row+x)=BlendRGB16(*(row+x),*(upperRow+x));
+//                 row=upperRow;
+//                 upperRow-=rowBytes/2;
+//         }
+//         for(y=gYSize;y>0;y--)
+//         {
+//                 for(x=0;x<gXSize;x++)
+//                         *(upperRow+x)=BlendRGB16(*(row+x),*(upperRow+x));
+//                 upperRow=row;
+//                 row+=rowBytes/2;
+//         }
+// }
+
 void GameOverAnim() {
   Ptr oldBaseAddr = gBaseAddr;
   short oldRowBytes = gRowBytes;
@@ -213,9 +211,9 @@ void GameOverAnim() {
   float t;
   gBaseAddr = GetPixBaseAddr(GetGWorldPixMap(screenGW));
   gRowBytes = (**GetGWorldPixMap(screenGW)).rowBytes & 0x3fff;
-  /*if(type==kBlur)
-          DrawSprite(kGameOverSprite,gXSize/2,gYSize/2,0,2);
-*/ animStart = GetMSTime();
+  // if(type==kBlur)
+  //   DrawSprite(kGameOverSprite,gXSize/2,gYSize/2,0,2);
+  animStart = GetMSTime();
   do {
     uint64_t msTime = GetMSTime();
     float size, xPos, yPos, dir;
@@ -237,9 +235,9 @@ void GameOverAnim() {
           yPos = gYSize - (gYSize / 2) * (4.0 / 3.0) * (1.0 / (-t - 1.0) + 1.0);
         dir = 0;
         break;
-        /*		case kBlur:
-                                BlurScreen();
-                                break;*/
+        // case kBlur:
+        //   BlurScreen();
+        //   break;
     }
     DrawSprite(kGameOverSprite, xPos, yPos, dir, size);
     if (t > kFadeStart)

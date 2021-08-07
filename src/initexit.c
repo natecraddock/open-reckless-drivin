@@ -27,7 +27,7 @@ bool Init() {
 
   if (!REG_check_registration()) {
     printf("Invalid registration %s %s\n", gPrefs.name, gPrefs.code);
-    /* Register(false); */
+    // Register(false);
   }
   else {
     printf("Registered to %s\n", gPrefs.name);
@@ -54,7 +54,7 @@ bool Init() {
   // InitChannels();
   // InitInterface();
 
-  /* TODO: exit early on failure */
+  // TODO: exit early on failure
   return true;
 }
 
@@ -74,7 +74,7 @@ static void free_packs() {
 }
 
 void Exit() {
-  /* Cleanup all loaded packs */
+  // Cleanup all loaded packs
   free_packs();
   //   WritePrefs(false);
   //   FadeScreen(1);

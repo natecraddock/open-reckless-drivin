@@ -9,4 +9,4 @@ extern int gRegistered;
 
 bool REG_check_registration();
 
-#endif /* __REGISTER_H */
+#endif // __REGISTER_H

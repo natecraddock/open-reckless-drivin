@@ -299,8 +299,8 @@ void RenderFrameZoomed() {
   DrawTracksZoomed(xDrawStart, yDrawStart, zoom);
   DrawSpritesZoomed(xDrawStart, yDrawStart, zoom);
   DrawTextFXZoomed(xDrawStart, yDrawStart, zoom);
-  /*	DrawParticleFX(xDrawStart,yDrawStart,0);
-          DrawParticleFX(xDrawStart,yDrawStart,1);*/
+  // DrawParticleFX(xDrawStart,yDrawStart,0);
+  // DrawParticleFX(xDrawStart,yDrawStart,1);
   DrawPanel();
   if (preSpecBlit != gScreenBlitSpecial)
     RenderFrameZoomed();

@@ -15,4 +15,4 @@ extern float sine_table[SINE_TABLE_SIZE];
 
 void InitTrig();
 
-#endif /* __TRIG_H */
+#endif // __TRIG_H

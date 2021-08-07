@@ -15,10 +15,10 @@ typedef struct {
 } PackHeader;
 typedef PackHeader **PackHandle;
 
-/* Stores handles to loaded packs */
+// Stores handles to loaded packs
 static Handle packs[PACK_NUM_PACKS];
 
-/* Length of unencrypted header */
+// Length of unencrypted header
 #define UNENCRYPTED_HEADER_LEN 256
 
 static uint32_t CryptData(uint32_t *data, uint32_t len) {
@@ -51,18 +51,18 @@ uint32_t LoadPack(int num) {
   if (!packs[num]) {
     packs[num] = GetResource("Pack", num + 128);
     if (packs[num]) {
-      /* TODO */
-      if (num >= PACK_ENCRYPTED /* || gLevelResFile*/) {
+      // TODO
+      if (num >= PACK_ENCRYPTED) { // || gLevelResFile
         check = CryptData((uint32_t *)*packs[num], GetHandleSize(packs[num]));
       }
       LZRWDecodeHandle(&packs[num]);
-      /* HLockHi(packs[num]); Locks a handle in memory. Unneeded. */
+      // HLockHi(packs[num]); Locks a handle in memory. Unneeded.
     }
   }
   return check;
 }
 
-/* Only used to check if registration is valid. */
+// Only used to check if registration is valid.
 bool CheckPack(int num, uint32_t check) {
   bool ok = false;
   if (!packs[num]) {
@@ -84,9 +84,9 @@ bool CheckPack(int num, uint32_t check) {
 
 void UnloadPack(int num) {
   if (packs[num]) {
-    /* Any valid pack has been decompressed, which means it is no longer a
-       resource handle, but a memory handle, so we must use DisposeHandle to
-       free that allocated memory. */
+    // Any valid pack has been decompressed, which means it is no longer a
+    // resource handle, but a memory handle, so we must use DisposeHandle to
+    // free that allocated memory.
     DisposeHandle(packs[num]);
     packs[num] = NULL;
   }
@@ -114,11 +114,9 @@ static int ComparePackHeaders(const void *p1, const void *p2) {
   return pack1.id - pack2.id;
 }
 
-/**
- * HACK: This was changed a great deal from the original code.
- * It seems to work okay, but it would be good to revisit the logic
- * at some point.
- */
+// HACK: This was changed a great deal from the original code.
+// It seems to work okay, but it would be good to revisit the logic
+// at some point.
 Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
   PackHeader pack = *(PackHeader *)*packs[packNum];
   FLIP_SHORT(pack.id);

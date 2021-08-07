@@ -64,20 +64,20 @@ void cleanup_sdl(Display display) {
 void load_picture(Display display, Handle resource) {
   char *bytes = *resource;
 
-  /* QuickDrawHeader */
+  // QuickDrawHeader
   QuickDrawHeader *header = (QuickDrawHeader *)bytes;
   QD_flip_endianness(header);
   bytes += sizeof(QuickDrawHeader);
 
-  /* Now read the DirectBitsRect */
+  // Now read the DirectBitsRect
   uint16_t op = *(uint16_t *)bytes;
   FLIP_SHORT(op);
   bytes += sizeof(uint16_t);
 
-  /* DirectBitsRect */
+  // DirectBitsRect
   if (op == 0x009A) {
     DirectBitsRect direct_bits = DBR_read(&bytes);
-    /* Copy colors to display buffer */
+    // Copy colors to display buffer
     uint32_t width = direct_bits.dst_rect.right;
     uint32_t height = direct_bits.dst_rect.bottom;
     for (uint32_t pix = 0; pix < width * height; pix++) {
@@ -86,7 +86,7 @@ void load_picture(Display display, Handle resource) {
           ((rgb.r * 8) << 16) | ((rgb.g * 8) << 8) | rgb.b * 8;
     }
   }
-  /* PackBitsRect */
+  // PackBitsRect
   else if (op == 0x0098) {
     PackBitsRect pack_bits = PBR_read(&bytes);
     uint32_t width = pack_bits.dst_rect.right;
@@ -110,39 +110,39 @@ void draw_picture(Display display, int pic_id) {
 int main(void) {
   printf("Open Reckless Drivin' 0.0.0\n");
 
-  /* Display display = init_sdl(); */
+  // Display display = init_sdl();
 
   if (!Init()) {
-    /* Failed to init */
+    // Failed to init
     return 1;
   }
 
-  /* draw_picture(display, 1003); */
-  /* SDL_Event event; */
+  // draw_picture(display, 1003);
+  // SDL_Event event;
   while (!gExit) {
-    /* SDL_UpdateTexture(display.texture, NULL, display.pixels, */
-    /*                   640 * sizeof(uint32_t)); */
+    // SDL_UpdateTexture(display.texture, NULL, display.pixels,
+    //                   640 * sizeof(uint32_t));
     if (gGameOn) {
       GameFrame();
     }
     else {
       Eventloop();
     }
-    /* SDL_WaitEvent(&event); */
+    // SDL_WaitEvent(&event);
 
-    /* switch (event.type) { */
-    /* case SDL_QUIT: */
-    /*   gExit = true; */
-    /*   break; */
-    /* } */
+    // switch (event.type) {
+    // case SDL_QUIT:
+    //   gExit = true;
+    //   break;
+    // }
 
-    /* SDL_RenderClear(display.renderer); */
-    /* SDL_RenderCopy(display.renderer, display.texture, NULL, NULL); */
-    /* SDL_RenderPresent(display.renderer); */
+    // SDL_RenderClear(display.renderer);
+    // SDL_RenderCopy(display.renderer, display.texture, NULL, NULL);
+    // SDL_RenderPresent(display.renderer);
   }
   Exit();
 
-  /* cleanup_sdl(display); */
+  // cleanup_sdl(display);
 
   return 0;
 }

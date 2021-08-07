@@ -14,7 +14,7 @@
 #define PREFS_MAX_VALUE 512
 
 typedef enum {
-  PREF_ERR, /* TODO: report type of error */
+  PREF_ERR, // TODO: report type of error
   PREF_BOOL,
   PREF_INT,
   PREF_STR,
@@ -35,7 +35,7 @@ bool PREFS_read_prefs(FILE *stream, Pref *pref);
 #define PREFS_NUM_HIGH_SCORE_ENTRIES 10
 #define PREFS_VERSION 4
 
-/* TODO: Scores should be stored separate from config (.local/share) */
+// TODO: Scores should be stored separate from config (.local/share)
 typedef struct {
   Str15 name;
   uint32_t time;
@@ -59,7 +59,7 @@ typedef struct {
 } Preferences;
 
 extern Preferences gPrefs;
-/* void Preferences(); */
+// void Preferences();
 void PREFS_load_preferences();
 
-#endif /* __PREFERENCES_H */
+#endif // __PREFERENCES_H

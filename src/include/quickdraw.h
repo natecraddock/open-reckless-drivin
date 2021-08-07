@@ -1,57 +1,49 @@
-/**
- * An implementation of a (tiny) subset of the Apple Quickdraw 2D Graphics
- * library.
- */
+// An implementation of a (tiny) subset of the Apple Quickdraw 2D Graphics
+// library.
 
-/**
- * Notes:
- *
- * Type Integer is 2 bytes
- * Type LongInt is 4 bytes
- *
- * Type Rect
- *  top:    Integer
- *  left:   Integer
- *  bottom: Integer
- *  right:  Integer
- *
- * Type DirectBitsRect
- *  PixMap: PixMap
- *  srcRect: Rect
- *  dstRect: Rect
- *  mode:    Integer (transfer mode) ditherCopy?
- *  PixData: Bytes (variable)
- *
- * Type PixMap:
- *  baseAddr:   Ptr (should have value 0x000000FF)
- *  rowBytes:   Integer (flags (2 high bits) and row width)
- *  bounds:     Rect
- *  pmVersion:  Integer (PixMap record version number)
- *              normally zero, if 4 then baseAddr is a 32-bit clean
- *  packType:   Integer (packing format)
- *              0: no packing 1-4: packed
- *  packSize:   LongInt (size of data in packed state)
- *              0 when packType is zero, otherwise size of packed image
- *  hRes:       Fixed - usually 0x00480000 for 72 ppi
- *  vRes:       Fixed - usually 0x00480000 for 72 ppi
- *  pixelType:  Integer (format of pixel image)
- *  pixelSize:  Integer (physical bits per pixel)
- *  cmpCount:   Integer (logical components per pixel)
- *  cmpSize:    Integer (logical bits per component)
- *  planeByte:  LongInt (offset to nextplane)
- *  pmTable:    CTabHandle (handle to colortable record)
- *  pmReserved: LongInt
- *
- * When packType is 3 then
- *  each image contains of bounds.bottom - bounds.top packed (compressed)
- *  scan lines.
- *  Each scan line consists of a block of data of the form
- *   byteCount: Integer
- *   data:      Variable of length byteCount
- *
- * The packed data is decompressed with
- *
- */
+// Notes:
+// Type Integer is 2 bytes
+// Type LongInt is 4 bytes
+
+// Type Rect
+//  top:    Integer
+//  left:   Integer
+//  bottom: Integer
+//  right:  Integer
+
+// Type DirectBitsRect
+//  PixMap: PixMap
+//  srcRect: Rect
+//  dstRect: Rect
+//  mode:    Integer (transfer mode) ditherCopy?
+//  PixData: Bytes (variable)
+
+// Type PixMap:
+//  baseAddr:   Ptr (should have value 0x000000FF)
+//  rowBytes:   Integer (flags (2 high bits) and row width)
+//  bounds:     Rect
+//  pmVersion:  Integer (PixMap record version number)
+//              normally zero, if 4 then baseAddr is a 32-bit clean
+//  packType:   Integer (packing format)
+//              0: no packing 1-4: packed
+//  packSize:   LongInt (size of data in packed state)
+//              0 when packType is zero, otherwise size of packed image
+//  hRes:       Fixed - usually 0x00480000 for 72 ppi
+//  vRes:       Fixed - usually 0x00480000 for 72 ppi
+//  pixelType:  Integer (format of pixel image)
+//  pixelSize:  Integer (physical bits per pixel)
+//  cmpCount:   Integer (logical components per pixel)
+//  cmpSize:    Integer (logical bits per component)
+//  planeByte:  LongInt (offset to nextplane)
+//  pmTable:    CTabHandle (handle to colortable record)
+//  pmReserved: LongInt
+
+// When packType is 3 then
+//  each image contains of bounds.bottom - bounds.top packed (compressed)
+//  scan lines.
+//  Each scan line consists of a block of data of the form
+//   byteCount: Integer
+//   data:      Variable of length byteCount
 
 #include <stdint.h>
 
@@ -77,7 +69,7 @@ typedef struct QuickDrawHeader {
   Rect optimal_rectangle;
   uint32_t reserved_2;
 
-  /* Hardcode comment for now */
+  // Hardcode comment for now
   uint16_t long_comment;
   uint16_t comment_type;
   uint16_t comment_length;

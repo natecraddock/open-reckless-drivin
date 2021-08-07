@@ -6,9 +6,9 @@
 
 #define kStartChaseDist 42.0
 
-/* Number of frames after new life in which player won't be attacked. */
+// Number of frames after new life in which player won't be attacked.
 #define kSaveDelay 3.0 * kCalcFPS
-/* Velocity which new cops who are called will initially have. */
+// Velocity which new cops who are called will initially have.
 #define kStartChaseSpeed 28.0
 
 void ObjectControl(tObject *theObj, tInputData *input);

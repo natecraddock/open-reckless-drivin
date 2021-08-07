@@ -41,8 +41,8 @@ int main() {
     return 1;
   }
 
-  /* Expected preferences found from parsing. See prefs-test.ini for the input
-   * data read */
+  // Expected preferences found from parsing. See prefs-test.ini for the input
+  // data read
   const Pref expected_prefs[] = {
       BOOL("allow", true),
       BOOL("deny", false),
@@ -58,10 +58,10 @@ int main() {
       STR("many_spaces", "are allowed"),
       STR("key", "value"),
       STR("key", "duplicate keys are allowed"),
-      /* Max key length of 63 chars */
+      // Max key length of 63 chars
       BOOL("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
            false),
-      /* Max value length of 511 chars */
+      // Max value length of 511 chars
       STR("x",
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
           "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
@@ -77,7 +77,7 @@ int main() {
   Pref pref;
   int current = 0;
   while (PREFS_read_prefs(file, &pref)) {
-    /* Another pref to read */
+    // Another pref to read
     if (current == num_expected) {
       printf("found ");
       print_pref(pref);

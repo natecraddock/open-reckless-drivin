@@ -5,7 +5,7 @@
 #include "defines.h"
 #include "resource.h"
 
-/* Game Data */
+// Game Data
 #include "data"
 
 struct Resource {
@@ -14,7 +14,7 @@ struct Resource {
   uint32_t length;
 };
 
-/* Search through the packed resource data for the given resource. */
+// Search through the packed resource data for the given resource.
 static void *FindResource(const char *type, short id, uint32_t *len) {
   uint8_t *resource_ptr = _game_data;
   uint8_t *_game_data_end = &_game_data[_game_data_len];

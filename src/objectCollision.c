@@ -353,62 +353,62 @@ void DoBounce(tObject *obj1, tObject *obj2, t2DPoint diff) {
     FFBJolt(joltMagnitude, joltMagnitude, 0.4);
   }
 }
-/*void DoBounceUnelastic(tObject *obj1,tObject *obj2,t2DPoint diff)
-{
-        t2DPoint newVelo;
-        t2DPoint impulse1,impulse2;
-        float momentum1,momentum2;
-        float mass1=obj1==gPlayerObj?kPlayerBounceMass:(**obj1->type).mass;
-        float mass2=obj2==gPlayerObj?kPlayerBounceMass:(**obj2->type).mass;
-        newVelo=VEC2D_Sum(VEC2D_Scale(obj1->velo,mass1),VEC2D_Scale(obj2->velo,mass2));
-        newVelo=VEC2D_Scale(newVelo,1/(mass1+mass2));
-        impulse1=VEC2D_Difference(obj1->velo,newVelo);
-        impulse2=VEC2D_Difference(obj2->velo,newVelo);
+// void DoBounceUnelastic(tObject *obj1,tObject *obj2,t2DPoint diff)
+//{
+//        t2DPoint newVelo;
+//        t2DPoint impulse1,impulse2;
+//        float momentum1,momentum2;
+//        float mass1=obj1==gPlayerObj?kPlayerBounceMass:(**obj1->type).mass;
+//        float mass2=obj2==gPlayerObj?kPlayerBounceMass:(**obj2->type).mass;
+//        newVelo=VEC2D_Sum(VEC2D_Scale(obj1->velo,mass1),VEC2D_Scale(obj2->velo,mass2));
+//        newVelo=VEC2D_Scale(newVelo,1/(mass1+mass2));
+//        impulse1=VEC2D_Difference(obj1->velo,newVelo);
+//        impulse2=VEC2D_Difference(obj2->velo,newVelo);
 //
-obj1->throttle*=VEC2D_DotProduct(impulse1,VEC2D_Norm(new1Velo))/VEC2D_Value(obj1->velo);
+// obj1->throttle*=VEC2D_DotProduct(impulse1,VEC2D_Norm(new1Velo))/VEC2D_Value(obj1->velo);
 //
-obj2->throttle*=VEC2D_DotProduct(impulse2,VEC2D_Norm(new2Velo))/VEC2D_Value(obj2->velo);
-        obj1->velo=newVelo;
-        obj2->velo=newVelo;
-        if((**obj1->type).flags2&kObjectDamageble)
-                DamageObj(obj1,VEC2D_Value(impulse1),VEC2D_Scale(diff,-1));
-        if((**obj2->type).flags2&kObjectDamageble)
-                DamageObj(obj2,VEC2D_Value(impulse2),diff);
-        momentum1=VEC2D_CrossProduct(VEC2D_Scale(impulse1,kCalcFPS),diff);
-        momentum2=VEC2D_CrossProduct(VEC2D_Scale(impulse2,kCalcFPS),diff);
-        obj1->rotVelo+=momentum1/mass1;
-        obj2->rotVelo-=momentum2/mass2;
-}
+// obj2->throttle*=VEC2D_DotProduct(impulse2,VEC2D_Norm(new2Velo))/VEC2D_Value(obj2->velo);
+//        obj1->velo=newVelo;
+//        obj2->velo=newVelo;
+//        if((**obj1->type).flags2&kObjectDamageble)
+//                DamageObj(obj1,VEC2D_Value(impulse1),VEC2D_Scale(diff,-1));
+//        if((**obj2->type).flags2&kObjectDamageble)
+//                DamageObj(obj2,VEC2D_Value(impulse2),diff);
+//        momentum1=VEC2D_CrossProduct(VEC2D_Scale(impulse1,kCalcFPS),diff);
+//        momentum2=VEC2D_CrossProduct(VEC2D_Scale(impulse2,kCalcFPS),diff);
+//        obj1->rotVelo+=momentum1/mass1;
+//        obj2->rotVelo-=momentum2/mass2;
+//}
 
-void DoBounceElastic(tObject *obj1,tObject *obj2,t2DPoint diff)
-{
-        t2DPoint new1Velo,new2Velo;
-        t2DPoint impulse1,impulse2;
-        float momentum1,momentum2;
-        float mass1=obj1==gPlayerObj?kPlayerBounceMass:(**obj1->type).mass;
-        float mass2=obj2==gPlayerObj?kPlayerBounceMass:(**obj2->type).mass;
-        new1Velo=VEC2D_Difference(VEC2D_Sum(VEC2D_Scale(obj1->velo,mass1),VEC2D_Scale(obj2->velo,mass2*2)),VEC2D_Scale(obj1->velo,mass2));
-        new2Velo=VEC2D_Difference(VEC2D_Sum(VEC2D_Scale(obj2->velo,mass2),VEC2D_Scale(obj1->velo,mass1*2)),VEC2D_Scale(obj2->velo,mass1));
-        new1Velo=VEC2D_Scale(new1Velo,1/(mass1+mass2));
-        new2Velo=VEC2D_Scale(new2Velo,1/(mass1+mass2));
-        impulse1=VEC2D_Difference(obj1->velo,new1Velo);
-        impulse2=VEC2D_Difference(obj2->velo,new2Velo);
+// void DoBounceElastic(tObject *obj1,tObject *obj2,t2DPoint diff)
+//{
+//        t2DPoint new1Velo,new2Velo;
+//        t2DPoint impulse1,impulse2;
+//        float momentum1,momentum2;
+//        float mass1=obj1==gPlayerObj?kPlayerBounceMass:(**obj1->type).mass;
+//        float mass2=obj2==gPlayerObj?kPlayerBounceMass:(**obj2->type).mass;
+//        new1Velo=VEC2D_Difference(VEC2D_Sum(VEC2D_Scale(obj1->velo,mass1),VEC2D_Scale(obj2->velo,mass2*2)),VEC2D_Scale(obj1->velo,mass2));
+//        new2Velo=VEC2D_Difference(VEC2D_Sum(VEC2D_Scale(obj2->velo,mass2),VEC2D_Scale(obj1->velo,mass1*2)),VEC2D_Scale(obj2->velo,mass1));
+//        new1Velo=VEC2D_Scale(new1Velo,1/(mass1+mass2));
+//        new2Velo=VEC2D_Scale(new2Velo,1/(mass1+mass2));
+//        impulse1=VEC2D_Difference(obj1->velo,new1Velo);
+//        impulse2=VEC2D_Difference(obj2->velo,new2Velo);
 //
-obj1->throttle*=VEC2D_DotProduct(impulse1,VEC2D_Norm(new1Velo))/VEC2D_Value(obj1->velo);
+// obj1->throttle*=VEC2D_DotProduct(impulse1,VEC2D_Norm(new1Velo))/VEC2D_Value(obj1->velo);
 //
-obj2->throttle*=VEC2D_DotProduct(impulse2,VEC2D_Norm(new2Velo))/VEC2D_Value(obj2->velo);
-        obj1->velo=new1Velo;
-        obj2->velo=new2Velo;
-        if((**obj1->type).flags2&kObjectDamageble)
-                DamageObj(obj1,VEC2D_Value(impulse1),VEC2D_Scale(diff,-1));
-        if((**obj2->type).flags2&kObjectDamageble)
-                DamageObj(obj2,VEC2D_Value(impulse2),diff);
-        momentum1=VEC2D_CrossProduct(VEC2D_Scale(impulse1,kCalcFPS),diff);
-        momentum2=VEC2D_CrossProduct(VEC2D_Scale(impulse2,kCalcFPS),diff);
-        obj1->rotVelo+=momentum1/mass1;
-        obj2->rotVelo-=momentum2/mass2;
-}
-*/
+// obj2->throttle*=VEC2D_DotProduct(impulse2,VEC2D_Norm(new2Velo))/VEC2D_Value(obj2->velo);
+//        obj1->velo=new1Velo;
+//        obj2->velo=new2Velo;
+//        if((**obj1->type).flags2&kObjectDamageble)
+//                DamageObj(obj1,VEC2D_Value(impulse1),VEC2D_Scale(diff,-1));
+//        if((**obj2->type).flags2&kObjectDamageble)
+//                DamageObj(obj2,VEC2D_Value(impulse2),diff);
+//        momentum1=VEC2D_CrossProduct(VEC2D_Scale(impulse1,kCalcFPS),diff);
+//        momentum2=VEC2D_CrossProduct(VEC2D_Scale(impulse2,kCalcFPS),diff);
+//        obj1->rotVelo+=momentum1/mass1;
+//        obj2->rotVelo-=momentum2/mass2;
+//}
+
 void BounceObjects(tObject *obj1, tObject *obj2) {
   t2DPoint diff;
   float boom =
@@ -603,66 +603,66 @@ void ShotHitObject(tObject *theObj, t2DPoint *srcPoint, t2DPoint *shotPoint,
     theObj->damage += 18;
 }
 
-/*#define kNumShots 2
+// #define kNumShots 2
 
-void HandleShot(float length,tObject* shooter,t2DPoint offset)
-{
-        int i;
-        for(i=0;i<kNumShots;i++)
-        {
-                float ranDir=shooter->dir+RanFl(-0.015,0.015);
-                float ranLength=length*(1+RanFl(-0.05,0.05));
-                tObject	*theObj=gFirstVisObj;
-                t2DPoint normDir=P2D(cos(ranDir),sin(ranDir));
-                t2DPoint
-srcPoint=VEC2D_Sum(shooter->pos,P2D(sin(ranDir)*offset.y+cos(ranDir)*offset.x,-sin(ranDir)*offset.x+cos(ranDir)*offset.y));
-                t2DPoint
-shotPoint=VEC2D_Sum(srcPoint,P2D(sin(ranDir)*ranLength,cos(ranDir)*ranLength));
-                float closeDist =INFINITY;
-                tObject *closeObj=NULL;
-                if(i==0){
-                        tObject *nozzleObj=NewObject(shooter,197);
-                        nozzleObj->dir=shooter->dir;
-                        nozzleObj->pos=srcPoint;
-                        nozzleObj->velo=shooter->velo;
-                }
-                while(theObj!=gLastVisObj)
-                {
-                        if(theObj!=shooter&&theObj->layer==shooter->layer)
-                        {
-                                t2DPoint
-relObjPos=VEC2D_Difference(theObj->pos,shooter->pos); float
-dist=fabs(VEC2D_DotProduct(normDir,relObjPos)); if(dist<kMaxCollDist*2)
-                                {
-                                        t2DPoint objPts[4];
-                                        int i;
-                                        CalcObjPoints(theObj,objPts);
-                                        for(i=0;i<4;i++)
-                                                if(SectLines(&objPts[i],&objPts[(i+1)&3],&srcPoint,&shotPoint))
-                                                {
-                                                        t2DPoint
-objDist=VEC2D_Difference(theObj->pos,srcPoint); float
-sqDist=objDist.x*objDist.x+objDist.y*objDist.y; if(sqDist<closeDist)
-                                                        {
-                                                                closeDist=sqDist;
-                                                                closeObj=theObj;
-                                                        }
-                                                }
-                                }
-                        }
-                        theObj=(tObject*)theObj->next;
-                }
-                if(closeObj)
-                {
-                        tObject *gunObj=NewObject(closeObj,196);
-                        ShotHitObject(closeObj,&srcPoint,&shotPoint,&gunObj->pos);
-                        NewParticleFX(gunObj->pos,closeObj->velo,10,0x03,1,25);
-                }
-                else
-                {
-                        tObject
-*gunObj=NewObject(shooter,(CalcBackCollision(shotPoint)==2?(*gRoadInfo).deathOffs:0)+196);
-                        gunObj->pos=shotPoint;
-                }
-        }
-}*/
+// void HandleShot(float length,tObject* shooter,t2DPoint offset)
+// {
+//         int i;
+//         for(i=0;i<kNumShots;i++)
+//         {
+//                 float ranDir=shooter->dir+RanFl(-0.015,0.015);
+//                 float ranLength=length*(1+RanFl(-0.05,0.05));
+//                 tObject	*theObj=gFirstVisObj;
+//                 t2DPoint normDir=P2D(cos(ranDir),sin(ranDir));
+//                 t2DPoint
+// srcPoint=VEC2D_Sum(shooter->pos,P2D(sin(ranDir)*offset.y+cos(ranDir)*offset.x,-sin(ranDir)*offset.x+cos(ranDir)*offset.y));
+//                 t2DPoint
+// shotPoint=VEC2D_Sum(srcPoint,P2D(sin(ranDir)*ranLength,cos(ranDir)*ranLength));
+//                 float closeDist =INFINITY;
+//                 tObject *closeObj=NULL;
+//                 if(i==0){
+//                         tObject *nozzleObj=NewObject(shooter,197);
+//                         nozzleObj->dir=shooter->dir;
+//                         nozzleObj->pos=srcPoint;
+//                         nozzleObj->velo=shooter->velo;
+//                 }
+//                 while(theObj!=gLastVisObj)
+//                 {
+//                         if(theObj!=shooter&&theObj->layer==shooter->layer)
+//                         {
+//                                 t2DPoint
+// relObjPos=VEC2D_Difference(theObj->pos,shooter->pos); float
+// dist=fabs(VEC2D_DotProduct(normDir,relObjPos)); if(dist<kMaxCollDist*2)
+//                                 {
+//                                         t2DPoint objPts[4];
+//                                         int i;
+//                                         CalcObjPoints(theObj,objPts);
+//                                         for(i=0;i<4;i++)
+//                                                 if(SectLines(&objPts[i],&objPts[(i+1)&3],&srcPoint,&shotPoint))
+//                                                 {
+//                                                         t2DPoint
+// objDist=VEC2D_Difference(theObj->pos,srcPoint); float
+// sqDist=objDist.x*objDist.x+objDist.y*objDist.y; if(sqDist<closeDist)
+//                                                         {
+//                                                                 closeDist=sqDist;
+//                                                                 closeObj=theObj;
+//                                                         }
+//                                                 }
+//                                 }
+//                         }
+//                         theObj=(tObject*)theObj->next;
+//                 }
+//                 if(closeObj)
+//                 {
+//                         tObject *gunObj=NewObject(closeObj,196);
+//                         ShotHitObject(closeObj,&srcPoint,&shotPoint,&gunObj->pos);
+//                         NewParticleFX(gunObj->pos,closeObj->velo,10,0x03,1,25);
+//                 }
+//                 else
+//                 {
+//                         tObject
+// *gunObj=NewObject(shooter,(CalcBackCollision(shotPoint)==2?(*gRoadInfo).deathOffs:0)+196);
+//                         gunObj->pos=shotPoint;
+//                 }
+//         }
+// }
