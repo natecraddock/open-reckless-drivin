@@ -46,7 +46,7 @@ static uint32_t CryptData(uint32_t *data, uint32_t len) {
   return check;
 }
 
-uint32_t LoadPack(int num) {
+uint32_t PACK_load(int num) {
   uint32_t check = 0;
   if (!packs[num]) {
     packs[num] = GetResource("Pack", num + 128);
@@ -63,7 +63,7 @@ uint32_t LoadPack(int num) {
 }
 
 // Only used to check if registration is valid.
-bool CheckPack(int num, uint32_t check) {
+bool PACK_check(int num, uint32_t check) {
   bool ok = false;
   if (!packs[num]) {
     packs[num] = GetResource("Pack", num + 128);
@@ -82,7 +82,7 @@ bool CheckPack(int num, uint32_t check) {
   return ok;
 }
 
-void UnloadPack(int num) {
+void PACK_unload(int num) {
   if (packs[num]) {
     // Any valid pack has been decompressed, which means it is no longer a
     // resource handle, but a memory handle, so we must use DisposeHandle to
@@ -92,7 +92,7 @@ void UnloadPack(int num) {
   }
 }
 
-Ptr GetSortedPackEntry(int packNum, int entryID, int *size) {
+Ptr PACK_get_sorted_entry(int packNum, int entryID, int *size) {
   PackHeader *pack = (PackHeader *)*packs[packNum];
   int startId = pack[1].id;
   uint32_t offset = pack[entryID - startId + 1].offset;
@@ -117,7 +117,7 @@ static int ComparePackHeaders(const void *p1, const void *p2) {
 // HACK: This was changed a great deal from the original code.
 // It seems to work okay, but it would be good to revisit the logic
 // at some point.
-Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
+Ptr PACK_get_unsorted_entry(int packNum, int entryID, int *size) {
   PackHeader pack = *(PackHeader *)*packs[packNum];
   FLIP_SHORT(pack.id);
   FLIP_LONG(pack.offset);
@@ -146,6 +146,6 @@ Ptr GetUnsortedPackEntry(int packNum, int entryID, int *size) {
   return (char *)*packs[packNum] + offset;
 }
 
-int NumPackEntries(int num) {
+int PACK_num_entries(int num) {
   return packs[num] ? TO_LITTLE_S((**(PackHandle)packs[num]).id) : 0;
 }

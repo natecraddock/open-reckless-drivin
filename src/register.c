@@ -92,7 +92,7 @@ bool REG_check_registration() {
   uint32_t check_num = FLIP_LONG(**(uint32_t **)check);
   ReleaseResource(check);
 
-  gRegistered = CheckPack(PACK_ENCRYPTED, check_num);
+  gRegistered = PACK_check(PACK_ENCRYPTED, check_num);
   return gRegistered;
 }
 

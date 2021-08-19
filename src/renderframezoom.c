@@ -125,12 +125,13 @@ void DrawRoadZoomed(float xDrawStart, float yDrawStart, float zoom) {
   int rowBytesSkip = gRowBytes - gXSize;
   Ptr drawPos = gBaseAddr;
   Ptr backgrTex =
-      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).backgroundTex);
-  Ptr roadTex = GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).foregroundTex);
+      PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).backgroundTex);
+  Ptr roadTex =
+      PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).foregroundTex);
   Ptr leftBorder =
-      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).roadLeftBorder);
+      PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).roadLeftBorder);
   Ptr rightBorder =
-      GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).roadRightBorder);
+      PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).roadRightBorder);
   if (gPrefs.lineSkip)
     rowBytesSkip += gRowBytes;
   for (screenY = 0; screenY < gYSize; screenY += (gPrefs.lineSkip ? 2 : 1)) {
@@ -181,7 +182,7 @@ void DrawMarksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   int l = 0, r = gMarkSize, i;
   int yClipWorld = (gYSize - (gFinishDelay ? 0 : kInvLines)) * zoom;
   int yClip = (gYSize - (gFinishDelay ? 0 : kInvLines));
-  Ptr trackTex = GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).marks);
+  Ptr trackTex = PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).marks);
   while (r - 1 > l)
     if (gMarks[(l + r) / 2].y > yDrawStart)
       l = (l + r) / 2;
@@ -202,7 +203,7 @@ void DrawTracksZoomed(float xDrawStart, float yDrawStart, float zoom) {
   float invZoom = 1 / zoom;
   int i;
   int yClip = gYSize - (gFinishDelay ? 0 : kInvLines);
-  Ptr trackTex = GetUnsortedPackEntry(PACK_TEXTURES, (*gRoadInfo).tracks);
+  Ptr trackTex = PACK_get_unsorted_entry(PACK_TEXTURES, (*gRoadInfo).tracks);
   for (i = 0; i < gTrackCount; i++) {
     int x = (gTracks[i].x - xDrawStart) * invZoom - 2;
     int y = (yDrawStart - gTracks[i].y) * invZoom;

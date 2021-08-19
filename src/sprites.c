@@ -1016,10 +1016,10 @@ void SpriteUnused(int id) {
 void LoadSprites() {
   // int spritePack = gPrefs.full_color ? PACK_SPRITES_16 : PACK_SPRITES;
   int spritePack = PACK_SPRITES;
-  LoadPack(spritePack);
+  PACK_load(spritePack);
   for (int i = 128; i < 128 + kNumSprites; i++) {
     int size;
-    Ptr data = GetUnsortedPackEntry(spritePack, i, &size);
+    Ptr data = PACK_get_unsorted_entry(spritePack, i, &size);
     if (data)
       // DoError(PtrToHand(data, &gSprites[i - 128], size));
       PtrToHandle(data, &gSprites[i - 128], size);
@@ -1029,7 +1029,7 @@ void LoadSprites() {
   for (int i = kNumSprites; i < kNumSprites + kNumSpecialSprites; i++) {
     gSprites[i] = NULL;
   }
-  UnloadPack(spritePack);
+  PACK_unload(spritePack);
 }
 
 void UnloadSprites() {

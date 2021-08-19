@@ -35,11 +35,11 @@ typedef enum {
 
 #define PACK_ENCRYPTED PACK_LEVEL_04
 
-uint32_t LoadPack(int);
-bool CheckPack(int num, uint32_t check);
-void UnloadPack(int);
-Ptr GetSortedPackEntry(int, int, int *);
-Ptr GetUnsortedPackEntry(int, int, int *);
-int NumPackEntries(int);
+uint32_t PACK_load(int);
+bool PACK_check(int num, uint32_t check);
+void PACK_unload(int);
+Ptr PACK_get_sorted_entry(int, int, int *);
+Ptr PACK_get_unsorted_entry(int, int, int *);
+int PACK_num_entries(int);
 
 #endif // __PACKS_H

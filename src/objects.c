@@ -180,7 +180,7 @@ t2DPoint GetUniquePos(int16_t minOffs, int16_t maxOffs, float *objDir,
 void InsertObjectGroup(tObjectGroupReference groupRef) {
   int probilities[100];
   int entryCnt, indexCount = 0, probCount;
-  tObjectGroup *group = (tObjectGroup *)GetSortedPackEntry(
+  tObjectGroup *group = (tObjectGroup *)PACK_get_sorted_entry(
       PACK_OBJECT_GROUPS, groupRef.resID, NULL);
   for (entryCnt = 0; entryCnt < (*group).numEntries; entryCnt++)
     for (probCount = 0; probCount < (*group).data[entryCnt].probility;
@@ -218,7 +218,7 @@ tObject *NewObject(tObject *prev, int16_t typeRes) {
   ((tObject *)(prev->next))->prev = theObj;
   prev->next = theObj;
   theObj->type =
-      (tObjectTypePtr)GetUnsortedPackEntry(PACK_OBJECT_TYPE, typeRes, 0);
+      (tObjectTypePtr)PACK_get_unsorted_entry(PACK_OBJECT_TYPE, typeRes, 0);
   if ((*theObj->type).flags & kObjectRandomFrameFlag)
     theObj->frame =
         (*theObj->type).frame + RanInt(0, (*theObj->type).numFrames);
@@ -241,7 +241,7 @@ void RemoveObject(tObject *theObj) {
   if (theObj == gPlayerObj) {
     theObj->frame = 0;
     theObj->type =
-        (tObjectTypePtr)GetUnsortedPackEntry(PACK_OBJECT_TYPE, 2000, 0);
+        (tObjectTypePtr)PACK_get_unsorted_entry(PACK_OBJECT_TYPE, 2000, 0);
   }
   else {
     if (theObj == gFirstVisObj)
@@ -314,7 +314,7 @@ void KillObject(tObject *theObj) {
     RemoveObject(theObj);
     return;
   }
-  theObj->type = (tObjectTypePtr)GetUnsortedPackEntry(
+  theObj->type = (tObjectTypePtr)PACK_get_unsorted_entry(
       PACK_OBJECT_TYPE,
       (*objType).deathObj + (sinkEnable ? gRoadInfo->deathOffs : 0), 0);
   theObj->layer = (*theObj->type).flags2 >> 5 & 3;

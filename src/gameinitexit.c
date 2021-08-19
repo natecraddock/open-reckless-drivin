@@ -99,11 +99,11 @@ int gGameOn;
 //     gLevelID = 0;
 //   }
 
-//   LoadPack(PACK_LEVEL_01 + gLevelID);
-//   gLevelData = GetSortedPackEntry(PACK_LEVEL_01 + gLevelID, 1, NULL);
-//   gMarks = GetSortedPackEntry(PACK_LEVEL_01 + gLevelID, 2, &gMarkSize);
+//   PACK_load(PACK_LEVEL_01 + gLevelID);
+//   gLevelData = PACK_get_sorted_entry(PACK_LEVEL_01 + gLevelID, 1, NULL);
+//   gMarks = PACK_get_sorted_entry(PACK_LEVEL_01 + gLevelID, 2, &gMarkSize);
 //   gMarkSize /= sizeof(tMarkSeg);
-//   gRoadInfo = GetSortedPackEntry(kPackRoad, gLevelData->roadInfo, NULL);
+//   gRoadInfo = PACK_get_sorted_entry(kPackRoad, gLevelData->roadInfo, NULL);
 //   gTrackUp = (Ptr)gLevelData + sizeof(tLevelData);
 //   gTrackDown =
 //       (Ptr)gTrackUp + sizeof(uint32_t) + gTrackUp->num *
@@ -151,7 +151,7 @@ int gGameOn;
 // }
 
 // void DisposeLevel() {
-//   UnloadPack(PACK_LEVEL_01 + gLevelID);
+//   PACK_unload(PACK_LEVEL_01 + gLevelID);
 //   gPlayerObj = NULL;
 //   while ((tObject *)gFirstObj->next != gFirstObj) {
 //     SpriteUnused((*(tObject *)gFirstObj->next).frame);

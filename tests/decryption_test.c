@@ -24,5 +24,5 @@ int main() {
   // Typically a global key would come from a username and registration
   // code rather than being hard-coded.
   gKey = 0x1E42A71F;
-  return !CheckPack(PACK_ENCRYPTED, check);
+  return !PACK_check(PACK_ENCRYPTED, check);
 }

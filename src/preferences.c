@@ -301,22 +301,22 @@ void PREFS_load_preferences() {
 //   ScreenMode(kScreenStopped);
 //   InitScreen(0);
 //   ShowPicScreen(1003);
-//   UnloadPack(PACK_RLE_16);
-//   UnloadPack(PACK_cRLE_16);
-//   UnloadPack(PACK_TEXTURES_16);
-//   UnloadPack(PACK_RLE);
-//   UnloadPack(PACK_cRLE);
-//   UnloadPack(PACK_TEXTURES);
+//   PACK_unload(PACK_RLE_16);
+//   PACK_unload(PACK_cRLE_16);
+//   PACK_unload(PACK_TEXTURES_16);
+//   PACK_unload(PACK_RLE);
+//   PACK_unload(PACK_cRLE);
+//   PACK_unload(PACK_TEXTURES);
 //   UnloadSprites();
 //   if (gPrefs.full_color) {
-//     LoadPack(PACK_RLE_16);
-//     LoadPack(PACK_cRLE_16);
-//     LoadPack(PACK_TEXTURES_16);
+//     PACK_load(PACK_RLE_16);
+//     PACK_load(PACK_cRLE_16);
+//     PACK_load(PACK_TEXTURES_16);
 //   }
 //   else {
-//     LoadPack(PACK_RLE);
-//     LoadPack(PACK_cRLE);
-//     LoadPack(PACK_TEXTURES);
+//     PACK_load(PACK_RLE);
+//     PACK_load(PACK_cRLE);
+//     PACK_load(PACK_TEXTURES);
 //   }
 //   LoadSprites();
 //   InitInterface();
