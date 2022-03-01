@@ -10,7 +10,13 @@ The original source may be found at https://github.com/jechter/RecklessDrivin.
 
 ## Current Status
 
-**TL;DR:** The game is not playable. Binary data loading, decompression, decryption, and reading is working.
+**Update**: After a long break away from this project, I'm back and working on
+this in the
+[riiz](https://github.com/natecraddock/open-reckless-drivin/tree/riiz) branch,
+where I'm rewriting in Zig! I discuss my rationale behind this in more detail on
+[my blog post](https://nathancraddock.com/blog/moving-to-zig/).
+
+**TL;DR**: The game is not playable. Binary data loading, decompression, decryption, and reading is working.
 Preferences are read from a file. The source code has been restructured and uses CMake. Currently working on
 using SDL2 for drawing sprites.
 
