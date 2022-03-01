@@ -1,9 +1,8 @@
 const std = @import("std");
+const log = std.log;
 
-pub fn main() anyerror!void {
-    std.log.info("All your codebase are belong to us.", .{});
-}
+const version = "0.0";
 
-test "basic test" {
-    try std.testing.expectEqual(10, 3 + 7);
+pub fn main() void {
+    log.info("Started Reckless Drivin {s}", .{version});
 }

@@ -1,6 +1,2 @@
-*build*/
-.cache/
-CMakeFiles
-.vscode
-CMakeCache.txt
-*.o
+zig-cache/
+zig-out/
