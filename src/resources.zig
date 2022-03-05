@@ -45,7 +45,7 @@ const eql = std.mem.eql;
 /// * Chck 128 Decryption Validation Bytes
 const data = @embedFile("resources.dat");
 
-const Header = struct {
+const Header = packed struct {
     resource_type: [8]u8,
     id: u32,
     length: u32,
@@ -59,9 +59,7 @@ const Resource = struct {
 fn resourceIter(offset: *usize) ?Resource {
     if (offset.* >= data.len) return null;
 
-    // The data must be aligned to bytes because the length of the individual resources does not
-    // always align to 4, the alignment of a Header.
-    const header = @ptrCast(*align(1) const Header, data[offset.* .. offset.* + @sizeOf(Header)]);
+    const header = @ptrCast(*const Header, data[offset.* .. offset.* + @sizeOf(Header)]);
     offset.* += @sizeOf(Header);
 
     const resource: Resource = .{
