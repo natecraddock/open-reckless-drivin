@@ -73,7 +73,7 @@ fn resourceIter(offset: *usize) ?Resource {
 
 /// Search through the resource data for the resource of the given type and id
 /// Returns a slice of bytes or null if not found
-fn findResource(resource_type: []const u8, id: u16) ?[]const u8 {
+pub fn getResource(resource_type: []const u8, id: u16) ?[]const u8 {
     var offset: usize = 0;
     while (resourceIter(&offset)) |resource| {
         if (eql(u8, resource.header.resource_type[0..4], resource_type) and resource.header.id == id) {
@@ -85,52 +85,47 @@ fn findResource(resource_type: []const u8, id: u16) ?[]const u8 {
 
 const expect = std.testing.expect;
 
-test "findResource" {
+test "getResource" {
     // Ensure all valid resources can be found
-    try expect(findResource("Pack", 128) != null);
-    try expect(findResource("Pack", 129) != null);
-    try expect(findResource("Pack", 130) != null);
-    try expect(findResource("Pack", 131) != null);
-    try expect(findResource("Pack", 132) != null);
-    try expect(findResource("Pack", 133) != null);
-    try expect(findResource("Pack", 134) != null);
-    try expect(findResource("Pack", 135) != null);
-    try expect(findResource("Pack", 136) != null);
-    try expect(findResource("Pack", 137) != null);
-    try expect(findResource("Pack", 138) != null);
-    try expect(findResource("Pack", 139) != null);
-    try expect(findResource("Pack", 140) != null);
-    try expect(findResource("Pack", 141) != null);
-    try expect(findResource("Pack", 142) != null);
-    try expect(findResource("Pack", 143) != null);
-    try expect(findResource("Pack", 144) != null);
-    try expect(findResource("Pack", 145) != null);
-    try expect(findResource("Pack", 146) != null);
-    try expect(findResource("Pack", 147) != null);
-    try expect(findResource("Pack", 148) != null);
-    try expect(findResource("Pack", 149) != null);
-    try expect(findResource("PPic", 1000) != null);
-    try expect(findResource("PPic", 1001) != null);
-    try expect(findResource("PPic", 1002) != null);
-    try expect(findResource("PPic", 1003) != null);
-    try expect(findResource("PPic", 1004) != null);
-    try expect(findResource("PPic", 1005) != null);
-    try expect(findResource("PPic", 1006) != null);
-    try expect(findResource("PPic", 1007) != null);
-    try expect(findResource("PPic", 1008) != null);
-    try expect(findResource("PPic", 1009) != null);
-    try expect(findResource("Chck", 128) != null);
+    try expect(getResource("Pack", 128) != null);
+    try expect(getResource("Pack", 129) != null);
+    try expect(getResource("Pack", 130) != null);
+    try expect(getResource("Pack", 131) != null);
+    try expect(getResource("Pack", 132) != null);
+    try expect(getResource("Pack", 133) != null);
+    try expect(getResource("Pack", 134) != null);
+    try expect(getResource("Pack", 135) != null);
+    try expect(getResource("Pack", 136) != null);
+    try expect(getResource("Pack", 137) != null);
+    try expect(getResource("Pack", 138) != null);
+    try expect(getResource("Pack", 139) != null);
+    try expect(getResource("Pack", 140) != null);
+    try expect(getResource("Pack", 141) != null);
+    try expect(getResource("Pack", 142) != null);
+    try expect(getResource("Pack", 143) != null);
+    try expect(getResource("Pack", 144) != null);
+    try expect(getResource("Pack", 145) != null);
+    try expect(getResource("Pack", 146) != null);
+    try expect(getResource("Pack", 147) != null);
+    try expect(getResource("Pack", 148) != null);
+    try expect(getResource("Pack", 149) != null);
+    try expect(getResource("PPic", 1000) != null);
+    try expect(getResource("PPic", 1001) != null);
+    try expect(getResource("PPic", 1002) != null);
+    try expect(getResource("PPic", 1003) != null);
+    try expect(getResource("PPic", 1004) != null);
+    try expect(getResource("PPic", 1005) != null);
+    try expect(getResource("PPic", 1006) != null);
+    try expect(getResource("PPic", 1007) != null);
+    try expect(getResource("PPic", 1008) != null);
+    try expect(getResource("PPic", 1009) != null);
+    try expect(getResource("Chck", 128) != null);
 
     // Test a few invalid resources
-    try expect(findResource("Pack", 127) == null);
-    try expect(findResource("Pack", 150) == null);
-    try expect(findResource("PPic", 999) == null);
-    try expect(findResource("PPic", 1010) == null);
-    try expect(findResource("Chck", 129) == null);
-    try expect(findResource("None", 128) == null);
-}
-
-pub fn getResource(resource_type: []const u8, id: u16) ?[]const u8 {
-    _ = resource_type;
-    _ = id;
+    try expect(getResource("Pack", 127) == null);
+    try expect(getResource("Pack", 150) == null);
+    try expect(getResource("PPic", 999) == null);
+    try expect(getResource("PPic", 1010) == null);
+    try expect(getResource("Chck", 129) == null);
+    try expect(getResource("None", 128) == null);
 }
