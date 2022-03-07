@@ -122,6 +122,7 @@
 #ifndef LZRW_H
 #define LZRW_H
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
@@ -155,11 +156,14 @@ struct compress_identity {
   char *vendor;      /* Where the algorithm can be obtained.        */
 };
 
+/* returns id information for the compression algorithm */
+struct compress_identity lzrw_identity();
+
 void lzrw3a_compress(/* Single function interface to compression algorithm. */
                      uint16_t action,    /* Action to be performed.       */
                      uint8_t *wrk_mem,   /* Working memory temporarily given to
                                           routine to use. */
-                     uint8_t *src_adr,   /* Address of input  data.     */
+                     const uint8_t *src_adr,   /* Address of input  data.     */
                      uint32_t src_len,   /* Length  of input  data.   */
                      uint8_t *dst_adr,   /* Address of output data.     */
                      uint64_t *p_dst_len /* Pointer to a longword where routine
@@ -172,15 +176,5 @@ void lzrw3a_compress(/* Single function interface to compression algorithm. */
 /******************************************************************************/
 /*                             End of COMPRESS.H                              */
 /******************************************************************************/
-
-#include "defines.h"
-
-/**
- * Decompress the bytes referenced by a handle.
- *
- * On success, the given Resource Handle is converted to a Memory Handle and
- * will need to be freed with DisposeHandle.
- */
-void LZRWDecodeHandle(Handle *handle);
 
 #endif /* LZRW_H */

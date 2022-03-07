@@ -102,10 +102,17 @@ static struct compress_identity identity = {
     "Public Domain"         /* Vendor of algorithm.             */
 };
 
-static void lzrw3a_compress_compress(uint8_t *, uint8_t *, uint32_t, uint8_t *,
+static void lzrw3a_compress_compress(uint8_t *, const uint8_t *, uint32_t, uint8_t *,
                                      uint64_t *);
-static void lzrw3a_compress_decompress(uint8_t *, uint8_t *, uint32_t,
+static void lzrw3a_compress_decompress(uint8_t *, const uint8_t *, uint32_t,
                                        uint8_t *, uint64_t *);
+
+
+/******************************************************************************/
+
+struct compress_identity lzrw_identity() {
+  return identity;
+}
 
 /******************************************************************************/
 
@@ -114,7 +121,7 @@ static void lzrw3a_compress_decompress(uint8_t *, uint8_t *, uint32_t,
 /* compress a block of memory, decompress a block of memory, or to identify   */
 /* itself. For more information, see the specification file "compress.h".     */
 
-void lzrw3a_compress(uint16_t action, uint8_t *wrk_mem, uint8_t *src_adr,
+void lzrw3a_compress(uint16_t action, uint8_t *wrk_mem, const uint8_t *src_adr,
                      uint32_t src_len, uint8_t *dst_adr, uint64_t *p_dst_len) {
   switch (action) {
     case COMPRESS_ACTION_COMPRESS:
@@ -386,7 +393,7 @@ void lzrw3a_compress(uint16_t action, uint8_t *wrk_mem, uint8_t *src_adr,
 
 /******************************************************************************/
 
-static void lzrw3a_compress_compress(uint8_t *p_wrk_mem, uint8_t *p_src_first,
+static void lzrw3a_compress_compress(uint8_t *p_wrk_mem, const uint8_t *p_src_first,
                                      uint32_t src_len, uint8_t *p_dst_first,
                                      uint64_t *p_dst_len)
 /* Input  : Hand over the required amount of working memory in p_wrk_mem.     */
@@ -680,7 +687,7 @@ overrun:
 
 /******************************************************************************/
 
-static void lzrw3a_compress_decompress(uint8_t *p_wrk_mem, uint8_t *p_src_first,
+static void lzrw3a_compress_decompress(uint8_t *p_wrk_mem, const uint8_t *p_src_first,
                                        uint32_t src_len, uint8_t *p_dst_first,
                                        uint64_t *p_dst_len)
 /* Input  : Hand over the required amount of working memory in p_wrk_mem.     */
@@ -738,11 +745,10 @@ static void lzrw3a_compress_decompress(uint8_t *p_wrk_mem, uint8_t *p_src_first,
 
   /* Check the leading copy flag to see if the compressor chose to use a copy */
   /* operation instead of a compression operation. If a copy operation was */
-  /* used, then all we need to do is copy the data over, set the output length
-   */
+  /* used, then all we need to do is copy the data over, set the output length */
   /* and return. */
   if (*p_src_first == FLAG_COPY) {
-    memcpy(p_src_first, p_src_first + FLAG_BYTES, src_len - FLAG_BYTES);
+    memcpy(p_dst_first, p_src_first + FLAG_BYTES, src_len - FLAG_BYTES);
     *p_dst_len = src_len - FLAG_BYTES;
     return;
   }
@@ -873,12 +879,9 @@ static void lzrw3a_compress_decompress(uint8_t *p_wrk_mem, uint8_t *p_src_first,
 /*                              End of LZRW3-A.C                              */
 /******************************************************************************/
 
-#include <stdio.h>
-
-#include "resource.h"
-
+/*
 void LZRWDecodeHandle(Handle *handle) {
-  /* Need the handle size to properly decompress. */
+  // Need the handle size to properly decompress.
   uint32_t handle_len = GetHandleSize(*handle);
 
   unsigned char *working_mem = malloc(sizeof *working_mem * identity.memory);
@@ -897,13 +900,14 @@ void LZRWDecodeHandle(Handle *handle) {
                   handle_len - 4, dst_mem, &dst_len);
   free(working_mem);
 
-  /* Reallocate the dst block to be exactly the right size. */
+  // Reallocate the dst block to be exactly the right size.
   dst_mem = realloc(dst_mem, dst_len);
   if (!dst_mem) {
     return;
   }
 
   **handle = dst_mem;
-  /* Store the new handle length. */
+  // Store the new handle length.
   SetHandleSize(*handle, dst_len);
 }
+*/

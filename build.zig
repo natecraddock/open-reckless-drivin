@@ -5,6 +5,11 @@ pub fn build(b: *std.build.Builder) void {
     const mode = b.standardReleaseOptions();
 
     const exe = b.addExecutable("reckless-drivin", "src/main.zig");
+
+    exe.linkLibC();
+    exe.addIncludeDir("src/c/");
+    exe.addCSourceFile("src/c/lzrw.c", &.{});
+
     exe.setTarget(target);
     exe.setBuildMode(mode);
     exe.install();
@@ -19,6 +24,10 @@ pub fn build(b: *std.build.Builder) void {
     run_step.dependOn(&run_cmd.step);
 
     const exe_tests = b.addTest("src/main.zig");
+    exe_tests.linkLibC();
+    exe_tests.addIncludeDir("src/c/");
+    exe_tests.addCSourceFile("src/c/lzrw.c", &.{});
+
     exe_tests.setTarget(target);
     exe_tests.setBuildMode(mode);
 
