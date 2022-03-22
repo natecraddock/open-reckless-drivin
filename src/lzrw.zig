@@ -9,9 +9,7 @@ const c = @cImport({
     @cInclude("lzrw.h");
 });
 
-/// Decompress the given bytes using the LZRW3-A algorithm. The caller owns the
-/// allocated slice of decompressed bytes.
-pub fn decompress(allocator: Allocator, compressed: []const u8) ![]u8 {
+fn decompress(allocator: Allocator, compressed: []const u8) ![]u8 {
     // Create a buffer with enough space to store the decompressed bytes
     const identity = c.lzrw_identity();
     var working_mem = try allocator.alloc(u8, identity.memory);
@@ -20,20 +18,28 @@ pub fn decompress(allocator: Allocator, compressed: []const u8) ![]u8 {
     // Maximum expansion possible is 9 times the length of the compressed data, use 10 for safety
     var destination_mem = try allocator.alloc(u8, compressed.len * 10);
 
-    // TODO: offset of 4 here or at callsite?
-    // The offset of 4 was discovered by looking at the decompiled Reckless Drivin' source
-    // in Ghidra. See https://nathancraddock.com/blog/resource-forks-and-lzrw-compression/
-    // for more information.
+    var len: u64 = 0;
     c.lzrw3a_compress(
         c.COMPRESS_ACTION_DECOMPRESS,
         @ptrCast([*c]u8, working_mem),
         @ptrCast([*c]const u8, compressed),
         @intCast(u32, compressed.len),
         @ptrCast([*c]u8, destination_mem),
-        &destination_mem.len,
+        &len,
     );
 
+    destination_mem = try allocator.realloc(destination_mem, len);
+
     return destination_mem;
+}
+
+/// Decompress the given bytes using the LZRW3-A algorithm. The caller owns the
+/// allocated slice of decompressed bytes.
+pub fn decompressResource(allocator: Allocator, compressed: []const u8) ![]u8 {
+    // The offset of 4 was discovered by looking at the decompiled Reckless Drivin' source
+    // in Ghidra. See https://nathancraddock.com/blog/resource-forks-and-lzrw-compression/
+    // for more information.
+    return try decompress(allocator, compressed[4..]);
 }
 
 const testing = std.testing;
@@ -56,5 +62,12 @@ test "LZRW decompress" {
         const result = try decompress(testing.allocator, "\x00\x00\x00\x00\x90\xff\x61\x73\x64\x66\x8f\x90\x64\x66");
         defer testing.allocator.free(result);
         try testing.expectEqualSlices(u8, "asdfasdfasdfasdfasdfasdf", result);
+    }
+
+    {
+        const data = "\x00\x00\x00\x00\xf8\xff\x7a\x69\x67\x8f\xd0";
+        const result = try decompress(testing.allocator, data);
+        defer testing.allocator.free(result);
+        try testing.expectEqualSlices(u8, "zigzigzigzigzigzigzig", result);
     }
 }

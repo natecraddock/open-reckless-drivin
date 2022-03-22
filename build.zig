@@ -8,7 +8,13 @@ pub fn build(b: *std.build.Builder) void {
 
     exe.linkLibC();
     exe.addIncludeDir("src/c/");
-    exe.addCSourceFile("src/c/lzrw.c", &.{});
+    exe.addCSourceFile("src/c/lzrw.c", &.{
+        // The default is to enable undefined behavior detection in C code. I have
+        // verified that the packs are all decompressed fine, so there is no need
+        // to sanitize. See https://github.com/ziglang/zig/wiki/FAQ#why-do-i-get-illegal-instruction-when-using-with-zig-cc-to-build-c-code
+        // for more details.
+        "-fno-sanitize=undefined",
+    });
 
     exe.setTarget(target);
     exe.setBuildMode(mode);
@@ -26,7 +32,9 @@ pub fn build(b: *std.build.Builder) void {
     const exe_tests = b.addTest("src/main.zig");
     exe_tests.linkLibC();
     exe_tests.addIncludeDir("src/c/");
-    exe_tests.addCSourceFile("src/c/lzrw.c", &.{});
+    exe_tests.addCSourceFile("src/c/lzrw.c", &.{
+        "-fno-sanitize=undefined",
+    });
 
     exe_tests.setTarget(target);
     exe_tests.setBuildMode(mode);

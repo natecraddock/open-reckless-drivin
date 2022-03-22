@@ -9,4 +9,6 @@ pub fn main() void {
 
 test {
     _ = @import("lzrw.zig");
+    _ = @import("resources.zig");
+    _ = @import("packs.zig");
 }
