@@ -7,7 +7,7 @@ pub fn main() void {
     log.info("Started Reckless Drivin {s}", .{version});
 }
 
-test {
+comptime {
     _ = @import("lzrw.zig");
     _ = @import("resources.zig");
     _ = @import("packs.zig");
