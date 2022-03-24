@@ -118,6 +118,9 @@ fn decrypt(bytes: []u8, key: u32) u32 {
 
 const testing = std.testing;
 
+// These tests for loading packs are considered to pass if
+// there are no segmentation faults or memory leaks. Other tests
+// will verify the integrity of the data.
 test "pack loading" {
     try load(testing.allocator, .object_type);
     try load(testing.allocator, .sprites);
@@ -171,4 +174,22 @@ test "pack decryption" {
     unload(testing.allocator, .level_08);
     unload(testing.allocator, .level_09);
     unload(testing.allocator, .level_10);
+}
+
+test "pack decryption check" {
+    // The "Chck" resource is used to verify proper decryption of
+    // level 04 by comparing the resource value to the value
+    // computed during decryption of the level.
+    const check = resources.getResource("Chck", 128) orelse return error.TestFailure;
+    const check_val = bigToNative(u32, @ptrCast(*align(1) const u32, check).*);
+
+    // Decrypt level 04 data to compute the decryption check
+    const level_04 = resources.getResource("Pack", @enumToInt(Pack.level_04) + 128) orelse return error.TestFailure;
+    var buf = try testing.allocator.alloc(u8, level_04.len);
+    defer testing.allocator.free(buf);
+
+    std.mem.copy(u8, buf, level_04);
+    const check_actual = decrypt(buf, 0x1E42A71F);
+
+    try testing.expectEqual(check_val, check_actual);
 }
