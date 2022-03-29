@@ -9,6 +9,7 @@ pub fn main() void {
 
 comptime {
     _ = @import("lzrw.zig");
-    _ = @import("resources.zig");
     _ = @import("packs.zig");
+    _ = @import("quickdraw.zig");
+    _ = @import("resources.zig");
 }
