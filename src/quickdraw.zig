@@ -306,21 +306,26 @@ test "quickdraw parsing" {
     const resources = @import("resources.zig");
     const lzrw = @import("lzrw.zig");
 
+    const unpackFn = struct {
+        fn unpack(pic: u16) !void {
+            const resource = resources.getResource("PPic", pic) orelse return;
+            const decompressed = try lzrw.decompressResource(testing.allocator, resource);
+            defer testing.allocator.free(decompressed);
+
+            const qd = try QuickDraw.parse(testing.allocator, decompressed);
+            defer testing.allocator.free(qd.pixels);
+        }
+    }.unpack;
+
     // TODO: 1009 does not decompress
-    const resource = resources.getResource("PPic", 1006) orelse return;
-    const decompressed = try lzrw.decompressResource(testing.allocator, resource);
-    defer testing.allocator.free(decompressed);
-
-    const qd = try QuickDraw.parse(testing.allocator, decompressed);
-    defer testing.allocator.free(qd.pixels);
-
-    // try expect(getResource("PPic", 1001) != null);
-    // try expect(getResource("PPic", 1002) != null);
-    // try expect(getResource("PPic", 1003) != null);
-    // try expect(getResource("PPic", 1004) != null);
-    // try expect(getResource("PPic", 1005) != null);
-    // try expect(getResource("PPic", 1006) != null);
-    // try expect(getResource("PPic", 1007) != null);
-    // try expect(getResource("PPic", 1008) != null);
-    // try expect(getResource("PPic", 1009) != null);
+    try unpackFn(1000);
+    try unpackFn(1001);
+    try unpackFn(1002);
+    try unpackFn(1003);
+    try unpackFn(1004);
+    try unpackFn(1005);
+    try unpackFn(1006);
+    try unpackFn(1007);
+    try unpackFn(1008);
+    // try unpackFn(1009);
 }
