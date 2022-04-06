@@ -55,7 +55,7 @@ const Reader = struct {
 pub const QuickDraw = struct {
     width: u16,
     height: u16,
-    pixels: []Pixel = undefined,
+    pixels: []RGB = undefined,
 
     /// Parse a QuickDraw image from a given sequence of bytes
     pub fn parse(allocator: Allocator, bytes: []const u8) !QuickDraw {
@@ -75,7 +75,6 @@ pub const QuickDraw = struct {
             try reader.skip(22);
         }
 
-        // TODO: allocate a buffer to store pixel data
         var image: QuickDraw = .{ .width = width, .height = height };
 
         // Parse remaining opcodes to construct the bitmap data
@@ -88,7 +87,7 @@ pub const QuickDraw = struct {
                 },
                 0x0098 => {
                     // PackBitsRect
-                    // image.pixels = try parsePackBitsRect(&reader);
+                    image.pixels = try parsePackBitsRect(allocator, &reader);
                 },
                 0x009A => {
                     // DirectBitsRect
@@ -111,27 +110,70 @@ pub const QuickDraw = struct {
     }
 };
 
-pub const Pixel = struct { r: u8, g: u8, b: u8 };
+pub const RGB = struct { r: u16, g: u16, b: u16 };
 
-fn parseDirectBitsRect(allocator: Allocator, reader: *Reader) ![]Pixel {
+fn parseDirectBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
     const map = try PixMap.parse(reader);
     try reader.skip(18); // srcRect, dstRect, mode
 
-    // const is_indexed = map.pixel_type == 0;
-    // const is_packed = map.pixel_size == 8;
     const row_bytes = map.row_bytes & 0b0011_1111_1111_1111;
 
     const width = @intCast(u32, map.right - map.left);
     const num_pixels = @intCast(u32, map.bottom - map.top) * @intCast(u32, map.right - map.left);
-    var pixels = try allocator.alloc(Pixel, num_pixels);
+    var pixels = try allocator.alloc(RGB, num_pixels);
 
     // Now read the actual pixel data
     const height = map.bottom - map.top;
     var line: usize = 0;
     while (line < height) : (line += 1) {
-        var byte_count: usize = if (row_bytes > 250) try reader.readNumber(u16) else try reader.readNumber(u8);
-        _ = byte_count;
-        try unpackRow(reader, &map, pixels[line * width .. line * width + width]);
+        if (row_bytes > 250) try reader.skip(2) else try reader.skip(1);
+        try unpackRowDirect(reader, pixels[line * width .. line * width + width]);
+    }
+
+    return pixels;
+}
+
+fn parseColorTable(allocator: Allocator, reader: *Reader) ![]RGB {
+    try reader.skip(6); // seed and flags
+    // Size stores one less than the number of entries in the table
+    const size = (try reader.readNumber(u16)) + 1;
+
+    var table = try allocator.alloc(RGB, size);
+    var i: usize = 0;
+    while (i < size) : (i += 1) {
+        try reader.skip(2); // index in table
+        table[i] = .{
+            .r = try reader.readNumber(u16),
+            .g = try reader.readNumber(u16),
+            .b = try reader.readNumber(u16),
+        };
+    }
+
+    return table;
+}
+
+fn parsePackBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
+    // Only PPic 1006 is a PackBitsRect image. For some reason the baseAddr
+    // field of the inner PixMap is not present in the data, so we offset the
+    // reader by -4 bytes. The baseAddr is ignored in the PixMap parsing so this
+    // is fine.
+    reader.index -= 4;
+    const map = try PixMap.parse(reader);
+    const color_table = try parseColorTable(allocator, reader);
+    defer allocator.free(color_table);
+    try reader.skip(18); // srcRect, dstRect, mode
+
+    const row_bytes = map.row_bytes & 0b0011_1111_1111_1111;
+
+    const width = @intCast(u32, map.right - map.left);
+    const num_pixels = @intCast(u32, map.bottom - map.top) * @intCast(u32, map.right - map.left);
+    var pixels = try allocator.alloc(RGB, num_pixels);
+
+    const height = map.bottom - map.top;
+    var line: usize = 0;
+    while (line < height) : (line += 1) {
+        if (row_bytes > 250) try reader.skip(2) else try reader.skip(1);
+        try unpackRowPacked(reader, color_table, pixels[line * width .. line * width + width]);
     }
 
     return pixels;
@@ -145,44 +187,75 @@ fn parseDirectBitsRect(allocator: Allocator, reader: *Reader) ![]Pixel {
 /// data is byte-oriented rather than pixel oriented. This information is missing
 /// from Imaging with Quickdraw. See http://fileformats.archiveteam.org/wiki/PackBits
 /// for more details.
-fn unpackRow(reader: *Reader, map: *const PixMap, pixels: []Pixel) !void {
+fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
     var col: usize = 0;
     while (col < pixels.len) {
         var n = try reader.readNumber(u8);
         if (n <= 127) {
             // Interpret the next n+1 bytes literally
             const repeat = n + 1;
-            if (map.pixel_size == 8) {} else if (map.pixel_size == 16) {
-                var i: usize = 0;
-                while (i < repeat) : ({
-                    i += 1;
-                    col += 1;
-                }) {
-                    const data = try reader.readNumber(u16);
-                    pixels[col].r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10);
-                    pixels[col].g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5);
-                    pixels[col].b = @intCast(u8, data & 0b0000_0000_0001_1111);
-                }
+            var i: usize = 0;
+            while (i < repeat) : ({
+                i += 1;
+                col += 1;
+            }) {
+                const data = try reader.readNumber(u16);
+                pixels[col].r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10);
+                pixels[col].g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5);
+                pixels[col].b = @intCast(u8, data & 0b0000_0000_0001_1111);
             }
         } else if (n == 128) {
             // Ignore
         } else {
             // Repeat the next byte 257 - n times
             const repeat = 257 - @intCast(u9, n);
-            if (map.pixel_size == 8) {} else if (map.pixel_size == 16) {
-                const data = try reader.readNumber(u16);
-                const pixel: Pixel = .{
-                    .r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10),
-                    .g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5),
-                    .b = @intCast(u8, data & 0b0000_0000_0001_1111),
-                };
-                var i: usize = 0;
-                while (i < repeat) : ({
-                    i += 1;
-                    col += 1;
-                }) {
-                    pixels[col] = pixel;
-                }
+            const data = try reader.readNumber(u16);
+            const pixel: RGB = .{
+                .r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10),
+                .g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5),
+                .b = @intCast(u8, data & 0b0000_0000_0001_1111),
+            };
+            var i: usize = 0;
+            while (i < repeat) : ({
+                i += 1;
+                col += 1;
+            }) {
+                pixels[col] = pixel;
+            }
+        }
+    }
+}
+
+/// The same as above, but for a PackedBitsRect.
+/// The RLE data stores indexes into a color table rather than RGB values directly.
+fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
+    var col: usize = 0;
+    while (col < pixels.len) {
+        var n = try reader.readNumber(u8);
+        if (n <= 127) {
+            // Interpret the next n+1 bytes literally
+            const repeat = n + 1;
+            var i: usize = 0;
+            while (i < repeat) : ({
+                i += 1;
+                col += 1;
+            }) {
+                const index = try reader.readNumber(u8);
+                pixels[col] = color_table[index];
+            }
+        } else if (n == 128) {
+            // Ignore
+        } else {
+            // Repeat the next byte 257 - n times
+            const repeat = 257 - @intCast(u9, n);
+            const index = try reader.readNumber(u8);
+            const pixel = color_table[index];
+            var i: usize = 0;
+            while (i < repeat) : ({
+                i += 1;
+                col += 1;
+            }) {
+                pixels[col] = pixel;
             }
         }
     }
@@ -233,7 +306,8 @@ test "quickdraw parsing" {
     const resources = @import("resources.zig");
     const lzrw = @import("lzrw.zig");
 
-    const resource = resources.getResource("PPic", 1000) orelse return;
+    // TODO: 1009 does not decompress
+    const resource = resources.getResource("PPic", 1006) orelse return;
     const decompressed = try lzrw.decompressResource(testing.allocator, resource);
     defer testing.allocator.free(decompressed);
 
