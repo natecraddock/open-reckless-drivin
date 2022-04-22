@@ -90,4 +90,5 @@ comptime {
     _ = @import("preferences.zig");
     _ = @import("quickdraw.zig");
     _ = @import("resources.zig");
+    _ = @import("trig.zig");
 }
