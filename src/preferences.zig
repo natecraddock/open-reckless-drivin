@@ -7,6 +7,8 @@ const mem = std.mem;
 
 const Allocator = mem.Allocator;
 
+/// TODO:
+/// * trailing line comments
 const INIParser = struct {
     iter: mem.TokenIterator(u8),
     section: ?[]const u8 = null,
@@ -39,11 +41,11 @@ const INIParser = struct {
         if (line.len == 1) return error.InvalidSyntax;
         for (line) |c, i| {
             if (!std.ascii.isAlNum(c) and c != '_') {
-                if (c == ']' and i == line.len - 1) break;
+                if (c == ']' and i == line.len - 1) return line[0 .. line.len - 1];
                 return error.InvalidSyntax;
             }
         }
-        return line[0 .. line.len - 1];
+        return error.InvalidSyntax;
     }
 
     fn parse(line: []const u8) !Key {
@@ -103,25 +105,65 @@ const Value = union(enum) {
     bool: bool,
 };
 
+const testing = std.testing;
+const expectError = testing.expectError;
+const expectString = testing.expectEqualStrings;
+
 test "ini" {
     const s =
-        \\#comment
+        \\# comment (should be ignored)
+        \\     #  leading spaces are ignored
+        \\a_bool = true
+        \\# sections
         \\[sound]
         \\enabled = false
         \\volume = 100
+        \\
+        \\[another_section]
         \\test="a long string here"
-        \\[section1]
-        \\[section2]
-        \\sensitivity = 1.234
-        \\[section3]
-        \\name = value
+        \\empty=""
+        \\sensitivity    =     1.234
+        \\
+        \\# now for some errors
+        \\[error
+        \\=
+        \\a=
+        \\=a
+        \\val=t
+        \\val=truee
+        \\val="some unclosed string
     ;
 
     var parser = INIParser.init(s);
-    while (true) {
-        const keyOrNull = parser.next() catch continue;
-        if (keyOrNull) |key| {
-            std.debug.print("key: {s}.{s}={}\n", .{ parser.section, key.name, key.value });
-        } else break;
+
+    // valid cases
+    try expectEqualKey("a_bool", Value{ .bool = true }, (try parser.next()).?);
+    try testing.expectEqual(@as(?[]const u8, null), parser.section);
+    try expectEqualKey("enabled", Value{ .bool = false }, (try parser.next()).?);
+    try testing.expectEqualStrings("sound", parser.section.?);
+    try expectEqualKey("volume", Value{ .int = 100 }, (try parser.next()).?);
+    try expectEqualKey("test", Value{ .str = "a long string here" }, (try parser.next()).?);
+    try testing.expectEqualStrings("another_section", parser.section.?);
+    try expectEqualKey("empty", Value{ .str = "" }, (try parser.next()).?);
+    try expectEqualKey("sensitivity", Value{ .float = 1.234 }, (try parser.next()).?);
+
+    // error cases
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+    try expectError(error.InvalidSyntax, parser.next());
+
+    // end of file
+    try testing.expectEqual(@as(?Key, null), try parser.next());
+}
+
+fn expectEqualKey(name: []const u8, value: Value, actual: Key) !void {
+    try testing.expectEqualStrings(name, actual.name);
+    switch (value) {
+        .str => try testing.expectEqualStrings(value.str, actual.value.str),
+        else => try testing.expectEqual(value, actual.value),
     }
 }
