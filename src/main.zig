@@ -87,6 +87,7 @@ fn formatName(allocator: Allocator, name: []const u8) ![]u8 {
 comptime {
     _ = @import("lzrw.zig");
     _ = @import("packs.zig");
+    _ = @import("preferences.zig");
     _ = @import("quickdraw.zig");
     _ = @import("resources.zig");
 }
