@@ -17,11 +17,11 @@ const sine_table = brk: {
 
 const sine_mask: u32 = 0x0000_03ff;
 
-inline fn sin(x: f32) f32 {
+pub inline fn sin(x: f32) f32 {
     return sine_table[@floatToInt(u16, x * @intToFloat(f32, table_size) / (2.0 * pi)) & sine_mask];
 }
 
-inline fn cos(x: f32) f32 {
+pub inline fn cos(x: f32) f32 {
     return sine_table[@floatToInt(u16, (x + (pi / 2.0)) * @intToFloat(f32, table_size) / (2.0 * pi)) & sine_mask];
 }
 
