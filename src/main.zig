@@ -1,13 +1,14 @@
+//! main.zig: handles argument parsing for the game and other utitlities
+
 const std = @import("std");
 const log = std.log;
 const mem = std.mem;
-const time = std.time;
 
 const Allocator = std.mem.Allocator;
 
-const version = "0.0";
+const game = @import("game.zig");
 
-const random = @import("random.zig");
+const version = "0.0";
 
 pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
@@ -20,13 +21,8 @@ pub fn main() !void {
         try handleArgs(allocator, args);
     } else {
         log.info("Started Reckless Drivin {s}", .{version});
-        game();
+        try game.start(allocator);
     }
-}
-
-fn game() void {
-    // initialize PRNG
-    random.init(@bitCast(u64, time.timestamp()));
 }
 
 fn handleArgs(allocator: Allocator, args: [][:0]u8) !void {
