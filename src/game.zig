@@ -43,5 +43,6 @@ pub fn start(allocator: Allocator) !void {
     // that would reduce the number of things to pass to each function :)
     // sprites are _almost_ read-only data, but the pixels themselves are modified
     // for bullet hit effects annoyingly :|
-    try sprites.load(allocator);
+    var sprites_data = try sprites.load(allocator);
+    defer sprites.unload(allocator, sprites_data);
 }

@@ -99,6 +99,9 @@ const Header = struct {
 };
 
 /// Find an entry in a pack via binary search
+/// Sparse packs are not guaranteed to contain all entries with no gaps, so it is not
+/// possible to index directly like an array. Binary search is used to find the entry.
+///
 /// TODO: could this potentially take a type parameter and parse the bytes
 /// and return an instantiated struct instead? (one flaw, structs containing slices)
 /// TODO: an additional feature would be a getEntry function that used a switch to
