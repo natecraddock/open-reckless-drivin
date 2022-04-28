@@ -9,9 +9,10 @@ const Allocator = std.mem.Allocator;
 
 const packs = @import("packs.zig");
 const random = @import("random.zig");
+const sprites = @import("sprites.zig");
 
-/// Initialize basic game resources
-fn init(allocator: Allocator) !void {
+/// Run the game
+pub fn start(allocator: Allocator) !void {
     // initialize PRNG
     random.init(@bitCast(u64, time.timestamp()));
 
@@ -19,29 +20,28 @@ fn init(allocator: Allocator) !void {
 
     // load packs
     try packs.load(allocator, .sounds);
+    defer packs.unload(allocator, .sounds);
     try packs.load(allocator, .object_type);
+    defer packs.unload(allocator, .object_type);
     try packs.load(allocator, .object_groups);
+    defer packs.unload(allocator, .object_groups);
     try packs.load(allocator, .road);
-    // TODO: disable full color?
+    defer packs.unload(allocator, .road);
+
+    // TODO: disable full color based on prefs
+    // if implemented, then this defer may free already freed memory
     try packs.load(allocator, .rle_16);
+    defer packs.unload(allocator, .rle_16);
     try packs.load(allocator, .crle_16);
+    defer packs.unload(allocator, .crle_16);
     try packs.load(allocator, .textures_16);
-}
+    defer packs.unload(allocator, .textures_16);
 
-/// Cleanup game resources
-fn deinit(allocator: Allocator) void {
-    packs.unload(allocator, .sounds);
-    packs.unload(allocator, .object_type);
-    packs.unload(allocator, .object_groups);
-    packs.unload(allocator, .road);
-    // TODO: disable full color?
-    packs.unload(allocator, .rle_16);
-    packs.unload(allocator, .crle_16);
-    packs.unload(allocator, .textures_16);
-}
-
-/// Run the game
-pub fn start(allocator: Allocator) !void {
-    try init(allocator);
-    defer deinit(allocator);
+    // load sprites into memory
+    // idea: use sprites.load() to create an ArrayList(Sprite) of all sprites
+    // then store in a game struct {} that stores any data needed (and allocator?)
+    // that would reduce the number of things to pass to each function :)
+    // sprites are _almost_ read-only data, but the pixels themselves are modified
+    // for bullet hit effects annoyingly :|
+    try sprites.load(allocator);
 }

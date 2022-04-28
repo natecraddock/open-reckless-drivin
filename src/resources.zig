@@ -83,6 +83,10 @@ pub fn getResource(resource_type: []const u8, id: u16) ?[]const u8 {
     return null;
 }
 
+// TODO: perhaps add a getPicResource() fn to make it easier to get and decompress
+// an lzrw image? It will be used in a few places in the code so a function makes sense
+// perhaps here or in packs.zig
+
 const expect = std.testing.expect;
 
 test "getResource" {

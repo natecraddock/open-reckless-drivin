@@ -78,8 +78,51 @@ pub fn loadEncrypted(allocator: Allocator, pack: Pack, key: u32) !void {
 
 pub fn unload(allocator: Allocator, pack: Pack) void {
     const id = @enumToInt(pack);
-    allocator.free(packs[id].?);
-    packs[id] = null;
+    if (packs[id]) |p| {
+        allocator.free(p);
+        packs[id] = null;
+    }
+}
+
+/// Each pack contains a list of headers (which may be sorted). Each header refers
+/// to an offset to the byte where that entry begins in the pack bytes.
+const Header = struct {
+    entry: i16,
+    pad: i16 = 0,
+    offset: u32 = 0,
+
+    fn compare(context: void, key: Header, item: Header) std.math.Order {
+        _ = context;
+        const entry = bigToNative(i16, item.entry);
+        return std.math.order(key.entry, entry);
+    }
+};
+
+/// Find an entry in a pack via binary search
+/// TODO: could this potentially take a type parameter and parse the bytes
+/// and return an instantiated struct instead? (one flaw, structs containing slices)
+/// TODO: an additional feature would be a getEntry function that used a switch to
+/// determine the search v normal version.
+pub fn getEntrySparse(pack: Pack, entry: i16) ?[]const u8 {
+    const id = @enumToInt(pack);
+    if (packs[id] == null) return null;
+    const bytes = @alignCast(@alignOf(Header), packs[id].?);
+
+    const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
+    const num_entries = @intCast(usize, bigToNative(i16, header.entry));
+    const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
+
+    var key: Header = .{ .entry = entry };
+    if (std.sort.binarySearch(Header, key, entries[0..num_entries], {}, Header.compare)) |index| {
+        const offset = bigToNative(u32, entries[index].offset);
+        var len: usize = undefined;
+        if (index + 1 == num_entries) {
+            len = bytes.len - offset;
+        } else {
+            len = bigToNative(u32, entries[index + 1].offset) - offset;
+        }
+        return bytes[offset .. offset + len];
+    } else return null;
 }
 
 /// Decrypt the bytes with the given key. Returns a special check value
@@ -189,6 +232,7 @@ test "pack decryption check" {
     defer testing.allocator.free(buf);
 
     std.mem.copy(u8, buf, level_04);
+    // TODO: store the global decryption key as a public constant somewhere
     const check_actual = decrypt(buf, 0x1E42A71F);
 
     try testing.expectEqual(check_val, check_actual);

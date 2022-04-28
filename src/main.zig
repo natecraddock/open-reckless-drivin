@@ -96,5 +96,6 @@ comptime {
     _ = @import("quickdraw.zig");
     _ = @import("random.zig");
     _ = @import("resources.zig");
+    _ = @import("sprites.zig");
     _ = @import("trig.zig");
 }

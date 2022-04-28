@@ -7,41 +7,7 @@ const std = @import("std");
 
 const Allocator = std.mem.Allocator;
 
-/// TODO: This will likely be pulled out to also be used for reading values
-/// from sprites and other resources.
-const Reader = struct {
-    bytes: []const u8,
-    index: usize,
-
-    fn init(bytes: []const u8) Reader {
-        return .{ .bytes = bytes, .index = 0 };
-    }
-
-    /// Read a number from the byte stream correcting for endianness
-    fn readNumber(self: *Reader, comptime T: type) !T {
-        const size = @sizeOf(T);
-        // TODO: Because the data is constant, once the game works and
-        // we confirm this is never reached we can remove the error check.
-        if (self.index + size > self.bytes.len) return error.EndOfStream;
-
-        if (size == 1) {
-            const value = self.bytes[self.index];
-            self.index += 1;
-            return value;
-        } else {
-            const slice = self.bytes[self.index .. self.index + size];
-            const value = std.mem.bigToNative(T, @ptrCast(*align(1) const T, slice).*);
-            self.index += size;
-            return value;
-        }
-    }
-
-    /// Skip `count` bytes in the stream
-    fn skip(self: *Reader, count: usize) !void {
-        if (self.index + count > self.bytes.len) return error.EndOfStream;
-        self.index += count;
-    }
-};
+const Reader = @import("utils.zig").Reader;
 
 /// Bounds and the direct pixels representing a QuickDraw image.
 ///
