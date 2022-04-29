@@ -12,23 +12,17 @@ The original source may be found at https://github.com/jechter/RecklessDrivin.
 
 ## Current Status
 
-**Update**: After a long break away from this project, I'm back and working on
-this in the
-[riiz](https://github.com/natecraddock/open-reckless-drivin/tree/riiz) branch,
-where I'm rewriting in Zig! I discuss my rationale behind this in more detail on
-[my blog post](https://nathancraddock.com/blog/moving-to-zig/).
+**Update:** I am finished porting all my work in C to Zig. Overall I am very
+pleased with the rewrite, and I appreciate all of the little improvements to the
+code that were lacking in C, like knowing the length of a slice without
+resorting to offsets and weird fat pointer tricks I was using previously.
 
-**TL;DR:** The game is not playable, but a lot of work has been done on
-decompressing, decrypting, and interpreting the bytes in the resource fork.
+At this stage, the game is not playable. But at startup all of the data is
+decompressed and loaded into memory, and then promptly freed before exiting. The
+next step is to start the game loop! I have chosen to ignore the main menu for
+now so we can get a playable game as soon as possible.
 
-I started the project summer 2020. Due to the demands of university, my work has
-been off-and-on since then. I recently picked the project up again since
-learning Zig and I am rewriting in Zig! See [this
-issue](https://github.com/natecraddock/open-reckless-drivin/issues/2) that
-tracks my progress on porting everything I did in C to Zig.
-
-Once I am caught up on what I have already done, I'll be pulling in GLFW and
-OpenGL libraries to start drawing sprites to the screen!
+## Details
 
 The original source contained a file called `Data` containing the resource fork.
 This has been converted into a header file (`src/include/data`) to be embedded
@@ -43,31 +37,17 @@ decompression is working, and is a exciting marker of progress! See the images
 on the
 [wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/QuickDraw-Pictures-(PPic)).
 
-The preference file reading and writing is working well now. Because I'm
-developing on Linux, the paths are Linux-specific, but I have structured the
-code to make it easy to update when I start testing on other platforms. The
-format is INI for simplicity, and the expected file path is
-`~/.config/open-reckless-drivin/prefs.ini`. (or
-`$XDG_CONFIG_HOME/open-reckless-drivin/prefs.ini` if set). The
-`open-reckless-drivin` directory must exist and will not be created if it
-doesn't exist.
-
-The **name** and **code** preferences are read for checking for a registered
-copy of the game, allowing for decryption of levels 4 through 10.
-
-Currently I am adding game loop code one function at a time. This is a slow
-going process. There are many Macintosh system calls in each file that need to
-either be removed because they play no role in the game, or the functions need
-to be replaced with a cross-platform alternative.
-
 # Building
 
 So far I have only built Open Reckless Drivin' on Arch Linux, but I see no
-reason why it wouldn't work elsewhere.
+reason why it wouldn't work elsewhere. Using the latest stable version of Zig:
 
 ```text
 zig build
 ```
+
+The binary will be placed in `zig-out/bin/reckless-drivin`. Run with the
+`register [name]` option to generate a new activation code.
 
 To run tests
 
@@ -84,7 +64,3 @@ information is:
 
 Name: Free<br>
 Code: B3FB09B1EB
-
-Registration keys can also be generated in your name using a Python script. See
-[the wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/Decryption)
-for more info.
