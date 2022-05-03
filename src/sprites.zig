@@ -41,11 +41,11 @@ pub fn load(allocator: Allocator) ![]?Sprite {
             var reader = Reader.init(data);
 
             var sprite: Sprite = undefined;
-            sprite.width = try reader.readNumber(u16);
-            sprite.height = try reader.readNumber(u16);
-            sprite.log2x_size = try reader.readNumber(u8);
+            sprite.width = try reader.readInt(u16);
+            sprite.height = try reader.readInt(u16);
+            sprite.log2x_size = try reader.readInt(u8);
             try reader.skip(1);
-            sprite.draw_mode = try reader.readNumber(u8);
+            sprite.draw_mode = try reader.readInt(u8);
             try reader.skip(1);
             sprite.pixels = .{ .full = try reader.readSlice(
                 u16,
