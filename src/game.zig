@@ -7,9 +7,30 @@ const time = std.time;
 
 const Allocator = std.mem.Allocator;
 
+const level = @import("level.zig");
 const packs = @import("packs.zig");
 const random = @import("random.zig");
 const sprites = @import("sprites.zig");
+const utils = @import("utils.zig");
+
+const Sprite = sprites.Sprite;
+
+const Game = struct {
+    state: enum {
+        menu,
+        game,
+    } = .game,
+    player: Player = .{},
+    sprites: []?Sprite = undefined,
+};
+
+const Player = struct {
+    lives: u8 = 3,
+    extra_lives: u8 = 0,
+    addons: u32 = 0,
+    death_delay: f32 = 0,
+    score: i32 = 0,
+};
 
 /// Run the game
 pub fn start(allocator: Allocator) !void {
@@ -37,12 +58,11 @@ pub fn start(allocator: Allocator) !void {
     try packs.load(allocator, .textures_16);
     defer packs.unload(allocator, .textures_16);
 
+    var game: Game = .{};
+
     // load sprites into memory
-    // idea: use sprites.load() to create an ArrayList(Sprite) of all sprites
-    // then store in a game struct {} that stores any data needed (and allocator?)
-    // that would reduce the number of things to pass to each function :)
-    // sprites are _almost_ read-only data, but the pixels themselves are modified
-    // for bullet hit effects annoyingly :|
-    var sprites_data = try sprites.load(allocator);
-    defer sprites.unload(allocator, sprites_data);
+    game.sprites = try sprites.load(allocator);
+    defer sprites.unload(allocator, game.sprites);
+
+    _ = try level.load(allocator, .level_01);
 }

@@ -37,15 +37,15 @@ pub fn load(allocator: Allocator) ![]?Sprite {
 
     var index: usize = 0;
     while (index < num_sprites) : (index += 1) {
-        if (packs.getEntrySparse(.sprites_16, @intCast(i16, index) + 128)) |data| {
+        if (packs.getEntryBytes(.sprites_16, @intCast(i16, index) + 128)) |data| {
             var reader = Reader.init(data);
 
             var sprite: Sprite = undefined;
-            sprite.width = try reader.readInt(u16);
-            sprite.height = try reader.readInt(u16);
-            sprite.log2x_size = try reader.readInt(u8);
+            sprite.width = try reader.read(u16);
+            sprite.height = try reader.read(u16);
+            sprite.log2x_size = try reader.read(u8);
             try reader.skip(1);
-            sprite.draw_mode = try reader.readInt(u8);
+            sprite.draw_mode = try reader.read(u8);
             try reader.skip(1);
             sprite.pixels = .{ .full = try reader.readSlice(
                 u16,
@@ -54,7 +54,7 @@ pub fn load(allocator: Allocator) ![]?Sprite {
             ) };
 
             sprites[index] = sprite;
-        } else sprites[index] = null;
+        } else |_| sprites[index] = null;
     }
     while (index < num_sprites + num_special_sprites) : (index += 1) {
         sprites[index] = null;

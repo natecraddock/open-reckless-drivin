@@ -31,10 +31,10 @@ pub const QuickDraw = struct {
         // See listings A-5 and A-6 in Imaging With Quickdraw for reference
         try reader.skip(2); // picture size
         try reader.skip(4); // bounds top and left
-        const height = try reader.readInt(u16);
-        const width = try reader.readInt(u16);
+        const height = try reader.read(u16);
+        const width = try reader.read(u16);
         try reader.skip(6); // various version information
-        const version = try reader.readInt(u16);
+        const version = try reader.read(u16);
         if (version == 0xFFFE) {
             try reader.skip(20);
         } else {
@@ -44,7 +44,7 @@ pub const QuickDraw = struct {
         var image: QuickDraw = .{ .width = width, .height = height };
 
         // Parse remaining opcodes to construct the bitmap data
-        while (reader.readInt(u16)) |op| {
+        while (reader.read(u16)) |op| {
             switch (op) {
                 0x0000, 0x0001 => continue, // NOP
                 0x000A => {
@@ -62,7 +62,7 @@ pub const QuickDraw = struct {
                 0x00A1 => {
                     // LongComment (ignored)
                     try reader.skip(2);
-                    const size = try reader.readInt(u16);
+                    const size = try reader.read(u16);
                     try reader.skip(size);
                 },
                 0x00FF => break, // End Of Picture
@@ -102,16 +102,16 @@ fn parseDirectBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
 fn parseColorTable(allocator: Allocator, reader: *Reader) ![]RGB {
     try reader.skip(6); // seed and flags
     // Size stores one less than the number of entries in the table
-    const size = (try reader.readInt(u16)) + 1;
+    const size = (try reader.read(u16)) + 1;
 
     var table = try allocator.alloc(RGB, size);
     var i: usize = 0;
     while (i < size) : (i += 1) {
         try reader.skip(2); // index in table
         table[i] = .{
-            .r = try reader.readInt(u16),
-            .g = try reader.readInt(u16),
-            .b = try reader.readInt(u16),
+            .r = try reader.read(u16),
+            .g = try reader.read(u16),
+            .b = try reader.read(u16),
         };
     }
 
@@ -156,7 +156,7 @@ fn parsePackBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
 fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
     var col: usize = 0;
     while (col < pixels.len) {
-        var n = try reader.readInt(u8);
+        var n = try reader.read(u8);
         if (n <= 127) {
             // Interpret the next n+1 bytes literally
             const repeat = n + 1;
@@ -165,7 +165,7 @@ fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
                 i += 1;
                 col += 1;
             }) {
-                const data = try reader.readInt(u16);
+                const data = try reader.read(u16);
                 pixels[col].r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10);
                 pixels[col].g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5);
                 pixels[col].b = @intCast(u8, data & 0b0000_0000_0001_1111);
@@ -175,7 +175,7 @@ fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
         } else {
             // Repeat the next byte 257 - n times
             const repeat = 257 - @intCast(u9, n);
-            const data = try reader.readInt(u16);
+            const data = try reader.read(u16);
             const pixel: RGB = .{
                 .r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10),
                 .g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5),
@@ -197,7 +197,7 @@ fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
 fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
     var col: usize = 0;
     while (col < pixels.len) {
-        var n = try reader.readInt(u8);
+        var n = try reader.read(u8);
         if (n <= 127) {
             // Interpret the next n+1 bytes literally
             const repeat = n + 1;
@@ -206,7 +206,7 @@ fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
                 i += 1;
                 col += 1;
             }) {
-                const index = try reader.readInt(u8);
+                const index = try reader.read(u8);
                 pixels[col] = color_table[index];
             }
         } else if (n == 128) {
@@ -214,7 +214,7 @@ fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
         } else {
             // Repeat the next byte 257 - n times
             const repeat = 257 - @intCast(u9, n);
-            const index = try reader.readInt(u8);
+            const index = try reader.read(u8);
             const pixel = color_table[index];
             var i: usize = 0;
             while (i < repeat) : ({
@@ -242,16 +242,16 @@ const PixMap = struct {
 
     fn parse(reader: *Reader) !PixMap {
         try reader.skip(4); // baseAddr
-        const row_bytes = try reader.readInt(u16);
-        const top = try reader.readInt(u16);
-        const left = try reader.readInt(u16);
-        const bottom = try reader.readInt(u16);
-        const right = try reader.readInt(u16);
+        const row_bytes = try reader.read(u16);
+        const top = try reader.read(u16);
+        const left = try reader.read(u16);
+        const bottom = try reader.read(u16);
+        const right = try reader.read(u16);
         try reader.skip(2); // pmVersion
-        const pack_type = try reader.readInt(u16);
+        const pack_type = try reader.read(u16);
         try reader.skip(12); // packSize, hRes, and vRes
-        const pixel_type = try reader.readInt(u16);
-        const pixel_size = try reader.readInt(u16);
+        const pixel_type = try reader.read(u16);
+        const pixel_size = try reader.read(u16);
         try reader.skip(16); // cmpCount, cmpSize, planeBytes, and pmTable
         return PixMap{
             .row_bytes = row_bytes,

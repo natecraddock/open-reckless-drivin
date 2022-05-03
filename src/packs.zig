@@ -12,6 +12,7 @@ const nativeToBig = std.mem.nativeToBig;
 
 const lzrw = @import("lzrw.zig");
 const resources = @import("resources.zig");
+const utils = @import("utils.zig");
 
 pub const decryption_key: u32 = 0x1E42A71F;
 
@@ -103,14 +104,9 @@ const Header = struct {
 /// Find an entry in a pack via binary search
 /// Sparse packs are not guaranteed to contain all entries with no gaps, so it is not
 /// possible to index directly like an array. Binary search is used to find the entry.
-///
-/// TODO: could this potentially take a type parameter and parse the bytes
-/// and return an instantiated struct instead? (one flaw, structs containing slices)
-/// TODO: an additional feature would be a getEntry function that used a switch to
-/// determine the search v normal version.
-pub fn getEntrySparse(pack: Pack, entry: i16) ?[]const u8 {
+fn getEntrySparse(pack: Pack, entry: i16) ![]const u8 {
     const id = @enumToInt(pack);
-    if (packs[id] == null) return null;
+    if (packs[id] == null) return error.PackNotLoaded;
     const bytes = @alignCast(@alignOf(Header), packs[id].?);
 
     const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
@@ -127,14 +123,14 @@ pub fn getEntrySparse(pack: Pack, entry: i16) ?[]const u8 {
             len = bigToNative(u32, entries[index + 1].offset) - offset;
         }
         return bytes[offset .. offset + len];
-    } else return null;
+    } else return error.InvalidPackEntry;
 }
 
-/// TODO: make this (and getEntrySparse) return error on invalid pack, not
-/// an optional. There is no useful reason for a null, but an error is valid
-pub fn getEntrySequential(pack: Pack, entry: i16) ?[]const u8 {
+/// Find an entry sequentially in the pack. Unlike sparse packs, these include
+/// sequential headers and thus do not require a binary search.
+fn getEntrySequential(pack: Pack, entry: i16) ![]const u8 {
     const id = @enumToInt(pack);
-    if (packs[id] == null) return null;
+    if (packs[id] == null) return error.PackNotLoaded;
     const bytes = @alignCast(@alignOf(Header), packs[id].?);
 
     const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
@@ -143,15 +139,55 @@ pub fn getEntrySequential(pack: Pack, entry: i16) ?[]const u8 {
     const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
     const start_entry = bigToNative(i16, entries[0].entry);
 
-    const offset = entries[entry - start_entry];
-
-    var len: usize = undefined;
-    if (entry - start_entry == num_entries) {
-        len = bytes.len - offset;
-    } else {
-        len = bigToNative(u32, entries[entry - start_entry].offset) - offset;
-    }
+    const index = @intCast(usize, entry - start_entry);
+    const offset = bigToNative(u32, entries[index].offset);
+    var len: usize = if (index + 1 == num_entries) bytes.len - offset else bigToNative(u32, entries[index + 1].offset) - offset;
     return bytes[offset .. offset + len];
+}
+
+/// Find an entry in the given pack
+pub fn getEntryBytes(pack: Pack, entry: i16) ![]const u8 {
+    return switch (pack) {
+        .object_groups,
+        .rle,
+        .crle,
+        .rle_16,
+        .crle_16,
+        .sounds,
+        .road,
+        .level_01,
+        .level_02,
+        .level_03,
+        .level_04,
+        .level_05,
+        .level_06,
+        .level_07,
+        .level_08,
+        .level_09,
+        .level_10,
+        => try getEntrySequential(pack, entry),
+        .object_type,
+        .sprites,
+        .textures,
+        .textures_16,
+        .sprites_16,
+        => try getEntrySparse(pack, entry),
+    };
+}
+
+/// Find an entry in the given pack and parse into the struct type
+pub fn getEntry(comptime T: type, pack: Pack, entry: i16) !T {
+    const bytes = try getEntryBytes(pack, entry);
+    var reader = utils.Reader.init(bytes);
+    return try reader.read(T);
+}
+
+/// Find an entry in the pack and parse as a slice of the given type
+pub fn getEntrySlice(comptime T: type, allocator: Allocator, pack: Pack, entry: i16) ![]T {
+    const bytes = try getEntryBytes(pack, entry);
+    var reader = utils.Reader.init(bytes);
+    const len = bytes.len / @sizeOf(T);
+    return try reader.readSlice(T, allocator, len);
 }
 
 /// Decrypt the bytes with the given key. Returns a special check value
