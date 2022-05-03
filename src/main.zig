@@ -7,6 +7,9 @@ const mem = std.mem;
 const Allocator = std.mem.Allocator;
 
 const game = @import("game.zig");
+const lzrw = @import("lzrw.zig");
+const packs = @import("packs.zig");
+const resources = @import("resources.zig");
 
 const version = "0.0";
 
@@ -26,8 +29,10 @@ pub fn main() !void {
 }
 
 fn handleArgs(allocator: Allocator, args: [][:0]u8) !void {
-    if (std.mem.eql(u8, args[1], "register")) {
+    if (mem.eql(u8, args[1], "register")) {
         try registerNewUser(allocator, args);
+    } else if (mem.eql(u8, args[1], "dump-resource")) {
+        try dumpResource(allocator, args);
     }
 }
 
@@ -87,6 +92,40 @@ fn formatName(allocator: Allocator, name: []const u8) ![]u8 {
 
     buf = try allocator.realloc(buf, i);
     return buf;
+}
+
+fn dumpResource(allocator: Allocator, args: [][:0]const u8) !void {
+    const stdout = std.io.getStdOut().writer();
+    const stderr = std.io.getStdErr().writer();
+    if (args.len != 4) {
+        try stderr.print("usage: {s} {s} [type] [id]\n", .{ args[0], args[1] });
+        return;
+    }
+
+    const resource_type = std.mem.trim(u8, args[2], " ");
+    const id = std.fmt.parseInt(u16, std.mem.trim(u8, args[3], " "), 0) catch {
+        try stderr.print("error: invalid character or overflow for resource id\n", .{});
+        return;
+    };
+
+    if (resources.getResource(resource_type, id)) |resource| {
+        if (mem.eql(u8, resource_type, "Chck")) {
+            _ = try stdout.write(resource);
+        } else if (mem.eql(u8, resource_type, "Pack") and id > 142) {
+            var buf = try allocator.dupe(u8, resource);
+            defer allocator.free(buf);
+            _ = packs.decrypt(buf, packs.decryption_key);
+            const decompressed = try lzrw.decompressResource(allocator, buf);
+            defer allocator.free(decompressed);
+            _ = try stdout.write(decompressed);
+        } else {
+            const decompressed = try lzrw.decompressResource(allocator, resource);
+            defer allocator.free(decompressed);
+            _ = try stdout.write(decompressed);
+        }
+    } else {
+        try stderr.print("error: invalid resource\n", .{});
+    }
 }
 
 comptime {

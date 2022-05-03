@@ -13,6 +13,8 @@ const nativeToBig = std.mem.nativeToBig;
 const lzrw = @import("lzrw.zig");
 const resources = @import("resources.zig");
 
+pub const decryption_key: u32 = 0x1E42A71F;
+
 // TODO: These names should match the descriptions in resources.zig
 pub const Pack = enum(u8) {
     object_type,
@@ -128,9 +130,34 @@ pub fn getEntrySparse(pack: Pack, entry: i16) ?[]const u8 {
     } else return null;
 }
 
+/// TODO: make this (and getEntrySparse) return error on invalid pack, not
+/// an optional. There is no useful reason for a null, but an error is valid
+pub fn getEntrySequential(pack: Pack, entry: i16) ?[]const u8 {
+    const id = @enumToInt(pack);
+    if (packs[id] == null) return null;
+    const bytes = @alignCast(@alignOf(Header), packs[id].?);
+
+    const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
+    const num_entries = @intCast(usize, bigToNative(i16, header.entry));
+
+    const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
+    const start_entry = bigToNative(i16, entries[0].entry);
+
+    const offset = entries[entry - start_entry];
+
+    var len: usize = undefined;
+    if (entry - start_entry == num_entries) {
+        len = bytes.len - offset;
+    } else {
+        len = bigToNative(u32, entries[entry - start_entry].offset) - offset;
+    }
+    return bytes[offset .. offset + len];
+}
+
 /// Decrypt the bytes with the given key. Returns a special check value
 /// used to verify valid registration.
-fn decrypt(bytes: []u8, key: u32) u32 {
+/// TODO: remove pub when no longer needed for dump-resource subcommand
+pub fn decrypt(bytes: []u8, key: u32) u32 {
     var check: u32 = 0;
 
     // The first 256 bytes of the pack are an unencrypted header
@@ -203,15 +230,13 @@ test "pack loading" {
 }
 
 test "pack decryption" {
-    const key = 0x1E42A71F;
-
-    try loadEncrypted(testing.allocator, .level_04, key);
-    try loadEncrypted(testing.allocator, .level_05, key);
-    try loadEncrypted(testing.allocator, .level_06, key);
-    try loadEncrypted(testing.allocator, .level_07, key);
-    try loadEncrypted(testing.allocator, .level_08, key);
-    try loadEncrypted(testing.allocator, .level_09, key);
-    try loadEncrypted(testing.allocator, .level_10, key);
+    try loadEncrypted(testing.allocator, .level_04, decryption_key);
+    try loadEncrypted(testing.allocator, .level_05, decryption_key);
+    try loadEncrypted(testing.allocator, .level_06, decryption_key);
+    try loadEncrypted(testing.allocator, .level_07, decryption_key);
+    try loadEncrypted(testing.allocator, .level_08, decryption_key);
+    try loadEncrypted(testing.allocator, .level_09, decryption_key);
+    try loadEncrypted(testing.allocator, .level_10, decryption_key);
 
     unload(testing.allocator, .level_04);
     unload(testing.allocator, .level_05);
@@ -235,8 +260,7 @@ test "pack decryption check" {
     defer testing.allocator.free(buf);
 
     std.mem.copy(u8, buf, level_04);
-    // TODO: store the global decryption key as a public constant somewhere
-    const check_actual = decrypt(buf, 0x1E42A71F);
+    const check_actual = decrypt(buf, decryption_key);
 
     try testing.expectEqual(check_val, check_actual);
 }
