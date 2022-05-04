@@ -3,10 +3,13 @@
 const packs = @import("packs.zig");
 const random = @import("random.zig");
 const std = @import("std");
+const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
+
+const inf = std.math.inf_f32;
 
 // Information for a specific object
 const Object = struct {
@@ -64,6 +67,16 @@ const ObjectType = packed struct {
     weapon_obj: i16,
     weapon_info: i16,
 };
+
+const ObjectGroup = packed struct {
+    entry: i16,
+    min_offs: i16,
+    max_offs: i16,
+    prob: i16,
+    dir: f32,
+};
+
+pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
 
 // Until packed bool structs can be cast to integer types reliably
 // (allowing to be read from the Pack data), just use integer constants
@@ -136,4 +149,52 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
     }
 
     return object;
+}
+
+pub fn insertObjectGroup(allocator: Allocator, group: ObjectGroupRef) !void {
+    var probabilities: [100]usize = undefined;
+    // TODO: do I ever getEntryBytes without making a reader?
+    const bytes = try packs.getEntryBytes(.object_groups, group.id);
+    var reader = utils.Reader.init(bytes);
+    const num_entries = try reader.read(u32);
+    const groups = try reader.readSlice(ObjectGroup, allocator, num_entries);
+
+    // Fill probability table
+    {
+        var index: usize = 0;
+        for (groups) |g, i| {
+            var probCount: usize = 0;
+            while (probCount < g.prob) : (probCount += 1) {
+                probabilities[index] = i;
+                index += 1;
+            }
+        }
+    }
+
+    var index: usize = 0;
+    while (index < group.len) : (index += 1) {
+        const prob = probabilities[@intCast(usize, random.randomInt(0, 100))];
+        var object = try create(allocator, groups[prob].entry);
+        object.pos = .{ .x = inf, .y = inf };
+        object.dir = groups[prob].dir;
+        var control: ObjectControl = undefined;
+        object.pos = getUniquePosition(groups[prob].min_offs, groups[prob].max_offs, &object.dir, &control);
+        object.control = control;
+
+        // TODO: need to pass in level data
+        if (object.control == .drive_up) {
+            object.target = 0;
+        } else {
+            object.target = 0;
+        }
+    }
+}
+
+// TODO: need to pass in level data
+pub fn getUniquePosition(min_offs: i16, max_offs: i16, object_dir: *f32, control: *ObjectControl) Point {
+    _ = min_offs;
+    _ = max_offs;
+    _ = object_dir;
+    _ = control;
+    return .{ .x = inf, .y = inf };
 }

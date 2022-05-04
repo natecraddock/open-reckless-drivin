@@ -6,6 +6,7 @@ const std = @import("std");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
+const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
 const Level = packed struct {
@@ -15,8 +16,6 @@ const Level = packed struct {
     x_start: i16,
     level_end: u16,
 };
-
-const ObjectGroupRef = packed struct { id: i16, num: i16 };
 
 const Mark = packed struct { p1: Point, p2: Point };
 
@@ -61,6 +60,8 @@ const ObjectPosition = packed struct {
     _pad: i16,
 };
 
+const RoadSegment = packed struct { parts: [4]i16 };
+
 pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     // Ensure the level data is loaded in memory
     switch (level_id) {
@@ -97,7 +98,6 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     // Read object positions and create objects
     const num_obs = try reader.read(u32);
     const object_positions = try reader.readSlice(ObjectPosition, allocator, num_obs);
-    const road_length = object_positions.len;
     defer allocator.free(object_positions);
     for (object_positions) |pos| {
         // TODO: leak! Store these objects somewhere
@@ -107,12 +107,24 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
         object.pos.y = @intToFloat(f32, pos.y);
     }
 
+    // Read road data
+    const road_length = try reader.read(u32);
+    const road_data = try reader.readSlice(RoadSegment, allocator, road_length);
+
+    // Create object groups
+    for (level.object_groups[0 .. level.object_groups.len - 1]) |group| {
+        if (group.id != 0) try objects.insertObjectGroup(allocator, group);
+    }
+
+    // Create player object
+
     std.debug.print("{}\n", .{level});
     std.debug.print("{}\n", .{marks[0]});
     std.debug.print("{}\n", .{road_info});
     std.debug.print("{}\n", .{track_up[0]});
     std.debug.print("{}\n", .{track_down[0]});
     std.debug.print("{}\n", .{road_length});
+    std.debug.print("{}\n", .{road_data[0]});
 
     return level;
 }
