@@ -94,21 +94,21 @@ pub fn deinitObjectTypes() void {
 }
 
 /// Get a pointer to an object type. See comment above `object_types` for more information.
-pub fn getObjectType(entity: i16) !*ObjectType {
-    const gop = try object_types.getOrPut(entity);
+pub fn getObjectType(entry: i16) !*ObjectType {
+    const gop = try object_types.getOrPut(entry);
     if (gop.found_existing) {
         return gop.value_ptr;
     } else {
-        gop.value_ptr.* = try packs.getEntry(ObjectType, .object_type, entity);
+        gop.value_ptr.* = try packs.getEntry(ObjectType, .object_type, entry);
         return gop.value_ptr;
     }
 }
 
-/// Create a new object of the given entity type
-pub fn create(allocator: Allocator, entity: i16) !*Object {
+/// Create a new object of the given entry type
+pub fn create(allocator: Allocator, entry: i16) !*Object {
     // TODO: is it important to zero the memory of this object?
     var object = try allocator.create(Object);
-    var obtype = try getObjectType(entity);
+    var obtype = try getObjectType(entry);
     object.type = obtype;
 
     // TODO: layer flags

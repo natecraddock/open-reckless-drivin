@@ -57,7 +57,7 @@ const ObjectPosition = packed struct {
     x: i32,
     y: i32,
     dir: f32,
-    entity: i16,
+    entry: i16,
     _pad: i16,
 };
 
@@ -101,7 +101,7 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     defer allocator.free(object_positions);
     for (object_positions) |pos| {
         // TODO: leak! Store these objects somewhere
-        var object = try objects.create(allocator, pos.entity);
+        var object = try objects.create(allocator, pos.entry);
         object.dir = pos.dir;
         object.pos.x = @intToFloat(f32, pos.x);
         object.pos.y = @intToFloat(f32, pos.y);
