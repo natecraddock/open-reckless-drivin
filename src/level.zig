@@ -1,11 +1,11 @@
 //! level.zig: for managing the data for each game level
 
+const objects = @import("objects.zig");
+const packs = @import("packs.zig");
 const std = @import("std");
+const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
-
-const packs = @import("packs.zig");
-
 const Point = @import("point.zig").Point;
 
 const Level = packed struct {
@@ -46,6 +46,21 @@ const RoadInfo = packed struct {
     slide_friction: f32,
 };
 
+const TrackInfo = packed struct {
+    flags: u16,
+    x: i16,
+    y: i32,
+    velocity: f32,
+};
+
+const ObjectPosition = packed struct {
+    x: i32,
+    y: i32,
+    dir: f32,
+    entity: i16,
+    _pad: i16,
+};
+
 pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     // Ensure the level data is loaded in memory
     switch (level_id) {
@@ -68,12 +83,41 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     const marks = try packs.getEntrySlice(Mark, allocator, level_id, 2);
     const road_info = try packs.getEntry(RoadInfo, .road, level.road_info_entry);
 
-    _ = level;
-    _ = marks;
+    // The first entry in a level (the level header info) contains many bytes after
+    // the header before the next entry. These must be parsed manually to get more
+    // information about the road.
+    var reader = utils.Reader.init(try packs.getEntryBytes(level_id, 1));
+    try reader.skip(@sizeOf(Level));
+
+    // I believe these are the positions and velocities of the objects on the track
+    // those travelling up, and those travelling down.
+    const track_up = try readTrackInfo(allocator, &reader);
+    const track_down = try readTrackInfo(allocator, &reader);
+
+    // Read object positions and create objects
+    const num_obs = try reader.read(u32);
+    const object_positions = try reader.readSlice(ObjectPosition, allocator, num_obs);
+    const road_length = object_positions.len;
+    defer allocator.free(object_positions);
+    for (object_positions) |pos| {
+        // TODO: leak! Store these objects somewhere
+        var object = try objects.create(allocator, pos.entity);
+        object.dir = pos.dir;
+        object.pos.x = @intToFloat(f32, pos.x);
+        object.pos.y = @intToFloat(f32, pos.y);
+    }
 
     std.debug.print("{}\n", .{level});
     std.debug.print("{}\n", .{marks[0]});
     std.debug.print("{}\n", .{road_info});
+    std.debug.print("{}\n", .{track_up[0]});
+    std.debug.print("{}\n", .{track_down[0]});
+    std.debug.print("{}\n", .{road_length});
 
     return level;
+}
+
+fn readTrackInfo(allocator: Allocator, reader: *utils.Reader) ![]const TrackInfo {
+    const len = try reader.read(u32);
+    return try reader.readSlice(TrackInfo, allocator, len);
 }

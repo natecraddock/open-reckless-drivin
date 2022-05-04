@@ -8,6 +8,7 @@ const time = std.time;
 const Allocator = std.mem.Allocator;
 
 const level = @import("level.zig");
+const objects = @import("objects.zig");
 const packs = @import("packs.zig");
 const random = @import("random.zig");
 const sprites = @import("sprites.zig");
@@ -57,6 +58,10 @@ pub fn start(allocator: Allocator) !void {
     defer packs.unload(allocator, .crle_16);
     try packs.load(allocator, .textures_16);
     defer packs.unload(allocator, .textures_16);
+
+    // Initialize object type map
+    try objects.initObjectTypes(allocator);
+    defer objects.deinitObjectTypes();
 
     var game: Game = .{};
 
