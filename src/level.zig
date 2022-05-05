@@ -117,6 +117,12 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     }
 
     // Create player object
+    // TODO: use constants for player car ID
+    var player = try objects.create(allocator, if (road_info.water) 201 else 128);
+    player.pos.x = @intToFloat(f32, level.x_start);
+    player.pos.y = 500.0;
+    player.control = .drive_up;
+    player.target = 1;
 
     std.debug.print("{}\n", .{level});
     std.debug.print("{}\n", .{marks[0]});
