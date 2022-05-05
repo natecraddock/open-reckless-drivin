@@ -34,35 +34,44 @@ const Player = struct {
     score: i32 = 0,
 };
 
+fn initData(allocator: Allocator) !void {
+    // load packs
+    try packs.load(allocator, .sounds);
+    try packs.load(allocator, .object_type);
+    try packs.load(allocator, .object_groups);
+    try packs.load(allocator, .road);
+
+    // TODO: disable full color based on prefs
+    // if implemented, then this defer may free already freed memory
+    try packs.load(allocator, .rle_16);
+    try packs.load(allocator, .crle_16);
+    try packs.load(allocator, .textures_16);
+
+    // Initialize object type map
+    try objects.initObjectTypes(allocator);
+}
+
+fn deinitData(allocator: Allocator) void {
+    defer packs.unload(allocator, .sounds);
+    defer packs.unload(allocator, .object_type);
+    defer packs.unload(allocator, .object_groups);
+    defer packs.unload(allocator, .road);
+    defer packs.unload(allocator, .rle_16);
+    defer packs.unload(allocator, .crle_16);
+    defer packs.unload(allocator, .textures_16);
+    defer objects.deinitObjectTypes();
+}
+
 /// Run the game
 pub fn start(allocator: Allocator) !void {
     // initialize PRNG
     random.init(@bitCast(u64, time.timestamp()));
 
+    // load packs and other constant game resources
+    try initData(allocator);
+    defer deinitData(allocator);
+
     // TODO: load preferences & check registration
-
-    // load packs
-    try packs.load(allocator, .sounds);
-    defer packs.unload(allocator, .sounds);
-    try packs.load(allocator, .object_type);
-    defer packs.unload(allocator, .object_type);
-    try packs.load(allocator, .object_groups);
-    defer packs.unload(allocator, .object_groups);
-    try packs.load(allocator, .road);
-    defer packs.unload(allocator, .road);
-
-    // TODO: disable full color based on prefs
-    // if implemented, then this defer may free already freed memory
-    try packs.load(allocator, .rle_16);
-    defer packs.unload(allocator, .rle_16);
-    try packs.load(allocator, .crle_16);
-    defer packs.unload(allocator, .crle_16);
-    try packs.load(allocator, .textures_16);
-    defer packs.unload(allocator, .textures_16);
-
-    // Initialize object type map
-    try objects.initObjectTypes(allocator);
-    defer objects.deinitObjectTypes();
 
     var game: Game = .{};
 
