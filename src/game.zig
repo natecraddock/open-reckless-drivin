@@ -16,7 +16,7 @@ const utils = @import("utils.zig");
 
 const Sprite = sprites.Sprite;
 
-const Game = struct {
+pub const Game = struct {
     state: enum {
         menu,
         game,
@@ -79,6 +79,7 @@ pub fn start(allocator: Allocator) !void {
     game.sprites = try sprites.load(allocator);
     defer sprites.unload(allocator, game.sprites);
 
+    // load the first level
     game.level = try levels.load(allocator, .level_01);
     defer game.level.deinit(allocator);
 
@@ -91,4 +92,14 @@ pub fn start(allocator: Allocator) !void {
     player.control = .drive_up;
     player.target = 1;
     try game.level.objects.append(player);
+
+    try gameloop(allocator, &game);
+}
+
+/// The main gameloop of Reckless Drivin'
+fn gameloop(allocator: Allocator, game: *Game) !void {
+    while (game.state == .game) {
+        objects.update(game, &game.level);
+    }
+    _ = allocator;
 }

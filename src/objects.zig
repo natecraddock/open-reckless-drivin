@@ -2,15 +2,21 @@
 
 const packs = @import("packs.zig");
 const random = @import("random.zig");
+const render = @import("render.zig");
 const std = @import("std");
+const trig = @import("trig.zig");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
 const ArrayList = std.ArrayList;
+const Game = @import("game.zig").Game;
+const Level = @import("levels.zig").Level;
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
 
 const inf = std.math.inf_f32;
+const max_rot_vel: f32 = 2 * trig.pi * 5;
+const pixels_per_peter: f32 = 9.0;
 
 // Information for a specific object
 pub const Object = struct {
@@ -89,6 +95,7 @@ const heli_flag: u16 = 1 << 14;
 
 /// flags2
 const road_kill: u16 = 1 << 4;
+const object_floating: u16 = 1 << 14;
 
 /// Due to endianness flipping, the object type data cannot be a simple pointer
 /// into the pack data in the binary. Rather than load a copy for each object
@@ -201,4 +208,85 @@ pub fn getUniquePosition(min_offs: i16, max_offs: i16, object_dir: *f32, control
     _ = object_dir;
     _ = control;
     return .{ .x = inf, .y = inf };
+}
+
+/// Repair an object
+inline fn repair(object: *Object) void {
+    object.damage = 0;
+    object.damage_flags = 0;
+    // TODO: sprite unused
+    object.frame = object.type.frame;
+}
+
+fn move(level: *Level, object: *Object) void {
+    // Move objects
+    if (object.velocity.x != 0.0 or object.velocity.y != 0.0) {
+        object.pos = Point.add(object.pos, Point.scale(object.velocity, pixels_per_peter * render.frame_duration));
+
+        // Cycle objects that moved off the track
+        if (object.pos.y > @intToFloat(f32, level.road_data.len * 2)) {
+            object.pos = .{
+                .x = @intToFloat(f32, level.track_up[0].x),
+                .y = 100,
+            };
+            if (object.control == .drive_up) object.target = 0;
+            repair(object);
+        } else if (object.pos.y < 0.0) {
+            object.pos = .{
+                .x = @intToFloat(f32, level.track_down[0].x),
+                .y = @intToFloat(f32, level.road_data.len * 2 - 100),
+            };
+            if (object.control == .drive_down) object.target = 0;
+            repair(object);
+        }
+    }
+
+    // Handle water
+    if (level.road_info.water != 0 and (object.type.flags2 & object_floating != 0)) {
+        object.pos = Point.add(object.pos, .{
+            .x = -level.road_info.x_front_drift * 0.5 * render.frame_duration,
+            .y = level.road_info.y_front_drift * 0.5 * render.frame_duration,
+        });
+    }
+
+    // Rotations
+    if (object.rot_vel != 0) {
+        object.dir += object.rot_vel * render.frame_duration;
+
+        if (object.dir >= 2 * trig.pi) {
+            object.dir -= 2 * trig.pi;
+        } else if (object.dir < 0.0) {
+            object.dir += 2 * trig.pi;
+        }
+
+        // TODO: object.rot_vel = std.math.clamp(object.rot_vel, -max_rot_vel, max_rot_vel);
+        if (std.math.fabs(object.rot_vel) > max_rot_vel) {
+            object.rot_vel = if (object.rot_vel > 0) max_rot_vel else -max_rot_vel;
+        }
+    }
+
+    // Handle jumping objects
+    if (object.jump_vel != 0) {
+        const gravity: f32 = 50.0;
+        object.jump_height += object.jump_vel * render.frame_duration;
+        object.jump_vel -= gravity * render.frame_duration;
+        if (object.jump_vel == 0.0) object.jump_vel = -0.0001;
+
+        // Place back on track?
+        if (object.jump_height <= 0 and object.jump_vel <= 0) {
+            object.jump_height = 0;
+            object.jump_vel = 0;
+            // TODO: sounds
+        }
+    }
+}
+
+/// Update all game objects
+pub fn update(game: *Game, level: *Level) void {
+    // TODO: special handling for the player
+    // TODO: Read events with SDL
+    for (level.objects.items) |object| {
+        move(level, object);
+    }
+    _ = game;
 }

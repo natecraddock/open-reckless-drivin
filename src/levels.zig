@@ -84,6 +84,7 @@ pub const Level = struct {
         allocator.free(self.track_down);
         allocator.free(self.road_data);
         for (self.objects.items) |object| {
+            // TODO: see DestroyObject for special handling of player?
             allocator.destroy(object);
         }
         self.objects.deinit();

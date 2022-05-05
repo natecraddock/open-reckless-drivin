@@ -3,7 +3,7 @@
 //! in this table would impact the gameplay, so to be safe we will include the table
 
 const table_size: u16 = 1024;
-const pi: f32 = 3.1415;
+pub const pi: f32 = 3.1415;
 
 const sine_table = brk: {
     @setEvalBranchQuota(1025);
