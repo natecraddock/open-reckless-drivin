@@ -6,6 +6,8 @@ const std = @import("std");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
+const Object = objects.Object;
 const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
@@ -72,6 +74,8 @@ pub const Level = struct {
     road_info: RoadInfo,
     road_data: []const RoadSegment,
 
+    objects: ArrayList(*Object),
+
     /// Free all the data associated with a level
     pub fn deinit(self: *Level, allocator: Allocator) void {
         packs.unload(allocator, self.pack);
@@ -79,6 +83,10 @@ pub const Level = struct {
         allocator.free(self.track_up);
         allocator.free(self.track_down);
         allocator.free(self.road_data);
+        for (self.objects.items) |object| {
+            allocator.destroy(object);
+        }
+        self.objects.deinit();
     }
 };
 
@@ -101,6 +109,8 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     }
 
     var level: Level = undefined;
+    level.objects = ArrayList(*Object).init(allocator);
+
     level.pack = level_id;
     level.header = try packs.getEntry(LevelHeader, level_id, 1);
     level.marks = try packs.getEntrySlice(Mark, allocator, level_id, 2);
@@ -127,6 +137,7 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
         object.dir = pos.dir;
         object.pos.x = @intToFloat(f32, pos.x);
         object.pos.y = @intToFloat(f32, pos.y);
+        try level.objects.append(object);
     }
 
     // Read road data
@@ -135,7 +146,7 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
 
     // Create object groups
     for (level.header.object_groups[0 .. level.header.object_groups.len - 1]) |group| {
-        if (group.id != 0) try objects.insertObjectGroup(allocator, group);
+        if (group.id != 0) try objects.insertObjectGroup(allocator, &level.objects, group);
     }
 
     return level;

@@ -81,4 +81,5 @@ pub fn start(allocator: Allocator) !void {
     player.pos.y = 500.0;
     player.control = .drive_up;
     player.target = 1;
+    try game.level.objects.append(player);
 }

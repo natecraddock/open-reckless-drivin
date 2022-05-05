@@ -6,13 +6,14 @@ const std = @import("std");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
+const ArrayList = std.ArrayList;
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
 
 const inf = std.math.inf_f32;
 
 // Information for a specific object
-const Object = struct {
+pub const Object = struct {
     pos: Point,
     velocity: Point,
     dir: f32,
@@ -151,13 +152,14 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
     return object;
 }
 
-pub fn insertObjectGroup(allocator: Allocator, group: ObjectGroupRef) !void {
+pub fn insertObjectGroup(allocator: Allocator, objects: *ArrayList(*Object), group: ObjectGroupRef) !void {
     var probabilities: [100]usize = undefined;
     // TODO: do I ever getEntryBytes without making a reader?
     const bytes = try packs.getEntryBytes(.object_groups, group.id);
     var reader = utils.Reader.init(bytes);
     const num_entries = try reader.read(u32);
     const groups = try reader.readSlice(ObjectGroup, allocator, num_entries);
+    defer allocator.free(groups);
 
     // Fill probability table
     {
@@ -187,6 +189,8 @@ pub fn insertObjectGroup(allocator: Allocator, group: ObjectGroupRef) !void {
         } else {
             object.target = 0;
         }
+
+        try objects.append(object);
     }
 }
 
