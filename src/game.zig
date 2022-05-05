@@ -7,7 +7,7 @@ const time = std.time;
 
 const Allocator = std.mem.Allocator;
 
-const level = @import("level.zig");
+const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
 const random = @import("random.zig");
@@ -23,6 +23,7 @@ const Game = struct {
     } = .game,
     player: Player = .{},
     sprites: []?Sprite = undefined,
+    level: levels.Level = undefined,
 };
 
 const Player = struct {
@@ -69,5 +70,15 @@ pub fn start(allocator: Allocator) !void {
     game.sprites = try sprites.load(allocator);
     defer sprites.unload(allocator, game.sprites);
 
-    _ = try level.load(allocator, .level_01);
+    game.level = try levels.load(allocator, .level_01);
+    defer game.level.deinit(allocator);
+
+    // Create player object
+    // TODO: use constants for player car ID
+    // TODO: use bool for water?
+    var player = try objects.create(allocator, if (game.level.road_info.water == 1) 201 else 128);
+    player.pos.x = @intToFloat(f32, game.level.header.x_start);
+    player.pos.y = 500.0;
+    player.control = .drive_up;
+    player.target = 1;
 }

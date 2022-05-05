@@ -9,7 +9,7 @@ const Allocator = std.mem.Allocator;
 const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
-const Level = packed struct {
+const LevelHeader = packed struct {
     road_info_entry: i16,
     time: u16,
     object_groups: [10]ObjectGroupRef,
@@ -62,6 +62,26 @@ const ObjectPosition = packed struct {
 
 const RoadSegment = packed struct { parts: [4]i16 };
 
+/// Holds all data relevant to the current level
+pub const Level = struct {
+    pack: packs.Pack,
+    header: LevelHeader,
+    marks: []const Mark,
+    track_up: []const TrackInfo,
+    track_down: []const TrackInfo,
+    road_info: RoadInfo,
+    road_data: []const RoadSegment,
+
+    /// Free all the data associated with a level
+    pub fn deinit(self: *Level, allocator: Allocator) void {
+        packs.unload(allocator, self.pack);
+        allocator.free(self.marks);
+        allocator.free(self.track_up);
+        allocator.free(self.track_down);
+        allocator.free(self.road_data);
+    }
+};
+
 pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     // Ensure the level data is loaded in memory
     switch (level_id) {
@@ -80,20 +100,22 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
         else => return error.InvalidLevel,
     }
 
-    const level = try packs.getEntry(Level, level_id, 1);
-    const marks = try packs.getEntrySlice(Mark, allocator, level_id, 2);
-    const road_info = try packs.getEntry(RoadInfo, .road, level.road_info_entry);
+    var level: Level = undefined;
+    level.pack = level_id;
+    level.header = try packs.getEntry(LevelHeader, level_id, 1);
+    level.marks = try packs.getEntrySlice(Mark, allocator, level_id, 2);
+    level.road_info = try packs.getEntry(RoadInfo, .road, level.header.road_info_entry);
 
     // The first entry in a level (the level header info) contains many bytes after
     // the header before the next entry. These must be parsed manually to get more
     // information about the road.
     var reader = utils.Reader.init(try packs.getEntryBytes(level_id, 1));
-    try reader.skip(@sizeOf(Level));
+    try reader.skip(@sizeOf(LevelHeader));
 
     // I believe these are the positions and velocities of the objects on the track
     // those travelling up, and those travelling down.
-    const track_up = try readTrackInfo(allocator, &reader);
-    const track_down = try readTrackInfo(allocator, &reader);
+    level.track_up = try readTrackInfo(allocator, &reader);
+    level.track_down = try readTrackInfo(allocator, &reader);
 
     // Read object positions and create objects
     const num_obs = try reader.read(u32);
@@ -109,28 +131,12 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
 
     // Read road data
     const road_length = try reader.read(u32);
-    const road_data = try reader.readSlice(RoadSegment, allocator, road_length);
+    level.road_data = try reader.readSlice(RoadSegment, allocator, road_length);
 
     // Create object groups
-    for (level.object_groups[0 .. level.object_groups.len - 1]) |group| {
+    for (level.header.object_groups[0 .. level.header.object_groups.len - 1]) |group| {
         if (group.id != 0) try objects.insertObjectGroup(allocator, group);
     }
-
-    // Create player object
-    // TODO: use constants for player car ID
-    var player = try objects.create(allocator, if (road_info.water) 201 else 128);
-    player.pos.x = @intToFloat(f32, level.x_start);
-    player.pos.y = 500.0;
-    player.control = .drive_up;
-    player.target = 1;
-
-    std.debug.print("{}\n", .{level});
-    std.debug.print("{}\n", .{marks[0]});
-    std.debug.print("{}\n", .{road_info});
-    std.debug.print("{}\n", .{track_up[0]});
-    std.debug.print("{}\n", .{track_down[0]});
-    std.debug.print("{}\n", .{road_length});
-    std.debug.print("{}\n", .{road_data[0]});
 
     return level;
 }
