@@ -309,12 +309,56 @@ fn move(level: *Level, object: *Object) void {
     }
 }
 
+/// Update sprite data for objects
+fn animate(object: *Object) void {
+    const obtype = object.type;
+    if (obtype.frame_duration == 0) return;
+
+    // Cops
+    if (obtype.flags & cop_flag != 0 and obtype.flags & heli_flag == 0 and obtype.flags & engine_sound_flag == 0) {
+        if (object.control != .cop_control) {
+            object.frame = obtype.frame;
+            return;
+        }
+    }
+
+    object.frame_duration -= render.frame_duration;
+
+    // Change sprite frames
+    if (object.frame_duration <= 0.0) {
+        object.frame_duration += obtype.frame_duration;
+        if ((object.frame >= obtype.frame) and (object.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1)) {
+            object.frame += 1;
+        } else if (obtype.flags & die_when_anim_ends_flag != 0 and (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1)) {
+            // TODO: kill object;
+            return;
+        } else {
+            object.frame_duration += 1;
+            object.frame = obtype.frame;
+            // TODO: added a wrapping subtraction here, I think it's okay though
+            if (object.frame_repetition == (obtype.num_frames >> 8) -% 1 or (obtype.num_frames >> 8 != 0)) {
+                object.frame_repetition = 0;
+
+                if (obtype.other_sound != 0) {
+                    // TODO: play sounds
+                }
+            }
+        }
+    }
+
+    // Don't animate dead roadkill?
+    if (obtype.flags2 & road_kill_flag != 0 and (object.velocity.x == 0.0 and object.velocity.y == 0)) {
+        object.frame = obtype.frame;
+    }
+}
+
 /// Update all game objects
 pub fn update(game: *Game, level: *Level) void {
     // TODO: special handling for the player
     // TODO: Read events with SDL
     for (level.objects.items) |object| {
         move(level, object);
+        animate(object);
     }
     _ = game;
 }
