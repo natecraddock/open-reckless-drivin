@@ -90,12 +90,40 @@ pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
 // for the flag values
 
 /// flags
+const wheel_flag: u16 = 1 << 0;
+const solid_friction_flag: u16 = 1 << 1;
+const back_collision_flag: u16 = 1 << 2;
 const random_frame_flag: u16 = 1 << 3;
+const die_when_anim_ends_flag: u16 = 1 << 4;
+const default_death_flag: u16 = 1 << 5;
+const follow_marks_flag: u16 = 1 << 6;
+const overtake_flag: u16 = 1 << 7;
+const slow_flag: u16 = 1 << 8;
+const long_flag: u16 = 1 << 9;
+const killed_by_cars_flag: u16 = 1 << 10;
+const kills_cars_flag: u16 = 1 << 11;
+const bounce_flag: u16 = 1 << 12;
+const cop_flag: u16 = 1 << 13;
 const heli_flag: u16 = 1 << 14;
+const bonus_flag: u16 = 1 << 15;
 
 /// flags2
-const road_kill: u16 = 1 << 4;
-const object_floating: u16 = 1 << 14;
+const addon_flag: u16 = 1 << 0;
+const front_collision_flag: u16 = 1 << 1;
+const oil_flag: u16 = 1 << 2;
+const missile_flag: u16 = 1 << 3;
+const road_kill_flag: u16 = 1 << 4;
+const layer_flag_1: u16 = 1 << 5;
+const layer_flag_2: u16 = 1 << 6;
+const engine_sound_flag: u16 = 1 << 7;
+const ramp_flag: u16 = 1 << 8;
+const sink_flag: u16 = 1 << 9;
+const damageable_flag: u16 = 1 << 10;
+const die_when_off_screen_flag: u16 = 1 << 11;
+const rear_drive_flag: u16 = 1 << 12;
+const rear_steer_flag: u16 = 1 << 13;
+const object_floating_flag: u16 = 1 << 14;
+const object_bump_flag: u16 = 1 << 15;
 
 /// Due to endianness flipping, the object type data cannot be a simple pointer
 /// into the pack data in the binary. Rather than load a copy for each object
@@ -142,7 +170,7 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
         object.frame = obtype.frame;
     }
 
-    if (obtype.flags2 & road_kill != 0) {
+    if (obtype.flags2 & road_kill_flag != 0) {
         object.control = .cop_control;
     } else {
         object.control = .no_input;
@@ -242,7 +270,7 @@ fn move(level: *Level, object: *Object) void {
     }
 
     // Handle water
-    if (level.road_info.water != 0 and (object.type.flags2 & object_floating != 0)) {
+    if (level.road_info.water != 0 and (object.type.flags2 & object_floating_flag != 0)) {
         object.pos = Point.add(object.pos, .{
             .x = -level.road_info.x_front_drift * 0.5 * render.frame_duration,
             .y = level.road_info.y_front_drift * 0.5 * render.frame_duration,
