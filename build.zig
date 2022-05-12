@@ -1,10 +1,17 @@
 const std = @import("std");
 
+const Sdk = @import("lib/sdl/Sdk.zig");
+
 pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
     const mode = b.standardReleaseOptions();
 
     const exe = b.addExecutable("reckless-drivin", "src/main.zig");
+
+    // Link SDL2
+    const sdk = Sdk.init(b);
+    sdk.link(exe, .dynamic);
+    exe.addPackage(sdk.getWrapperPackage("sdl"));
 
     exe.linkLibC();
     exe.addIncludeDir("src/c/");
