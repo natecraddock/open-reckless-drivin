@@ -15,8 +15,10 @@ const sprites = @import("sprites.zig");
 const utils = @import("utils.zig");
 
 const Sprite = sprites.Sprite;
+const Window = @import("window.zig").Window;
 
 pub const Game = struct {
+    window: Window = undefined,
     state: enum {
         menu,
         game,
@@ -64,6 +66,11 @@ fn deinitData(allocator: Allocator) void {
 
 /// Run the game
 pub fn start(allocator: Allocator) !void {
+    var game: Game = .{};
+
+    game.window = try Window.init();
+    defer game.window.deinit();
+
     // initialize PRNG
     random.init(@bitCast(u64, time.timestamp()));
 
@@ -72,8 +79,6 @@ pub fn start(allocator: Allocator) !void {
     defer deinitData(allocator);
 
     // TODO: load preferences & check registration
-
-    var game: Game = .{};
 
     // load sprites into memory
     game.sprites = try sprites.load(allocator);
@@ -98,8 +103,22 @@ pub fn start(allocator: Allocator) !void {
 
 /// The main gameloop of Reckless Drivin'
 fn gameloop(allocator: Allocator, game: *Game) !void {
-    while (game.state == .game) {
+    mainloop: while (game.state == .game) {
         objects.update(game, &game.level);
+        // player handling
+        // framecount
+        while (Window.getEvent()) |ev| {
+            switch (ev) {
+                .quit => break :mainloop,
+                .key_up => |key| {
+                    switch (key.scancode) {
+                        .escape => break :mainloop,
+                        else => {},
+                    }
+                },
+                else => {},
+            }
+        }
     }
     _ = allocator;
 }
