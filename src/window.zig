@@ -30,14 +30,14 @@ pub const Window = struct {
             .{ .centered = {} },
             width,
             height,
-            .{ .shown = true, .resizable = true },
+            .{
+                .hidden = true,
+                .resizable = true,
+                .allow_high_dpi = true,
+            },
         );
 
-        var renderer = try sdl.createRenderer(
-            window,
-            null,
-            .{ .accelerated = true, .present_vsync = true },
-        );
+        var renderer = try sdl.createRenderer(window, null, .{});
         try renderer.setLogicalSize(width, height);
 
         // TODO: for some reason this needs to be done after the renderer?
@@ -53,6 +53,8 @@ pub const Window = struct {
             width,
             height,
         );
+
+        sdl.c.SDL_ShowWindow(window.ptr);
 
         return Window{
             .window = window,
@@ -71,10 +73,12 @@ pub const Window = struct {
 
     /// Copy a buffer of pixels to the window for display
     pub fn render(self: *Window, pixels: []const u8) !void {
-        try self.texture.update(pixels, width * 4, null);
+        // try self.texture.update(pixels, width * 4, null);
+        _ = pixels;
         try self.renderer.clear();
         try self.renderer.copy(self.texture, null, null);
         self.renderer.present();
+        sdl.delay(10);
     }
 
     pub fn getEvent() ?sdl.Event {

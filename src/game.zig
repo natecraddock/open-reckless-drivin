@@ -68,9 +68,6 @@ fn deinitData(allocator: Allocator) void {
 pub fn start(allocator: Allocator) !void {
     var game: Game = .{};
 
-    game.window = try Window.init();
-    defer game.window.deinit();
-
     // initialize PRNG
     random.init(@bitCast(u64, time.timestamp()));
 
@@ -98,6 +95,9 @@ pub fn start(allocator: Allocator) !void {
     player.target = 1;
     try game.level.objects.append(player);
 
+    // Finally initialize the window and start the gameloop
+    game.window = try Window.init();
+    defer game.window.deinit();
     try gameloop(allocator, &game);
 }
 
@@ -119,6 +119,8 @@ fn gameloop(allocator: Allocator, game: *Game) !void {
                 else => {},
             }
         }
+
+        try game.window.render(&.{ 0x00, 0x00 });
     }
     _ = allocator;
 }
