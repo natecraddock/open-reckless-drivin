@@ -3,16 +3,16 @@
 //! lzrw-compressed format used in the original Reckless Drivin' game, with
 //! each pack containing multiple entities "packed" into a sequence of bytes.
 
+const lzrw = @import("lzrw.zig");
+const resources = @import("resources.zig");
 const std = @import("std");
+const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
+const Reader = utils.Reader;
 
 const bigToNative = std.mem.bigToNative;
 const nativeToBig = std.mem.nativeToBig;
-
-const lzrw = @import("lzrw.zig");
-const resources = @import("resources.zig");
-const utils = @import("utils.zig");
 
 pub const decryption_key: u32 = 0x1E42A71F;
 
@@ -45,8 +45,11 @@ pub const Pack = enum(u8) {
 /// Level 4 marks the beginning of the encrypted packs
 const encrypted_pack = Pack.level_04;
 
+pub const pack_alignment = @alignOf(u32);
+const num_packs = @typeInfo(Pack).Enum.fields.len;
+
 /// Packs are stored globally, and are read-only from other modules.
-var packs = std.mem.zeroes([@typeInfo(Pack).Enum.fields.len]?[]const u8);
+var packs = std.mem.zeroes([num_packs]?[]align(pack_alignment) const u8);
 
 /// Load and decompress a Pack, preparing it for use later
 pub fn load(allocator: Allocator, pack: Pack) !void {
@@ -104,11 +107,12 @@ const Header = struct {
 /// Find an entry in a pack via binary search
 /// Sparse packs are not guaranteed to contain all entries with no gaps, so it is not
 /// possible to index directly like an array. Binary search is used to find the entry.
-fn getEntrySparse(pack: Pack, entry: i16) ![]const u8 {
+fn getEntrySparse(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
     const id = @enumToInt(pack);
     if (packs[id] == null) return error.PackNotLoaded;
-    const bytes = @alignCast(@alignOf(Header), packs[id].?);
+    const bytes = packs[id].?;
 
+    // TODO: remove these pointer casts if possible
     const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
     const num_entries = @intCast(usize, bigToNative(i16, header.entry));
     const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
@@ -128,11 +132,12 @@ fn getEntrySparse(pack: Pack, entry: i16) ![]const u8 {
 
 /// Find an entry sequentially in the pack. Unlike sparse packs, these include
 /// sequential headers and thus do not require a binary search.
-fn getEntrySequential(pack: Pack, entry: i16) ![]const u8 {
+fn getEntrySequential(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
     const id = @enumToInt(pack);
     if (packs[id] == null) return error.PackNotLoaded;
-    const bytes = @alignCast(@alignOf(Header), packs[id].?);
+    const bytes = packs[id].?;
 
+    // TODO: remove these pointer casts if possible
     const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
     const num_entries = @intCast(usize, bigToNative(i16, header.entry));
 
@@ -145,8 +150,8 @@ fn getEntrySequential(pack: Pack, entry: i16) ![]const u8 {
     return bytes[offset .. offset + len];
 }
 
-/// Find an entry in the given pack
-pub fn getEntryBytes(pack: Pack, entry: i16) ![]const u8 {
+/// Find an entry in the given pack as bytes
+pub fn getEntryBytes(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
     return switch (pack) {
         .object_groups,
         .rle,

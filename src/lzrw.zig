@@ -9,14 +9,16 @@ const c = @cImport({
     @cInclude("lzrw.h");
 });
 
-fn decompress(allocator: Allocator, compressed: []const u8) ![]u8 {
+const pack_alignment = @import("packs.zig").pack_alignment;
+
+fn decompress(allocator: Allocator, compressed: []const u8) ![]align(pack_alignment) u8 {
     // Create a buffer with enough space to store the decompressed bytes
     const identity = c.lzrw_identity();
     var working_mem = try allocator.alloc(u8, identity.memory);
     defer allocator.free(working_mem);
 
     // Maximum expansion possible is 9 times the length of the compressed data, use 10 for safety
-    var destination_mem = try allocator.alloc(u8, compressed.len * 10);
+    var destination_mem = try allocator.allocWithOptions(u8, compressed.len * 10, pack_alignment, null);
 
     var len: u64 = 0;
     c.lzrw3a_compress(
@@ -35,7 +37,7 @@ fn decompress(allocator: Allocator, compressed: []const u8) ![]u8 {
 
 /// Decompress the given bytes using the LZRW3-A algorithm. The caller owns the
 /// allocated slice of decompressed bytes.
-pub fn decompressResource(allocator: Allocator, compressed: []const u8) ![]u8 {
+pub fn decompressResource(allocator: Allocator, compressed: []const u8) ![]align(pack_alignment) u8 {
     // The offset of 4 was discovered by looking at the decompiled Reckless Drivin' source
     // in Ghidra. See https://nathancraddock.com/blog/resource-forks-and-lzrw-compression/
     // for more information.
