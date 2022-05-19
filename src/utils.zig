@@ -31,18 +31,15 @@ pub const Reader = struct {
     }
 
     /// Read a float from the byte stream correcting for endianness
-    fn readFloat(self: *Reader, comptime T: type) !f32 {
-        // Reckless Drivin' only ever uses f32 values in structs that need parsing.
-        // It is therefore okay to only accept f32 types.
-        if (T != f32) @compileError("readFloat() only reads f32 values");
-        const size = @sizeOf(T);
+    fn readFloat(self: *Reader) !f32 {
+        const size = @sizeOf(f32);
         if (self.index + size > self.bytes.len) return error.EndOfStream;
 
         const slice = self.bytes[self.index .. self.index + size];
         // The value needs to be read as an integer to flip the endianness
         const value = std.mem.bigToNative(u32, @ptrCast(*align(1) const u32, slice).*);
         self.index += size;
-        return @bitCast(T, value);
+        return @bitCast(f32, value);
     }
 
     /// Read bytes into an allocated slice
@@ -79,7 +76,7 @@ pub const Reader = struct {
     pub fn read(self: *Reader, comptime T: type) !T {
         return switch (@typeInfo(T)) {
             .Int => try self.readInt(T),
-            .Float => try self.readFloat(T),
+            .Float => try self.readFloat(),
             .Array => |array| {
                 var arr: [array.len]array.child = undefined;
                 var index: usize = 0;
