@@ -58,10 +58,7 @@ pub const Reader = struct {
     /// Limitations:
     /// * does not support arbitrary slices of bytes
     fn readStruct(self: *Reader, comptime T: type) !T {
-        const fields = switch (@typeInfo(T).Struct.layout) {
-            .Packed => std.meta.fields(T),
-            else => @compileError("readStruct() must use a packed struct type"),
-        };
+        const fields = std.meta.fields(T);
 
         var item: T = undefined;
         inline for (fields) |field| {
