@@ -2,6 +2,8 @@
 
 const std = @import("std");
 
+const bigToNative = std.mem.bigToNative;
+
 /// Read data from a stream of bytes
 pub const Reader = struct {
     bytes: []const u8,
@@ -18,16 +20,12 @@ pub const Reader = struct {
         // we confirm this is never reached we can remove the error check.
         if (self.index + size > self.bytes.len) return error.EndOfStream;
 
-        if (size == 1) {
-            const value = self.bytes[self.index];
-            self.index += 1;
-            return value;
-        } else {
-            const slice = self.bytes[self.index .. self.index + size];
-            const value = std.mem.bigToNative(T, @ptrCast(*align(1) const T, slice).*);
-            self.index += size;
-            return value;
-        }
+        const slice = self.bytes[self.index .. self.index + size];
+        var value: [size]u8 = undefined;
+        for (slice) |b, i| value[i] = b;
+
+        self.index += size;
+        return bigToNative(T, @bitCast(T, value));
     }
 
     /// Read a float from the byte stream correcting for endianness
@@ -36,10 +34,12 @@ pub const Reader = struct {
         if (self.index + size > self.bytes.len) return error.EndOfStream;
 
         const slice = self.bytes[self.index .. self.index + size];
-        // The value needs to be read as an integer to flip the endianness
-        const value = std.mem.bigToNative(u32, @ptrCast(*align(1) const u32, slice).*);
+        var value: [size]u8 = undefined;
+        for (slice) |b, i| value[i] = b;
+
         self.index += size;
-        return @bitCast(f32, value);
+        // The float needs to be interpreted as an integer to flip the endianness
+        return @bitCast(f32, bigToNative(u32, @bitCast(u32, value)));
     }
 
     /// Read bytes into an allocated slice
