@@ -3,7 +3,11 @@
 //! The data file is embedded directly in the binary.
 
 const std = @import("std");
+
+const Reader = @import("utils.zig").Reader;
+
 const eql = std.mem.eql;
+const bigToNative = std.mem.bigToNative;
 
 /// resources.dat contains the resource fork data. Each resource begins with a
 /// Header containing the type, id, and resource length in bytes, followed by
@@ -43,6 +47,10 @@ const eql = std.mem.eql;
 /// * PPic 1008 Help 2
 /// * PPic 1009 Credits
 /// * Chck 128 Decryption Validation Bytes
+///
+/// A note about data alignment: The bytes in the resource file are just bytes,
+/// so there isn't any reason to align the data to a word boundary. This will
+/// take place later when splitting into individual resources
 const data = @embedFile("resources.dat");
 
 const Header = packed struct {
@@ -56,26 +64,29 @@ const Resource = struct {
     data: []const u8,
 };
 
-fn resourceIter(offset: *usize) ?Resource {
-    if (offset.* >= data.len) return null;
+fn resourceIter(reader: *Reader) ?Resource {
+    var header = reader.read(Header) catch return null;
 
-    const header = @ptrCast(*const Header, data[offset.* .. offset.* + @sizeOf(Header)]);
-    offset.* += @sizeOf(Header);
+    // All other uses of the reader are parsing big-endian data. Here we need to
+    // manually flip the bytes. This is an acceptable trade off rather than making
+    // the Reader more complex for only this use case
+    header.id = bigToNative(u32, header.id);
+    header.length = bigToNative(u32, header.length);
 
     const resource: Resource = .{
-        .header = header.*,
-        .data = data[offset.* .. offset.* + header.length],
+        .header = header,
+        .data = data[reader.index .. reader.index + header.length],
     };
 
-    offset.* += header.length;
+    reader.skip(header.length) catch return null;
     return resource;
 }
 
 /// Search through the resource data for the resource of the given type and id
 /// Returns a slice of bytes or null if not found
 pub fn getResource(resource_type: []const u8, id: u16) ?[]const u8 {
-    var offset: usize = 0;
-    while (resourceIter(&offset)) |resource| {
+    var reader = Reader.init(data);
+    while (resourceIter(&reader)) |resource| {
         if (eql(u8, resource.header.resource_type[0..4], resource_type) and resource.header.id == id) {
             return resource.data;
         }
