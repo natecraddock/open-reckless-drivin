@@ -37,7 +37,7 @@ decompression is working, and is a exciting marker of progress! See the images
 on the
 [wiki](https://github.com/natecraddock/open-reckless-drivin/wiki/QuickDraw-Pictures-(PPic)).
 
-# Building
+## Building
 
 So far I have only built Open Reckless Drivin' on Arch Linux, but I see no
 reason why it wouldn't work elsewhere. Using the latest stable version of Zig:
