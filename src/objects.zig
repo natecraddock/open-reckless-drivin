@@ -53,6 +53,16 @@ const ObjectControl = enum(u8) {
     cop_control,
 };
 
+const ObjectGroup = packed struct {
+    entry: i16,
+    min_offs: i16,
+    max_offs: i16,
+    prob: i16,
+    dir: f32,
+};
+
+pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
+
 /// Stores information about a type of object
 const ObjectType = packed struct {
     mass: f32,
@@ -91,21 +101,11 @@ const ObjectType = packed struct {
             return self.flags & value != 0;
         } else {
             // flag2
-            value -= 1 << 16;
+            value >>= 16;
             return self.flags2 & value != 0;
         }
     }
 };
-
-const ObjectGroup = packed struct {
-    entry: i16,
-    min_offs: i16,
-    max_offs: i16,
-    prob: i16,
-    dir: f32,
-};
-
-pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
 
 /// the flags and flag2 fields are both stored in the enum.
 pub const ObjectTypeFlag = enum(u32) {
@@ -172,6 +172,24 @@ pub fn getObjectType(entry: i16) !*ObjectType {
         gop.value_ptr.* = try packs.getEntry(ObjectType, .object_type, entry);
         return gop.value_ptr;
     }
+}
+
+test "object type flags" {
+    // Construct some obtype flags on boundaries
+    var obtype: ObjectType = undefined;
+    obtype.flags = @enumToInt(ObjectTypeFlag.wheel_flag) + @enumToInt(ObjectTypeFlag.bonus_flag);
+
+    // Note that this is a mess, but we shouldn't ever need to construct
+    // ourselves in game code
+    obtype.flags2 = @intCast(u16, (@enumToInt(ObjectTypeFlag.addon_flag) >> 16) + (@enumToInt(ObjectTypeFlag.object_bump_flag) >> 16));
+
+    try std.testing.expect(obtype.flag(.wheel_flag));
+    try std.testing.expect(obtype.flag(.bonus_flag));
+    try std.testing.expect(obtype.flag(.addon_flag));
+    try std.testing.expect(obtype.flag(.object_bump_flag));
+
+    try std.testing.expect(!obtype.flag(.slow_flag));
+    try std.testing.expect(!obtype.flag(.sink_flag));
 }
 
 /// Create a new object of the given entry type

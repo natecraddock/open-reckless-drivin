@@ -130,6 +130,7 @@ fn dumpResource(allocator: Allocator, args: [][:0]const u8) !void {
 
 comptime {
     _ = @import("lzrw.zig");
+    _ = @import("objects.zig");
     _ = @import("packs.zig");
     _ = @import("preferences.zig");
     _ = @import("quickdraw.zig");
