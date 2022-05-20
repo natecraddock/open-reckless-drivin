@@ -327,20 +327,42 @@ fn move(level: *Level, object: *Object) void {
     }
 }
 
-fn calcBackCollision(level: *Level, pos: Point) i8 {
-    _ = level;
-    _ = pos;
+// TODO: honestly no idea what the one and two are intended to mean... but
+// this is used in a few places. Will figure that out eventually and update
+// the enums.
+pub const Collision = enum { none, one, two };
+
+fn calcBackCollision(level: *Level, pos: Point) Collision {
+    var segments: [4]f32 = undefined;
+    for (level.road_data[@floatToInt(usize, pos.y / 2.0)]) |segment, i| {
+        segments[i] = @intToFloat(f32, segment);
+    }
+    const tolerance = @intToFloat(f32, level.road_info.tolerance);
+
+    if (segments[0] > pos.x) {
+        return if ((segments[0] - pos.x) > tolerance) .two else .one;
+    }
+
+    if (segments[3] < pos.x) {
+        return if ((pos.x - segments[3]) > tolerance) .two else .one;
+    }
+
+    if ((segments[1] < pos.x) and (segments[2] > pos.x)) {
+        const collision_val = if (pos.x - segments[1] < segments[2] - pos.x) pos.x - segments[1] else segments[2] - pos.x;
+        return if (collision_val > 16) .two else .one;
+    }
+
+    return .none;
 }
 
-fn killObject(object: *Object) void {
+fn killObject(level: *Level, object: *Object) void {
     const obtype = object.type;
-    _ = obtype;
-    // const sink_enable = calcBackCollision(object.pos) == 2 and (obtype.flag(.sink_flag));
-    // _ = sink_enable;
+    const sink_enable = calcBackCollision(level, object.pos) == .two and (obtype.flag(.sink_flag));
+    _ = sink_enable;
 }
 
 /// Update sprite data for objects
-fn animate(object: *Object) void {
+fn animate(level: *Level, object: *Object) void {
     const obtype = object.type;
     if (obtype.frame_duration == 0) return;
 
@@ -364,7 +386,7 @@ fn animate(object: *Object) void {
         } else if (obtype.flag(.die_when_anim_ends_flag) and
             (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
         {
-            killObject(object);
+            killObject(level, object);
             return;
         } else {
             object.frame_duration += 1;
@@ -392,7 +414,7 @@ pub fn update(game: *Game, level: *Level) void {
     // TODO: Read events with SDL
     for (level.objects.items) |object| {
         move(level, object);
-        animate(object);
+        animate(level, object);
     }
     _ = game;
 }

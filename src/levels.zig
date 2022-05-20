@@ -62,7 +62,7 @@ const ObjectPosition = packed struct {
     _pad: i16,
 };
 
-const RoadSegment = packed struct { parts: [4]i16 };
+const RoadSegment = [4]i16;
 
 /// Holds all data relevant to the current level
 pub const Level = struct {
