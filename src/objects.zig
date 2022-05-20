@@ -17,7 +17,7 @@ const Point = @import("point.zig").Point;
 
 const inf = std.math.inf_f32;
 const max_rot_vel: f32 = 2 * trig.pi * 5;
-const pixels_per_peter: f32 = 9.0;
+const pixels_per_meter: f32 = 9.0;
 
 // Information for a specific object
 pub const Object = struct {
@@ -272,7 +272,7 @@ inline fn repair(game: *Game, object: *Object) void {
 fn move(game: *Game, level: *Level, object: *Object) void {
     // Move objects
     if (object.velocity.x != 0.0 or object.velocity.y != 0.0) {
-        object.pos = Point.add(object.pos, Point.scale(object.velocity, pixels_per_peter * render.frame_duration));
+        object.pos = Point.add(object.pos, Point.scale(object.velocity, pixels_per_meter * render.frame_duration));
 
         // Cycle objects that moved off the track
         if (object.pos.y > @intToFloat(f32, level.road_data.len * 2)) {
