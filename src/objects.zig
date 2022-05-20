@@ -73,6 +73,25 @@ const ObjectType = packed struct {
     max_damage: f32,
     weapon_obj: i16,
     weapon_info: i16,
+
+    /// Return a boolean indicating whether the flag is set
+    pub fn flag(self: *ObjectType, f: ObjectTypeFlag) bool {
+        // currently a packed bitflag struct does not have a defined integer
+        // layout for deserialization. If that were the case I would use that
+        // instead. This function is a workaround
+        var value = @enumToInt(f);
+
+        // This one function is used to manage both flag variables, so check
+        // which flag this is intended for
+        if (value < @enumToInt(ObjectTypeFlag.addon_flag)) {
+            // flag1
+            return self.flags & value != 0;
+        } else {
+            // flag2
+            value -= 1 << 16;
+            return self.flags2 & value != 0;
+        }
+    }
 };
 
 const ObjectGroup = packed struct {
@@ -85,45 +104,44 @@ const ObjectGroup = packed struct {
 
 pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
 
-// Until packed bool structs can be cast to integer types reliably
-// (allowing to be read from the Pack data), just use integer constants
-// for the flag values
+/// the flags and flag2 fields are both stored in the enum.
+pub const ObjectTypeFlag = enum(u32) {
+    // flags
+    wheel_flag = 1 << 0,
+    solid_friction_flag = 1 << 1,
+    back_collision_flag = 1 << 2,
+    random_frame_flag = 1 << 3,
+    die_when_anim_ends_flag = 1 << 4,
+    default_death_flag = 1 << 5,
+    follow_marks_flag = 1 << 6,
+    overtake_flag = 1 << 7,
+    slow_flag = 1 << 8,
+    long_flag = 1 << 9,
+    killed_by_cars_flag = 1 << 10,
+    kills_cars_flag = 1 << 11,
+    bounce_flag = 1 << 12,
+    cop_flag = 1 << 13,
+    heli_flag = 1 << 14,
+    bonus_flag = 1 << 15,
 
-/// flags
-const wheel_flag: u16 = 1 << 0;
-const solid_friction_flag: u16 = 1 << 1;
-const back_collision_flag: u16 = 1 << 2;
-const random_frame_flag: u16 = 1 << 3;
-const die_when_anim_ends_flag: u16 = 1 << 4;
-const default_death_flag: u16 = 1 << 5;
-const follow_marks_flag: u16 = 1 << 6;
-const overtake_flag: u16 = 1 << 7;
-const slow_flag: u16 = 1 << 8;
-const long_flag: u16 = 1 << 9;
-const killed_by_cars_flag: u16 = 1 << 10;
-const kills_cars_flag: u16 = 1 << 11;
-const bounce_flag: u16 = 1 << 12;
-const cop_flag: u16 = 1 << 13;
-const heli_flag: u16 = 1 << 14;
-const bonus_flag: u16 = 1 << 15;
-
-/// flags2
-const addon_flag: u16 = 1 << 0;
-const front_collision_flag: u16 = 1 << 1;
-const oil_flag: u16 = 1 << 2;
-const missile_flag: u16 = 1 << 3;
-const road_kill_flag: u16 = 1 << 4;
-const layer_flag_1: u16 = 1 << 5;
-const layer_flag_2: u16 = 1 << 6;
-const engine_sound_flag: u16 = 1 << 7;
-const ramp_flag: u16 = 1 << 8;
-const sink_flag: u16 = 1 << 9;
-const damageable_flag: u16 = 1 << 10;
-const die_when_off_screen_flag: u16 = 1 << 11;
-const rear_drive_flag: u16 = 1 << 12;
-const rear_steer_flag: u16 = 1 << 13;
-const object_floating_flag: u16 = 1 << 14;
-const object_bump_flag: u16 = 1 << 15;
+    // flags2
+    addon_flag = 1 << 16,
+    front_collision_flag = 1 << 17,
+    oil_flag = 1 << 18,
+    missile_flag = 1 << 19,
+    road_kill_flag = 1 << 20,
+    layer_flag_1 = 1 << 21,
+    layer_flag_2 = 1 << 22,
+    engine_sound_flag = 1 << 23,
+    ramp_flag = 1 << 24,
+    sink_flag = 1 << 25,
+    damageable_flag = 1 << 26,
+    die_when_off_screen_flag = 1 << 27,
+    rear_drive_flag = 1 << 28,
+    rear_steer_flag = 1 << 29,
+    object_floating_flag = 1 << 30,
+    object_bump_flag = 1 << 31,
+};
 
 /// Due to endianness flipping, the object type data cannot be a simple pointer
 /// into the pack data in the binary. Rather than load a copy for each object
@@ -164,19 +182,19 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
     object.layer = (obtype.flags2 >> 5) & 3;
 
     // Init specific object characteristics
-    if (obtype.flags & random_frame_flag != 0) {
+    if (obtype.flag(.random_frame_flag)) {
         object.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
     } else {
         object.frame = obtype.frame;
     }
 
-    if (obtype.flags2 & road_kill_flag != 0) {
+    if (obtype.flag(.road_kill_flag)) {
         object.control = .cop_control;
     } else {
         object.control = .no_input;
     }
 
-    if (obtype.flags & heli_flag != 0) {
+    if (obtype.flag(.heli_flag)) {
         object.jump_height = 12.0;
     }
 
@@ -270,7 +288,7 @@ fn move(level: *Level, object: *Object) void {
     }
 
     // Handle water
-    if (level.road_info.water != 0 and (object.type.flags2 & object_floating_flag != 0)) {
+    if (level.road_info.water != 0 and (object.type.flag(.object_floating_flag))) {
         object.pos = Point.add(object.pos, .{
             .x = -level.road_info.x_front_drift * 0.5 * render.frame_duration,
             .y = level.road_info.y_front_drift * 0.5 * render.frame_duration,
@@ -309,13 +327,25 @@ fn move(level: *Level, object: *Object) void {
     }
 }
 
+fn calcBackCollision(level: *Level, pos: Point) i8 {
+    _ = level;
+    _ = pos;
+}
+
+fn killObject(object: *Object) void {
+    const obtype = object.type;
+    _ = obtype;
+    // const sink_enable = calcBackCollision(object.pos) == 2 and (obtype.flag(.sink_flag));
+    // _ = sink_enable;
+}
+
 /// Update sprite data for objects
 fn animate(object: *Object) void {
     const obtype = object.type;
     if (obtype.frame_duration == 0) return;
 
     // Cops
-    if (obtype.flags & cop_flag != 0 and obtype.flags & heli_flag == 0 and obtype.flags & engine_sound_flag == 0) {
+    if (obtype.flag(.cop_flag) and !obtype.flag(.heli_flag) and !obtype.flag(.engine_sound_flag)) {
         if (object.control != .cop_control) {
             object.frame = obtype.frame;
             return;
@@ -327,10 +357,14 @@ fn animate(object: *Object) void {
     // Change sprite frames
     if (object.frame_duration <= 0.0) {
         object.frame_duration += obtype.frame_duration;
-        if ((object.frame >= obtype.frame) and (object.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1)) {
+        if ((object.frame >= obtype.frame) and
+            (object.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+        {
             object.frame += 1;
-        } else if (obtype.flags & die_when_anim_ends_flag != 0 and (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1)) {
-            // TODO: kill object;
+        } else if (obtype.flag(.die_when_anim_ends_flag) and
+            (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+        {
+            killObject(object);
             return;
         } else {
             object.frame_duration += 1;
@@ -347,7 +381,7 @@ fn animate(object: *Object) void {
     }
 
     // Don't animate dead roadkill?
-    if (obtype.flags2 & road_kill_flag != 0 and (object.velocity.x == 0.0 and object.velocity.y == 0)) {
+    if (obtype.flag(.road_kill_flag) and (object.velocity.x == 0.0 and object.velocity.y == 0)) {
         object.frame = obtype.frame;
     }
 }
