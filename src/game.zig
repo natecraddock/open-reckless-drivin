@@ -2,23 +2,23 @@
 //! Contains code for initialization and cleanup of game resources
 //! and the main game loop.
 
-const std = @import("std");
-const time = std.time;
-
-const Allocator = std.mem.Allocator;
-
 const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
 const random = @import("random.zig");
 const render = @import("render.zig");
 const sprites = @import("sprites.zig");
+const std = @import("std");
+const time = std.time;
 const utils = @import("utils.zig");
 
+const Allocator = std.mem.Allocator;
 const Sprite = sprites.Sprite;
 const Window = @import("window.zig").Window;
 
 pub const Game = struct {
+    allocator: Allocator,
+
     window: Window = undefined,
     state: enum {
         menu,
@@ -29,6 +29,16 @@ pub const Game = struct {
     level: levels.Level = undefined,
     start_time: u64 = 0,
     frame_count: u64 = 0,
+
+    /// Free a sprite's resources if it was created as a special sprite
+    pub fn specialSpriteUnused(self: *Game, id: i32) void {
+        const index = @intCast(usize, id - 128);
+        if (index < sprites.num_sprites) return;
+        if (self.sprites[index]) |sprite| {
+            self.allocator.free(sprite.pixels.full);
+            self.sprites[index] = null;
+        }
+    }
 };
 
 const Player = struct {
@@ -69,7 +79,7 @@ fn deinitData(allocator: Allocator) void {
 
 /// Run the game
 pub fn start(allocator: Allocator) !void {
-    var game: Game = .{};
+    var game: Game = .{ .allocator = allocator };
 
     // initialize PRNG
     random.init(@bitCast(u64, time.timestamp()));
@@ -96,6 +106,7 @@ pub fn start(allocator: Allocator) !void {
     player.pos.y = 500.0;
     player.control = .drive_up;
     player.target = 1;
+    player.is_player = true;
     try game.level.objects.append(player);
 
     game.start_time = getMicroTime();
@@ -103,11 +114,11 @@ pub fn start(allocator: Allocator) !void {
     // Finally initialize the window and start the gameloop
     game.window = try Window.init();
     defer game.window.deinit();
-    try gameloop(allocator, &game);
+    try gameloop(&game);
 }
 
 /// The main gameloop of Reckless Drivin'
-fn gameloop(allocator: Allocator, game: *Game) !void {
+fn gameloop(game: *Game) !void {
     mainloop: while (game.state == .game) {
         objects.update(game, &game.level);
         // player handling
@@ -132,7 +143,6 @@ fn gameloop(allocator: Allocator, game: *Game) !void {
             try game.window.render(&.{ 0x00, 0x00 });
         }
     }
-    _ = allocator;
 }
 
 const frames_per_microsecond = render.fps / 1000000.0;

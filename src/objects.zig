@@ -3,6 +3,7 @@
 const packs = @import("packs.zig");
 const random = @import("random.zig");
 const render = @import("render.zig");
+const sprites = @import("sprites.zig");
 const std = @import("std");
 const trig = @import("trig.zig");
 const utils = @import("utils.zig");
@@ -39,6 +40,8 @@ pub const Object = struct {
     damage_flags: i32,
     type: *ObjectType,
     shooter: *anyopaque,
+    // TODO: perhaps store a pointer to the player data so all that is easily accessible?
+    is_player: bool, // Reckless Drivin' uses a global, but a boolean is much simpler even if it is nearly always false
     // TODO: input tInputData,
 };
 
@@ -202,6 +205,8 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
         // TODO: play sound
     }
 
+    object.is_player = false;
+
     return object;
 }
 
@@ -257,14 +262,14 @@ pub fn getUniquePosition(min_offs: i16, max_offs: i16, object_dir: *f32, control
 }
 
 /// Repair an object
-inline fn repair(object: *Object) void {
+inline fn repair(game: *Game, object: *Object) void {
     object.damage = 0;
     object.damage_flags = 0;
-    // TODO: sprite unused
+    game.specialSpriteUnused(object.frame);
     object.frame = object.type.frame;
 }
 
-fn move(level: *Level, object: *Object) void {
+fn move(game: *Game, level: *Level, object: *Object) void {
     // Move objects
     if (object.velocity.x != 0.0 or object.velocity.y != 0.0) {
         object.pos = Point.add(object.pos, Point.scale(object.velocity, pixels_per_peter * render.frame_duration));
@@ -276,14 +281,14 @@ fn move(level: *Level, object: *Object) void {
                 .y = 100,
             };
             if (object.control == .drive_up) object.target = 0;
-            repair(object);
+            repair(game, object);
         } else if (object.pos.y < 0.0) {
             object.pos = .{
                 .x = @intToFloat(f32, level.track_down[0].x),
                 .y = @intToFloat(f32, level.road_data.len * 2 - 100),
             };
             if (object.control == .drive_down) object.target = 0;
-            repair(object);
+            repair(game, object);
         }
     }
 
@@ -355,14 +360,52 @@ fn calcBackCollision(level: *Level, pos: Point) Collision {
     return .none;
 }
 
-fn killObject(level: *Level, object: *Object) void {
-    const obtype = object.type;
+fn killObject(game: *Game, level: *Level, object: *Object) void {
+    var obtype = object.type;
+
+    if (object.is_player) {
+        // TODO: show killed player text effect
+        // TODO: player addons and other stats
+
+        object.slide = 0;
+        object.throttle = 0;
+    } else if (obtype.score != 0) {
+        // TODO: show score text effect
+    }
+
+    game.specialSpriteUnused(object.frame);
+    if (obtype.flag(.default_death_flag)) {
+        // TODO: Explosion!
+    }
+
+    if (obtype.death_obj == -1) {
+        // TODO: remove object
+        return;
+    }
+
     const sink_enable = calcBackCollision(level, object.pos) == .two and (obtype.flag(.sink_flag));
-    _ = sink_enable;
+    const death_obj = obtype.death_obj + if (sink_enable) level.road_info.death_offs else 0;
+    object.type = getObjectType(death_obj) catch unreachable;
+
+    object.layer = obtype.flags2 >> 5 & 3;
+    obtype = object.type;
+
+    if (obtype.flag(.random_frame_flag)) {
+        object.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
+    } else {
+        object.frame = obtype.frame;
+    }
+
+    if (obtype.creation_sound != 0) {
+        // TODO: play sounds
+    }
+
+    object.frame_duration = obtype.frame_duration;
+    object.control = .no_input;
 }
 
 /// Update sprite data for objects
-fn animate(level: *Level, object: *Object) void {
+fn animate(game: *Game, level: *Level, object: *Object) void {
     const obtype = object.type;
     if (obtype.frame_duration == 0) return;
 
@@ -386,7 +429,7 @@ fn animate(level: *Level, object: *Object) void {
         } else if (obtype.flag(.die_when_anim_ends_flag) and
             (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
         {
-            killObject(level, object);
+            killObject(game, level, object);
             return;
         } else {
             object.frame_duration += 1;
@@ -413,8 +456,8 @@ pub fn update(game: *Game, level: *Level) void {
     // TODO: special handling for the player
     // TODO: Read events with SDL
     for (level.objects.items) |object| {
-        move(level, object);
-        animate(level, object);
+        move(game, level, object);
+        animate(game, level, object);
     }
     _ = game;
 }

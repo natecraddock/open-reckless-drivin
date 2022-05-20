@@ -47,11 +47,13 @@ pub fn load(allocator: Allocator) ![]?Sprite {
             try reader.skip(1);
             sprite.draw_mode = try reader.read(u8);
             try reader.skip(1);
-            sprite.pixels = .{ .full = try reader.readSlice(
-                u16,
-                allocator,
-                @intCast(usize, sprite.width) * @intCast(usize, sprite.height),
-            ) };
+            sprite.pixels = .{
+                .full = try reader.readSlice(
+                    u16,
+                    allocator,
+                    @intCast(usize, sprite.width) * @intCast(usize, sprite.height),
+                ),
+            };
 
             sprites[index] = sprite;
         } else |_| sprites[index] = null;
