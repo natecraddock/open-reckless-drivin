@@ -11,6 +11,7 @@ const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
 const random = @import("random.zig");
+const render = @import("render.zig");
 const sprites = @import("sprites.zig");
 const utils = @import("utils.zig");
 
@@ -26,6 +27,8 @@ pub const Game = struct {
     player: Player = .{},
     sprites: []?Sprite = undefined,
     level: levels.Level = undefined,
+    start_time: u64 = 0,
+    frame_count: u64 = 0,
 };
 
 const Player = struct {
@@ -95,6 +98,8 @@ pub fn start(allocator: Allocator) !void {
     player.target = 1;
     try game.level.objects.append(player);
 
+    game.start_time = getMicroTime();
+
     // Finally initialize the window and start the gameloop
     game.window = try Window.init();
     defer game.window.deinit();
@@ -106,7 +111,10 @@ fn gameloop(allocator: Allocator, game: *Game) !void {
     mainloop: while (game.state == .game) {
         objects.update(game, &game.level);
         // player handling
-        // framecount
+
+        game.frame_count += 1;
+
+        // event handling (move elsewhere later?)
         while (Window.getEvent()) |ev| {
             switch (ev) {
                 .quit => break :mainloop,
@@ -120,7 +128,26 @@ fn gameloop(allocator: Allocator, game: *Game) !void {
             }
         }
 
-        try game.window.render(&.{ 0x00, 0x00 });
+        if (checkFrameTime(game)) {
+            try game.window.render(&.{ 0x00, 0x00 });
+        }
     }
     _ = allocator;
+}
+
+const frames_per_microsecond = render.fps / 1000000.0;
+
+/// Return the current time in microseconds
+fn getMicroTime() u64 {
+    return @intCast(u64, @divTrunc(time.nanoTimestamp(), 1000));
+}
+
+/// Check if a frame should be rendered
+/// TODO: this seems to always return true, and might be a NOP. Return to this
+/// at a later point to investigate...
+fn checkFrameTime(game: *Game) bool {
+    const current_time = getMicroTime() - game.start_time;
+    const optimal_frame_count = @intToFloat(f32, current_time) * frames_per_microsecond;
+
+    return @intToFloat(f32, game.frame_count) > optimal_frame_count;
 }
