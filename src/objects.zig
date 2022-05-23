@@ -9,9 +9,9 @@ const trig = @import("trig.zig");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
-const ArrayList = std.ArrayList;
 const Game = @import("game.zig").Game;
 const Level = @import("levels.zig").Level;
+pub const ObjectList = std.TailQueue(Object);
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
 
@@ -193,9 +193,11 @@ test "object type flags" {
 }
 
 /// Create a new object of the given entry type
-pub fn create(allocator: Allocator, entry: i16) !*Object {
+pub fn create(allocator: Allocator, entry: i16) !*ObjectList.Node {
     // TODO: is it important to zero the memory of this object?
-    var object = try allocator.create(Object);
+    var node = try allocator.create(ObjectList.Node);
+    var object = &node.data;
+
     var obtype = try getObjectType(entry);
     object.type = obtype;
 
@@ -225,10 +227,10 @@ pub fn create(allocator: Allocator, entry: i16) !*Object {
 
     object.is_player = false;
 
-    return object;
+    return node;
 }
 
-pub fn insertObjectGroup(allocator: Allocator, objects: *ArrayList(*Object), group: ObjectGroupRef) !void {
+pub fn insertObjectGroup(allocator: Allocator, objects: *ObjectList, group: ObjectGroupRef) !void {
     var probabilities: [100]usize = undefined;
     // TODO: do I ever getEntryBytes without making a reader?
     const bytes = try packs.getEntryBytes(.object_groups, group.id);
@@ -252,7 +254,9 @@ pub fn insertObjectGroup(allocator: Allocator, objects: *ArrayList(*Object), gro
     var index: usize = 0;
     while (index < group.len) : (index += 1) {
         const prob = probabilities[@intCast(usize, random.randomInt(0, 100))];
-        var object = try create(allocator, groups[prob].entry);
+        var node = try create(allocator, groups[prob].entry);
+        var object = &node.data;
+
         object.pos = .{ .x = inf, .y = inf };
         object.dir = groups[prob].dir;
         var control: ObjectControl = undefined;
@@ -266,7 +270,7 @@ pub fn insertObjectGroup(allocator: Allocator, objects: *ArrayList(*Object), gro
             object.target = 0;
         }
 
-        try objects.append(object);
+        objects.append(node);
     }
 }
 
@@ -473,7 +477,9 @@ fn animate(game: *Game, level: *Level, object: *Object) void {
 pub fn update(game: *Game, level: *Level) void {
     // TODO: special handling for the player
     // TODO: Read events with SDL
-    for (level.objects.items) |object| {
+    var it = level.objects.first;
+    while (it) |node| : (it = node.next) {
+        var object = &node.data;
         move(game, level, object);
         animate(game, level, object);
     }

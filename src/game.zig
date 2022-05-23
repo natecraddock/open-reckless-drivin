@@ -101,13 +101,14 @@ pub fn start(allocator: Allocator) !void {
     // Create player object
     // TODO: use constants for player car ID
     // TODO: use bool for water?
-    var player = try objects.create(allocator, if (game.level.road_info.water == 1) 201 else 128);
+    var node = try objects.create(allocator, if (game.level.road_info.water == 1) 201 else 128);
+    var player = &node.data;
     player.pos.x = @intToFloat(f32, game.level.header.x_start);
     player.pos.y = 500.0;
     player.control = .drive_up;
     player.target = 1;
     player.is_player = true;
-    try game.level.objects.append(player);
+    game.level.objects.append(node);
 
     game.start_time = getMicroTime();
 

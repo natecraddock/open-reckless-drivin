@@ -6,8 +6,8 @@ const std = @import("std");
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
-const ArrayList = std.ArrayList;
 const Object = objects.Object;
+const ObjectList = objects.ObjectList;
 const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
@@ -74,7 +74,7 @@ pub const Level = struct {
     road_info: RoadInfo,
     road_data: []const RoadSegment,
 
-    objects: ArrayList(*Object),
+    objects: ObjectList,
 
     /// Free all the data associated with a level
     pub fn deinit(self: *Level, allocator: Allocator) void {
@@ -83,11 +83,15 @@ pub const Level = struct {
         allocator.free(self.track_up);
         allocator.free(self.track_down);
         allocator.free(self.road_data);
-        for (self.objects.items) |object| {
+
+        var it = self.objects.first;
+        while (it) |node| {
+            it = node.next;
+
             // TODO: see DestroyObject for special handling of player?
-            allocator.destroy(object);
+            self.objects.remove(node);
+            allocator.destroy(node);
         }
-        self.objects.deinit();
     }
 };
 
@@ -110,7 +114,7 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     }
 
     var level: Level = undefined;
-    level.objects = ArrayList(*Object).init(allocator);
+    level.objects = ObjectList{};
 
     level.pack = level_id;
     level.header = try packs.getEntry(LevelHeader, level_id, 1);
@@ -135,10 +139,10 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     for (object_positions) |pos| {
         // TODO: leak! Store these objects somewhere
         var object = try objects.create(allocator, pos.entry);
-        object.dir = pos.dir;
-        object.pos.x = @intToFloat(f32, pos.x);
-        object.pos.y = @intToFloat(f32, pos.y);
-        try level.objects.append(object);
+        object.data.dir = pos.dir;
+        object.data.pos.x = @intToFloat(f32, pos.x);
+        object.data.pos.y = @intToFloat(f32, pos.y);
+        level.objects.append(object);
     }
 
     // Read road data
