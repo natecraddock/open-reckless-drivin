@@ -87,11 +87,14 @@ pub const Level = struct {
         var it = self.objects.first;
         while (it) |node| {
             it = node.next;
-
-            // TODO: see DestroyObject for special handling of player?
-            self.objects.remove(node);
-            allocator.destroy(node);
+            self.removeObject(allocator, node);
         }
+    }
+
+    pub fn removeObject(self: *Level, allocator: Allocator, node: *ObjectList.Node) void {
+        // TODO: update visible node pointers
+        self.objects.remove(node);
+        allocator.destroy(node);
     }
 };
 

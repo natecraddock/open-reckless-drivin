@@ -11,7 +11,6 @@ const utils = @import("utils.zig");
 const Allocator = std.mem.Allocator;
 const Game = @import("game.zig").Game;
 const Level = @import("levels.zig").Level;
-pub const ObjectList = std.TailQueue(Object);
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
 
@@ -19,8 +18,8 @@ const inf = std.math.inf_f32;
 const max_rot_vel: f32 = 2 * trig.pi * 5;
 const pixels_per_meter: f32 = 9.0;
 
-// Information for a specific object
-pub const Object = struct {
+/// Data for an individual object
+pub const ObjectData = struct {
     pos: Point,
     velocity: Point,
     dir: f32,
@@ -44,6 +43,12 @@ pub const Object = struct {
     is_player: bool, // Reckless Drivin' uses a global, but a boolean is much simpler even if it is nearly always false
     // TODO: input tInputData,
 };
+
+/// A list of objects
+pub const ObjectList = std.TailQueue(ObjectData);
+
+/// An object node with pointer to previous and next objects
+pub const Object = ObjectList.Node;
 
 const ObjectControl = enum(u8) {
     no_input,
@@ -195,39 +200,39 @@ test "object type flags" {
 /// Create a new object of the given entry type
 pub fn create(allocator: Allocator, entry: i16) !*ObjectList.Node {
     // TODO: is it important to zero the memory of this object?
-    var node = try allocator.create(ObjectList.Node);
-    var object = &node.data;
+    var object = try allocator.create(ObjectList.Node);
+    var obdata = &object.data;
 
     var obtype = try getObjectType(entry);
-    object.type = obtype;
+    obdata.type = obtype;
 
     // TODO: layer flags
-    object.layer = (obtype.flags2 >> 5) & 3;
+    obdata.layer = (obtype.flags2 >> 5) & 3;
 
     // Init specific object characteristics
     if (obtype.flag(.random_frame_flag)) {
-        object.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
+        obdata.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
     } else {
-        object.frame = obtype.frame;
+        obdata.frame = obtype.frame;
     }
 
     if (obtype.flag(.road_kill_flag)) {
-        object.control = .cop_control;
+        obdata.control = .cop_control;
     } else {
-        object.control = .no_input;
+        obdata.control = .no_input;
     }
 
     if (obtype.flag(.heli_flag)) {
-        object.jump_height = 12.0;
+        obdata.jump_height = 12.0;
     }
 
     if (obtype.creation_sound != 0) {
         // TODO: play sound
     }
 
-    object.is_player = false;
+    obdata.is_player = false;
 
-    return node;
+    return object;
 }
 
 pub fn insertObjectGroup(allocator: Allocator, objects: *ObjectList, group: ObjectGroupRef) !void {
@@ -254,23 +259,23 @@ pub fn insertObjectGroup(allocator: Allocator, objects: *ObjectList, group: Obje
     var index: usize = 0;
     while (index < group.len) : (index += 1) {
         const prob = probabilities[@intCast(usize, random.randomInt(0, 100))];
-        var node = try create(allocator, groups[prob].entry);
-        var object = &node.data;
+        var object = try create(allocator, groups[prob].entry);
+        var obdata = &object.data;
 
-        object.pos = .{ .x = inf, .y = inf };
-        object.dir = groups[prob].dir;
+        obdata.pos = .{ .x = inf, .y = inf };
+        obdata.dir = groups[prob].dir;
         var control: ObjectControl = undefined;
-        object.pos = getUniquePosition(groups[prob].min_offs, groups[prob].max_offs, &object.dir, &control);
-        object.control = control;
+        obdata.pos = getUniquePosition(groups[prob].min_offs, groups[prob].max_offs, &obdata.dir, &control);
+        obdata.control = control;
 
         // TODO: need to pass in level data
-        if (object.control == .drive_up) {
-            object.target = 0;
+        if (obdata.control == .drive_up) {
+            obdata.target = 0;
         } else {
-            object.target = 0;
+            obdata.target = 0;
         }
 
-        objects.append(node);
+        objects.append(object);
     }
 }
 
@@ -284,71 +289,73 @@ pub fn getUniquePosition(min_offs: i16, max_offs: i16, object_dir: *f32, control
 }
 
 /// Repair an object
-inline fn repair(game: *Game, object: *Object) void {
-    object.damage = 0;
-    object.damage_flags = 0;
-    game.specialSpriteUnused(object.frame);
-    object.frame = object.type.frame;
+inline fn repair(game: *Game, obdata: *ObjectData) void {
+    obdata.damage = 0;
+    obdata.damage_flags = 0;
+    game.specialSpriteUnused(obdata.frame);
+    obdata.frame = obdata.type.frame;
 }
 
 fn move(game: *Game, level: *Level, object: *Object) void {
+    var obdata = &object.data;
+
     // Move objects
-    if (object.velocity.x != 0.0 or object.velocity.y != 0.0) {
-        object.pos = Point.add(object.pos, Point.scale(object.velocity, pixels_per_meter * render.frame_duration));
+    if (obdata.velocity.x != 0.0 or obdata.velocity.y != 0.0) {
+        obdata.pos = Point.add(obdata.pos, Point.scale(obdata.velocity, pixels_per_meter * render.frame_duration));
 
         // Cycle objects that moved off the track
-        if (object.pos.y > @intToFloat(f32, level.road_data.len * 2)) {
-            object.pos = .{
+        if (obdata.pos.y > @intToFloat(f32, level.road_data.len * 2)) {
+            obdata.pos = .{
                 .x = @intToFloat(f32, level.track_up[0].x),
                 .y = 100,
             };
-            if (object.control == .drive_up) object.target = 0;
-            repair(game, object);
-        } else if (object.pos.y < 0.0) {
-            object.pos = .{
+            if (obdata.control == .drive_up) obdata.target = 0;
+            repair(game, obdata);
+        } else if (obdata.pos.y < 0.0) {
+            obdata.pos = .{
                 .x = @intToFloat(f32, level.track_down[0].x),
                 .y = @intToFloat(f32, level.road_data.len * 2 - 100),
             };
-            if (object.control == .drive_down) object.target = 0;
-            repair(game, object);
+            if (obdata.control == .drive_down) obdata.target = 0;
+            repair(game, obdata);
         }
     }
 
     // Handle water
-    if (level.road_info.water != 0 and (object.type.flag(.object_floating_flag))) {
-        object.pos = Point.add(object.pos, .{
+    if (level.road_info.water != 0 and (obdata.type.flag(.object_floating_flag))) {
+        obdata.pos = Point.add(obdata.pos, .{
             .x = -level.road_info.x_front_drift * 0.5 * render.frame_duration,
             .y = level.road_info.y_front_drift * 0.5 * render.frame_duration,
         });
     }
 
     // Rotations
-    if (object.rot_vel != 0) {
-        object.dir += object.rot_vel * render.frame_duration;
+    if (obdata.rot_vel != 0) {
+        obdata.dir += obdata.rot_vel * render.frame_duration;
 
-        if (object.dir >= 2 * trig.pi) {
-            object.dir -= 2 * trig.pi;
-        } else if (object.dir < 0.0) {
-            object.dir += 2 * trig.pi;
+        if (obdata.dir >= 2 * trig.pi) {
+            obdata.dir -= 2 * trig.pi;
+        } else if (obdata.dir < 0.0) {
+            obdata.dir += 2 * trig.pi;
         }
 
-        // TODO: object.rot_vel = std.math.clamp(object.rot_vel, -max_rot_vel, max_rot_vel);
-        if (std.math.fabs(object.rot_vel) > max_rot_vel) {
-            object.rot_vel = if (object.rot_vel > 0) max_rot_vel else -max_rot_vel;
+        // TODO: obdata.rot_vel = std.math.clamp(obdata.rot_vel, -max_rot_vel, max_rot_vel);
+        if (std.math.fabs(obdata.rot_vel) > max_rot_vel) {
+            obdata.rot_vel = if (obdata.rot_vel > 0) max_rot_vel else -max_rot_vel;
         }
     }
 
     // Handle jumping objects
-    if (object.jump_vel != 0) {
+    if (obdata.jump_vel != 0) {
         const gravity: f32 = 50.0;
-        object.jump_height += object.jump_vel * render.frame_duration;
-        object.jump_vel -= gravity * render.frame_duration;
-        if (object.jump_vel == 0.0) object.jump_vel = -0.0001;
+        obdata.jump_height += obdata.jump_vel * render.frame_duration;
+        obdata.jump_vel -= gravity * render.frame_duration;
+        if (obdata.jump_vel == 0.0) obdata.jump_vel = -0.0001;
 
         // Place back on track?
-        if (object.jump_height <= 0 and object.jump_vel <= 0) {
-            object.jump_height = 0;
-            object.jump_vel = 0;
+        if (obdata.jump_height <= 0 and obdata.jump_vel <= 0) {
+            obdata.jump_height = 0;
+            obdata.jump_vel = 0;
             // TODO: sounds
         }
     }
@@ -383,82 +390,85 @@ fn calcBackCollision(level: *Level, pos: Point) Collision {
 }
 
 fn killObject(game: *Game, level: *Level, object: *Object) void {
-    var obtype = object.type;
+    var obdata = &object.data;
+    var obtype = obdata.type;
 
-    if (object.is_player) {
+    if (obdata.is_player) {
         // TODO: show killed player text effect
         // TODO: player addons and other stats
 
-        object.slide = 0;
-        object.throttle = 0;
+        obdata.slide = 0;
+        obdata.throttle = 0;
     } else if (obtype.score != 0) {
         // TODO: show score text effect
     }
 
-    game.specialSpriteUnused(object.frame);
+    game.specialSpriteUnused(obdata.frame);
     if (obtype.flag(.default_death_flag)) {
         // TODO: Explosion!
     }
 
     if (obtype.death_obj == -1) {
-        // TODO: remove object
+        level.removeObject(game.allocator, object);
         return;
     }
 
-    const sink_enable = calcBackCollision(level, object.pos) == .two and (obtype.flag(.sink_flag));
+    const sink_enable = calcBackCollision(level, obdata.pos) == .two and (obtype.flag(.sink_flag));
     const death_obj = obtype.death_obj + if (sink_enable) level.road_info.death_offs else 0;
-    object.type = getObjectType(death_obj) catch unreachable;
+    obdata.type = getObjectType(death_obj) catch unreachable;
 
-    object.layer = obtype.flags2 >> 5 & 3;
-    obtype = object.type;
+    obdata.layer = obtype.flags2 >> 5 & 3;
+    obtype = obdata.type;
 
     if (obtype.flag(.random_frame_flag)) {
-        object.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
+        obdata.frame = obtype.frame + random.randomInt(0, obtype.num_frames);
     } else {
-        object.frame = obtype.frame;
+        obdata.frame = obtype.frame;
     }
 
     if (obtype.creation_sound != 0) {
         // TODO: play sounds
     }
 
-    object.frame_duration = obtype.frame_duration;
-    object.control = .no_input;
+    obdata.frame_duration = obtype.frame_duration;
+    obdata.control = .no_input;
 }
 
 /// Update sprite data for objects
 fn animate(game: *Game, level: *Level, object: *Object) void {
-    const obtype = object.type;
+    var obdata = &object.data;
+    const obtype = obdata.type;
+
     if (obtype.frame_duration == 0) return;
 
     // Cops
     if (obtype.flag(.cop_flag) and !obtype.flag(.heli_flag) and !obtype.flag(.engine_sound_flag)) {
-        if (object.control != .cop_control) {
-            object.frame = obtype.frame;
+        if (obdata.control != .cop_control) {
+            obdata.frame = obtype.frame;
             return;
         }
     }
 
-    object.frame_duration -= render.frame_duration;
+    obdata.frame_duration -= render.frame_duration;
 
     // Change sprite frames
-    if (object.frame_duration <= 0.0) {
-        object.frame_duration += obtype.frame_duration;
-        if ((object.frame >= obtype.frame) and
-            (object.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+    if (obdata.frame_duration <= 0.0) {
+        obdata.frame_duration += obtype.frame_duration;
+        if ((obdata.frame >= obtype.frame) and
+            (obdata.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
         {
-            object.frame += 1;
+            obdata.frame += 1;
         } else if (obtype.flag(.die_when_anim_ends_flag) and
-            (object.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+            (obdata.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
         {
             killObject(game, level, object);
             return;
         } else {
-            object.frame_duration += 1;
-            object.frame = obtype.frame;
+            obdata.frame_duration += 1;
+            obdata.frame = obtype.frame;
             // TODO: added a wrapping subtraction here, I think it's okay though
-            if (object.frame_repetition == (obtype.num_frames >> 8) -% 1 or (obtype.num_frames >> 8 != 0)) {
-                object.frame_repetition = 0;
+            if (obdata.frame_repetition == (obtype.num_frames >> 8) -% 1 or (obtype.num_frames >> 8 != 0)) {
+                obdata.frame_repetition = 0;
 
                 if (obtype.other_sound != 0) {
                     // TODO: play sounds
@@ -468,8 +478,8 @@ fn animate(game: *Game, level: *Level, object: *Object) void {
     }
 
     // Don't animate dead roadkill?
-    if (obtype.flag(.road_kill_flag) and (object.velocity.x == 0.0 and object.velocity.y == 0)) {
-        object.frame = obtype.frame;
+    if (obtype.flag(.road_kill_flag) and (obdata.velocity.x == 0.0 and obdata.velocity.y == 0)) {
+        obdata.frame = obtype.frame;
     }
 }
 
@@ -478,8 +488,7 @@ pub fn update(game: *Game, level: *Level) void {
     // TODO: special handling for the player
     // TODO: Read events with SDL
     var it = level.objects.first;
-    while (it) |node| : (it = node.next) {
-        var object = &node.data;
+    while (it) |object| : (it = object.next) {
         move(game, level, object);
         animate(game, level, object);
     }
