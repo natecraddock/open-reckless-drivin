@@ -4,6 +4,8 @@
 const sdl = @import("sdl");
 const std = @import("std");
 
+const Allocator = std.mem.Allocator;
+
 pub const width: usize = 640;
 pub const height: usize = 480;
 
@@ -17,8 +19,10 @@ pub const Window = struct {
     renderer: sdl.Renderer,
     texture: sdl.Texture,
 
+    pixels: []u8,
+
     /// Initialize the window and return a struct
-    pub fn init() !Window {
+    pub fn init(allocator: Allocator) !Window {
         try sdl.init(.{
             .video = true,
             .events = true,
@@ -46,6 +50,7 @@ pub const Window = struct {
         // Don't interpolate pixels when scaled
         _ = sdl.c.SDL_SetHint(sdl.c.SDL_HINT_RENDER_SCALE_QUALITY, "0");
 
+        // TODO: maybe only do rgb because this game doesn't use alpha
         var texture = try sdl.createTexture(
             renderer,
             .argb8888,
@@ -56,15 +61,19 @@ pub const Window = struct {
 
         sdl.c.SDL_ShowWindow(window.ptr);
 
+        var pixels = try allocator.alloc(u8, width * height * 4);
+
         return Window{
             .window = window,
             .renderer = renderer,
             .texture = texture,
+            .pixels = pixels,
         };
     }
 
     /// Free all memory created by the window
-    pub fn deinit(self: *Window) void {
+    pub fn deinit(self: *Window, allocator: Allocator) void {
+        allocator.free(self.pixels);
         self.texture.destroy();
         self.renderer.destroy();
         self.window.destroy();
@@ -72,9 +81,8 @@ pub const Window = struct {
     }
 
     /// Copy a buffer of pixels to the window for display
-    pub fn render(self: *Window, pixels: []const u8) !void {
-        // try self.texture.update(pixels, width * 4, null);
-        _ = pixels;
+    pub fn render(self: *Window) !void {
+        try self.texture.update(self.pixels, width * 4, null);
         try self.renderer.clear();
         try self.renderer.copy(self.texture, null, null);
         self.renderer.present();

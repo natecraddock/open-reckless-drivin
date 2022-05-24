@@ -13,6 +13,7 @@ const time = std.time;
 const utils = @import("utils.zig");
 
 const Allocator = std.mem.Allocator;
+const Object = objects.Object;
 const Sprite = sprites.Sprite;
 const Window = @import("window.zig").Window;
 
@@ -29,6 +30,7 @@ pub const Game = struct {
     level: levels.Level = undefined,
     start_time: u64 = 0,
     frame_count: u64 = 0,
+    zoom_vel: f32 = 0.0,
 
     /// Free a sprite's resources if it was created as a special sprite
     pub fn specialSpriteUnused(self: *Game, id: i32) void {
@@ -42,6 +44,7 @@ pub const Game = struct {
 };
 
 const Player = struct {
+    obj: *Object = undefined,
     lives: u8 = 3,
     extra_lives: u8 = 0,
     addons: u32 = 0,
@@ -108,13 +111,14 @@ pub fn start(allocator: Allocator) !void {
     player.control = .drive_up;
     player.target = 1;
     player.is_player = true;
+    game.player.obj = node;
     game.level.objects.append(node);
 
     game.start_time = getMicroTime();
 
     // Finally initialize the window and start the gameloop
-    game.window = try Window.init();
-    defer game.window.deinit();
+    game.window = try Window.init(allocator);
+    defer game.window.deinit(allocator);
     try gameloop(&game);
 }
 
@@ -141,7 +145,7 @@ fn gameloop(game: *Game) !void {
         }
 
         if (checkFrameTime(game)) {
-            try game.window.render(&.{ 0x00, 0x00 });
+            try render.renderFrame(game);
         }
     }
 }
