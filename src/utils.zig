@@ -21,11 +21,10 @@ pub const Reader = struct {
         if (self.index + size > self.bytes.len) return error.EndOfStream;
 
         const slice = self.bytes[self.index .. self.index + size];
-        var value: [size]u8 = undefined;
-        for (slice) |b, i| value[i] = b;
+        const value = @ptrCast(*align(1) const T, slice).*;
 
         self.index += size;
-        return bigToNative(T, @bitCast(T, value));
+        return bigToNative(T, value);
     }
 
     /// Read a float from the byte stream correcting for endianness
@@ -34,12 +33,11 @@ pub const Reader = struct {
         if (self.index + size > self.bytes.len) return error.EndOfStream;
 
         const slice = self.bytes[self.index .. self.index + size];
-        var value: [size]u8 = undefined;
-        for (slice) |b, i| value[i] = b;
+        const value = @ptrCast(*align(1) const u32, slice).*;
 
         self.index += size;
         // The float needs to be interpreted as an integer to flip the endianness
-        return @bitCast(f32, bigToNative(u32, @bitCast(u32, value)));
+        return @bitCast(f32, bigToNative(u32, value));
     }
 
     /// Read bytes into an allocated slice
