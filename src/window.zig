@@ -59,9 +59,13 @@ pub const Window = struct {
             height,
         );
 
-        sdl.c.SDL_ShowWindow(window.ptr);
-
         var pixels = try allocator.alloc(u8, width * height * 4);
+
+        // Ensure a clean slate before showing the window
+        try renderer.clear();
+        renderer.present();
+
+        sdl.c.SDL_ShowWindow(window.ptr);
 
         return Window{
             .window = window,
