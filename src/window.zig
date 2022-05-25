@@ -19,7 +19,7 @@ pub const Window = struct {
     renderer: sdl.Renderer,
     texture: sdl.Texture,
 
-    pixels: []u8,
+    pixels: []u16,
 
     /// Initialize the window and return a struct
     pub fn init(allocator: Allocator) !Window {
@@ -53,13 +53,13 @@ pub const Window = struct {
         // TODO: maybe only do rgb because this game doesn't use alpha
         var texture = try sdl.createTexture(
             renderer,
-            .argb8888,
+            .rgb555,
             .streaming,
             width,
             height,
         );
 
-        var pixels = try allocator.alloc(u8, width * height * 4);
+        var pixels = try allocator.alloc(u16, width * height);
 
         // Ensure a clean slate before showing the window
         try renderer.clear();
@@ -86,7 +86,8 @@ pub const Window = struct {
 
     /// Copy a buffer of pixels to the window for display
     pub fn render(self: *Window) !void {
-        try self.texture.update(self.pixels, width * 4, null);
+        const pixels = @ptrCast([*]const u8, self.pixels)[0 .. width * 2];
+        try self.texture.update(pixels, width * 2, null);
         try self.renderer.clear();
         try self.renderer.copy(self.texture, null, null);
         self.renderer.present();

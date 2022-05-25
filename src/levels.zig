@@ -62,7 +62,7 @@ const ObjectPosition = packed struct {
     _pad: i16,
 };
 
-const RoadSegment = [4]i16;
+pub const RoadSegment = [4]i16;
 
 /// Holds all data relevant to the current level
 pub const Level = struct {
@@ -140,7 +140,6 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     const object_positions = try reader.readSlice(ObjectPosition, allocator, num_obs);
     defer allocator.free(object_positions);
     for (object_positions) |pos| {
-        // TODO: leak! Store these objects somewhere
         var object = try objects.create(allocator, pos.entry);
         object.data.dir = pos.dir;
         object.data.pos.x = @intToFloat(f32, pos.x);

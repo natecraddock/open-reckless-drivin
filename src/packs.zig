@@ -195,6 +195,16 @@ pub fn getEntrySlice(comptime T: type, allocator: Allocator, pack: Pack, entry: 
     return try reader.readSlice(T, allocator, len);
 }
 
+/// Find an entry in the pack and parse as a slice of the given type without allocations
+///
+/// Because no allocations are used, the data is NOT correctly byte swapped for
+/// the target architecture.
+pub fn getEntrySliceNoAlloc(comptime T: type, pack: Pack, entry: i16) ![]const T {
+    const bytes = try getEntryBytes(pack, entry);
+    const len = bytes.len / @sizeOf(T);
+    return @ptrCast([*]const T, bytes)[0..len];
+}
+
 /// Decrypt the bytes with the given key. Returns a special check value
 /// used to verify valid registration.
 /// TODO: remove pub when no longer needed for dump-resource subcommand

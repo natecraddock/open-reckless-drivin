@@ -30,7 +30,7 @@ pub const Game = struct {
     level: levels.Level = undefined,
     start_time: u64 = 0,
     frame_count: u64 = 0,
-    zoom_vel: f32 = 0.0,
+    zoom_vel: f32 = 80.0,
 
     /// Free a sprite's resources if it was created as a special sprite
     pub fn specialSpriteUnused(self: *Game, id: i32) void {
@@ -127,6 +127,9 @@ fn gameloop(game: *Game) !void {
     mainloop: while (game.state == .game) {
         objects.update(game, &game.level);
         // player handling
+
+        // just to see things scrolling about :)
+        // game.player.obj.data.pos.y += 15;
 
         game.frame_count += 1;
 
