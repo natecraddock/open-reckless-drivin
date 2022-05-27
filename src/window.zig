@@ -6,8 +6,9 @@ const std = @import("std");
 
 const Allocator = std.mem.Allocator;
 
-pub const width: usize = 640;
-pub const height: usize = 480;
+pub const width = 640;
+pub const height = 480;
+pub const row_bytes = width * @sizeOf(u16);
 
 /// Contains logic to manage the state of the Reckless Drivin' window
 ///
