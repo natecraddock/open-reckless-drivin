@@ -75,6 +75,8 @@ pub const Level = struct {
     road_data: []const RoadSegment,
 
     objects: ObjectList,
+    first_visible_ob: *Object,
+    last_visible_ob: *Object,
 
     /// Free all the data associated with a level
     pub fn deinit(self: *Level, allocator: Allocator) void {

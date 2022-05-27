@@ -18,6 +18,9 @@ const inf = std.math.inf_f32;
 const max_rot_vel: f32 = 2 * trig.pi * 5;
 const pixels_per_meter: f32 = 9.0;
 
+// distance from the player in which the environment is accurately simulated in pixels
+const visibility_distance = 1500;
+
 /// Data for an individual object
 pub const ObjectData = struct {
     pos: Point,
@@ -483,6 +486,47 @@ fn animate(game: *Game, level: *Level, object: *Object) void {
     }
 }
 
+fn swap(objects: *ObjectList, a: *Object, b: *Object) void {
+    if (objects.first == a) objects.first = b;
+    if (objects.last == b) objects.last = a;
+
+    if (a.prev) |prev| prev.next = b;
+    if (b.next) |next| next.prev = a;
+    a.next = b.next;
+    b.prev = a.prev;
+    a.prev = b;
+    b.next = a;
+}
+
+/// Sort objects by y position and determine which are on screen
+fn sortObjects(player: ObjectData, level: *Level) void {
+    // This is a very basic sort, but could be optimized if needed
+    var sorted = false;
+    while (!sorted) {
+        sorted = true;
+        var ob = level.objects.first;
+        while (ob != null and ob.?.next != null) {
+            var next = ob.?.next;
+            if (next.?.data.pos.y < ob.?.data.pos.y) {
+                swap(&level.objects, ob.?, next.?);
+                sorted = false;
+            } else {
+                ob = next;
+            }
+        }
+    }
+
+    // Find the first and last visible objects
+    var ob = level.objects.first;
+    const min_vis = player.pos.y - visibility_distance;
+    const max_vis = player.pos.y + visibility_distance;
+
+    while (ob != null and ob.?.data.pos.y < min_vis) ob = ob.?.next;
+    level.first_visible_ob = ob.?;
+    while (ob != null and ob.?.data.pos.y < max_vis) ob = ob.?.next;
+    level.last_visible_ob = ob.?;
+}
+
 /// Update all game objects
 pub fn update(game: *Game, level: *Level) void {
     // TODO: special handling for the player
@@ -492,5 +536,6 @@ pub fn update(game: *Game, level: *Level) void {
         move(game, level, object);
         animate(game, level, object);
     }
-    _ = game;
+
+    sortObjects(game.player.obj.data, level);
 }
