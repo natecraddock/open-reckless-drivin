@@ -61,39 +61,39 @@ const ObjectControl = enum(u8) {
     cop_control,
 };
 
-const ObjectGroup = packed struct {
-    entry: i16,
-    min_offs: i16,
-    max_offs: i16,
-    prob: i16,
-    dir: f32,
+const ObjectGroup = extern struct {
+    entry: i16 align(1),
+    min_offs: i16 align(1),
+    max_offs: i16 align(1),
+    prob: i16 align(1),
+    dir: f32 align(1),
 };
 
-pub const ObjectGroupRef = packed struct { id: i16, len: i16 };
+pub const ObjectGroupRef = extern struct { id: i16 align(1), len: i16 align(1) };
 
 /// Stores information about a type of object
-const ObjectType = packed struct {
-    mass: f32,
-    max_engine_force: f32,
-    max_neg_engine_force: f32,
-    friction: f32,
-    flags: u16,
-    death_obj: i16,
-    frame: i16,
-    num_frames: u16,
-    frame_duration: f32,
-    wheel_width: f32,
-    wheel_length: f32,
-    steering: f32,
-    width: f32,
-    length: f32,
-    score: u16,
-    flags2: u16,
-    creation_sound: i16,
-    other_sound: i16,
-    max_damage: f32,
-    weapon_obj: i16,
-    weapon_info: i16,
+const ObjectType = extern struct {
+    mass: f32 align(1),
+    max_engine_force: f32 align(1),
+    max_neg_engine_force: f32 align(1),
+    friction: f32 align(1),
+    flags: u16 align(1),
+    death_obj: i16 align(1),
+    frame: i16 align(1),
+    num_frames: u16 align(1),
+    frame_duration: f32 align(1),
+    wheel_width: f32 align(1),
+    wheel_length: f32 align(1),
+    steering: f32 align(1),
+    width: f32 align(1),
+    length: f32 align(1),
+    score: u16 align(1),
+    flags2: u16 align(1),
+    creation_sound: i16 align(1),
+    other_sound: i16 align(1),
+    max_damage: f32 align(1),
+    weapon_obj: i16 align(1),
+    weapon_info: i16 align(1),
 
     /// Return a boolean indicating whether the flag is set
     pub fn flag(self: *ObjectType, f: ObjectTypeFlag) bool {
@@ -250,7 +250,7 @@ pub fn insertObjectGroup(allocator: Allocator, objects: *ObjectList, group: Obje
     // Fill probability table
     {
         var index: usize = 0;
-        for (groups) |g, i| {
+        for (groups, 0..) |g, i| {
             var probCount: usize = 0;
             while (probCount < g.prob) : (probCount += 1) {
                 probabilities[index] = i;
@@ -371,7 +371,7 @@ pub const Collision = enum { none, one, two };
 
 fn calcBackCollision(level: *Level, pos: Point) Collision {
     var segments: [4]f32 = undefined;
-    for (level.road_data[@floatToInt(usize, pos.y / 2.0)]) |segment, i| {
+    for (level.road_data[@floatToInt(usize, pos.y / 2.0)], 0..) |segment, i| {
         segments[i] = @intToFloat(f32, segment);
     }
     const tolerance = @intToFloat(f32, level.road_info.tolerance);

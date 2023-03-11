@@ -49,7 +49,7 @@ pub fn init(initial_seed: u64) void {
     var prng = Prng.init(initial_seed);
     var rand = prng.random();
 
-    for (seeds) |*seed| {
+    for (&seeds) |*seed| {
         seed.* = rand.int(u64);
     }
 }

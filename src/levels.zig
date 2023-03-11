@@ -11,55 +11,55 @@ const ObjectList = objects.ObjectList;
 const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
-const LevelHeader = struct {
-    road_info_entry: i16,
-    time: u16,
-    object_groups: [10]ObjectGroupRef,
-    x_start: i16,
-    level_end: u16,
+const LevelHeader = extern struct {
+    road_info_entry: i16 align(1),
+    time: u16 align(1),
+    object_groups: [10]ObjectGroupRef align(1),
+    x_start: i16 align(1),
+    level_end: u16 align(1),
 };
 
-const Mark = packed struct { p1: Point, p2: Point };
+const Mark = extern struct { p1: Point align(1), p2: Point align(1) };
 
-const RoadInfo = packed struct {
-    friction: f32,
-    air_resistance: f32,
-    back_resistance: f32, // obsolete
-    tolerance: u16,
-    marks: i16,
-    death_offs: i16,
-    background_tex: i16,
-    foreground_tex: i16,
-    road_left_border: i16,
-    road_right_border: i16,
-    tracks: i16,
-    skid_sound: i16,
-    _pad1: i16,
-    x_drift: f32,
-    y_drift: f32,
-    x_front_drift: f32,
-    y_front_drift: f32,
-    track_slide: f32,
-    dust_slide: f32,
-    dust_color: u8,
-    water: u8,
-    _pad2: u16,
-    slide_friction: f32,
+const RoadInfo = extern struct {
+    friction: f32 align(1),
+    air_resistance: f32 align(1),
+    back_resistance: f32 align(1), // obsolete
+    tolerance: u16 align(1),
+    marks: i16 align(1),
+    death_offs: i16 align(1),
+    background_tex: i16 align(1),
+    foreground_tex: i16 align(1),
+    road_left_border: i16 align(1),
+    road_right_border: i16 align(1),
+    tracks: i16 align(1),
+    skid_sound: i16 align(1),
+    _pad1: i16 align(1),
+    x_drift: f32 align(1),
+    y_drift: f32 align(1),
+    x_front_drift: f32 align(1),
+    y_front_drift: f32 align(1),
+    track_slide: f32 align(1),
+    dust_slide: f32 align(1),
+    dust_color: u8 align(1),
+    water: u8 align(1),
+    _pad2: u16 align(1),
+    slide_friction: f32 align(1),
 };
 
-const TrackInfo = packed struct {
-    flags: u16,
-    x: i16,
-    y: i32,
-    velocity: f32,
+const TrackInfo = extern struct {
+    flags: u16 align(1),
+    x: i16 align(1),
+    y: i32 align(1),
+    velocity: f32 align(1),
 };
 
-const ObjectPosition = packed struct {
-    x: i32,
-    y: i32,
-    dir: f32,
-    entry: i16,
-    _pad: i16,
+const ObjectPosition = extern struct {
+    x: i32 align(1),
+    y: i32 align(1),
+    dir: f32 align(1),
+    entry: i16 align(1),
+    _pad: i16 align(1),
 };
 
 pub const RoadSegment = [4]i16;

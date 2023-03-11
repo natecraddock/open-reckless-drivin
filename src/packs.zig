@@ -92,10 +92,10 @@ pub fn unload(allocator: Allocator, pack: Pack) void {
 
 /// Each pack contains a list of headers (which may be sorted). Each header refers
 /// to an offset to the byte where that entry begins in the pack bytes.
-const Header = struct {
-    entry: i16,
-    pad: i16 = 0,
-    offset: u32 = 0,
+const Header = extern struct {
+    entry: i16 align(1),
+    pad: i16 align(1) = 0,
+    offset: u32 align(1) = 0,
 
     fn compare(context: void, key: Header, item: Header) std.math.Order {
         _ = context;

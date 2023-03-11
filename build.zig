@@ -2,9 +2,14 @@ const std = @import("std");
 
 pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
-    const mode = b.standardReleaseOptions();
+    const optimize = b.standardOptimizeOption(.{});
 
-    const exe = b.addExecutable("reckless-drivin", "src/main.zig");
+    const exe = b.addExecutable(.{
+        .name = "reckless-drivin",
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
 
     exe.linkLibC();
     exe.addIncludePath("src/c/");
@@ -15,9 +20,6 @@ pub fn build(b: *std.build.Builder) void {
         // for more details.
         "-fno-sanitize=undefined",
     });
-
-    exe.setTarget(target);
-    exe.setBuildMode(mode);
     exe.install();
 
     const run_cmd = exe.run();
@@ -29,15 +31,16 @@ pub fn build(b: *std.build.Builder) void {
     const run_step = b.step("run", "Run Reckless Drivin'");
     run_step.dependOn(&run_cmd.step);
 
-    const exe_tests = b.addTest("src/main.zig");
+    const exe_tests = b.addTest(.{
+        .root_source_file = .{ .path = "src/main.zig" },
+        .target = target,
+        .optimize = optimize,
+    });
     exe_tests.linkLibC();
     exe_tests.addIncludePath("src/c/");
     exe_tests.addCSourceFile("src/c/lzrw.c", &.{
         "-fno-sanitize=undefined",
     });
-
-    exe_tests.setTarget(target);
-    exe_tests.setBuildMode(mode);
 
     const test_step = b.step("test", "Run tests");
     test_step.dependOn(&exe_tests.step);

@@ -60,7 +60,7 @@ pub const Reader = struct {
 
         var item: T = undefined;
         inline for (fields) |field| {
-            @field(item, field.name) = try self.read(field.field_type);
+            @field(item, field.name) = try self.read(field.type);
         }
 
         return item;

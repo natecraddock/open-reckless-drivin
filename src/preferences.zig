@@ -39,8 +39,8 @@ const INIParser = struct {
     /// The inside characters must not be square brackets.
     fn parseSection(line: []const u8) ![]const u8 {
         if (line.len == 1) return error.InvalidSyntax;
-        for (line) |c, i| {
-            if (!std.ascii.isAlNum(c) and c != '_') {
+        for (line, 0..) |c, i| {
+            if (!std.ascii.isAlphanumeric(c) and c != '_') {
                 if (c == ']' and i == line.len - 1) return line[0 .. line.len - 1];
                 return error.InvalidSyntax;
             }
@@ -67,7 +67,7 @@ const INIParser = struct {
 
     fn parseName(name: []const u8) ![]const u8 {
         for (name) |c| {
-            if (!std.ascii.isAlNum(c) and c != '_') return error.InvalidSyntax;
+            if (!std.ascii.isAlphanumeric(c) and c != '_') return error.InvalidSyntax;
         }
         return name;
     }
