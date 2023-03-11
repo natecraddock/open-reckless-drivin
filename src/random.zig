@@ -46,7 +46,9 @@ fn nextRandom() f64 {
 
 /// Initialize the random number seeds
 pub fn init(initial_seed: u64) void {
-    var rand = Prng.init(initial_seed).random();
+    var prng = Prng.init(initial_seed);
+    var rand = prng.random();
+
     for (seeds) |*seed| {
         seed.* = rand.int(u64);
     }

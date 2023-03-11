@@ -124,7 +124,7 @@ pub fn start(allocator: Allocator) !void {
 
 /// The main gameloop of Reckless Drivin'
 fn gameloop(game: *Game) !void {
-    mainloop: while (game.state == .game) {
+    while (game.state == .game) {
         objects.update(game, &game.level);
         // player handling
 
@@ -136,13 +136,6 @@ fn gameloop(game: *Game) !void {
         // event handling (move elsewhere later?)
         while (Window.getEvent()) |ev| {
             switch (ev) {
-                .quit => break :mainloop,
-                .key_up => |key| {
-                    switch (key.scancode) {
-                        .escape => break :mainloop,
-                        else => {},
-                    }
-                },
                 else => {},
             }
         }

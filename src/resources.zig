@@ -53,7 +53,7 @@ const bigToNative = std.mem.bigToNative;
 /// take place later when splitting into individual resources
 const data = @embedFile("resources.dat");
 
-const Header = packed struct {
+const Header = struct {
     resource_type: [8]u8,
     id: u32,
     length: u32,

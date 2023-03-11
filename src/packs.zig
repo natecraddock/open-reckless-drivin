@@ -126,7 +126,7 @@ fn getEntrySparse(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
         } else {
             len = bigToNative(u32, entries[index + 1].offset) - offset;
         }
-        return bytes[offset .. offset + len];
+        return @alignCast(pack_alignment, bytes[offset .. offset + len]);
     } else return error.InvalidPackEntry;
 }
 
@@ -147,7 +147,7 @@ fn getEntrySequential(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 
     const index = @intCast(usize, entry - start_entry);
     const offset = bigToNative(u32, entries[index].offset);
     var len: usize = if (index + 1 == num_entries) bytes.len - offset else bigToNative(u32, entries[index + 1].offset) - offset;
-    return bytes[offset .. offset + len];
+    return @alignCast(pack_alignment, bytes[offset .. offset + len]);
 }
 
 /// Find an entry in the given pack as bytes

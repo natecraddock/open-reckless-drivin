@@ -11,7 +11,7 @@ const ObjectList = objects.ObjectList;
 const ObjectGroupRef = objects.ObjectGroupRef;
 const Point = @import("point.zig").Point;
 
-const LevelHeader = packed struct {
+const LevelHeader = struct {
     road_info_entry: i16,
     time: u16,
     object_groups: [10]ObjectGroupRef,
