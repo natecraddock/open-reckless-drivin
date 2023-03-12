@@ -4,6 +4,11 @@ pub fn build(b: *std.build.Builder) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
+    const raylib = b.dependency("raylib", .{
+        .target = target,
+        .optimize = optimize,
+    });
+
     const exe = b.addExecutable(.{
         .name = "reckless-drivin",
         .root_source_file = .{ .path = "src/main.zig" },
@@ -12,6 +17,7 @@ pub fn build(b: *std.build.Builder) void {
     });
 
     exe.linkLibC();
+    exe.linkLibrary(raylib.artifact("raylib"));
     exe.addIncludePath("src/c/");
     exe.addCSourceFile("src/c/lzrw.c", &.{
         // The default is to enable undefined behavior detection in C code. I have

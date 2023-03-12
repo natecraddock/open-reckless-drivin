@@ -9,6 +9,7 @@ const Allocator = std.mem.Allocator;
 const game = @import("game.zig");
 const lzrw = @import("lzrw.zig");
 const packs = @import("packs.zig");
+const raylib = @import("raylib.zig");
 const resources = @import("resources.zig");
 
 const version = "0.0";
@@ -17,6 +18,8 @@ pub fn main() !void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     const allocator = gpa.allocator();
     defer _ = gpa.deinit();
+
+    raylib.testing();
 
     const args = try std.process.argsAlloc(allocator);
     defer std.process.argsFree(allocator, args);
