@@ -1,21 +1,33 @@
 const std = @import("std");
 
-const c = @cImport({
+pub const c = @cImport({
     @cInclude("raylib.h");
 });
 
-
-
-pub fn testing() void {
-    c.InitWindow(640, 480, "Open Reckless Drivin'");
+/// Initialize the window
+pub fn initWindow(width: i32, height: i32, title: [:0]const u8) void {
+    c.InitWindow(width, height, title);
+    c.SetWindowState(c.FLAG_WINDOW_RESIZABLE | c.FLAG_VSYNC_HINT);
+    c.SetWindowMinSize(width, height);
     c.SetTargetFPS(60);
+}
 
-    while (!c.WindowShouldClose()) {
-        c.BeginDrawing();
-        c.ClearBackground(c.RAYWHITE);
-        c.DrawText("Congrats! You created your first window!", 190, 200, 20, c.LIGHTGRAY);
-        c.EndDrawing();
-    }
-
+pub fn closeWindow() void {
     c.CloseWindow();
+}
+
+pub fn beginDrawing() void {
+    c.BeginDrawing();
+}
+
+pub fn endDrawing() void {
+    c.EndDrawing();
+}
+
+pub fn clearBackground() void {
+    c.ClearBackground(c.RAYWHITE);
+}
+
+pub fn windowShouldClose() bool {
+    return c.WindowShouldClose();
 }

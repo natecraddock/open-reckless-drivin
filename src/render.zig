@@ -29,8 +29,6 @@ pub fn renderFrame(game: *Game) !void {
     const x_draw_start = camera.pos.x - window.width * x_camera_screen_pos * zoom;
     const y_draw_start = camera.pos.y + window.height * y_camera_screen_pos * zoom;
 
-    if (true) return;
-
     var pixels = game.window.pixels;
     try drawRoad(pixels, &game.level, x_draw_start, y_draw_start, zoom);
     try drawMarks(pixels, &game.level, x_draw_start, y_draw_start, zoom);
