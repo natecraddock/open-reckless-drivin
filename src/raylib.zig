@@ -6,8 +6,10 @@ pub const c = @cImport({
 
 /// Initialize the window
 pub fn initWindow(width: i32, height: i32, title: [:0]const u8) void {
+    c.SetWindowState(c.FLAG_WINDOW_HIGHDPI);
     c.InitWindow(width, height, title);
     c.SetWindowState(c.FLAG_WINDOW_RESIZABLE | c.FLAG_VSYNC_HINT);
+    c.SetExitKey(0);
     c.SetWindowMinSize(width, height);
     c.SetTargetFPS(60);
 }
@@ -25,7 +27,7 @@ pub fn endDrawing() void {
 }
 
 pub fn clearBackground() void {
-    c.ClearBackground(c.RAYWHITE);
+    c.ClearBackground(c.BLACK);
 }
 
 pub fn windowShouldClose() bool {

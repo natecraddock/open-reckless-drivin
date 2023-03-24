@@ -46,14 +46,38 @@ pub const Window = struct {
         raylib.beginDrawing();
         raylib.clearBackground();
 
-        // Copy reckless drivin pixels to the raylib texture pixel buffer
+        // Reckless drivin stores pixels in RGB555 (0RRRRRGG_GGGBBBBB), while Raylib does
+        // RGBA555 (RRRRRGGG_GGBBBBBA). So we need to convert the pixels. This seems to be fast
+        // enough for now, but maybe someday I'll update the logic throughout reckless drivin to
+        // set the pixels correctly up front.
         for (win.pixels, 0..) |pix, i| {
             win.tex_pixels[i] = pix << 1;
             win.tex_pixels[i] |= 1;
         }
+        raylib.c.UpdateTexture(win.texture, @ptrCast(*anyopaque, win.tex_pixels));
 
-        raylib.c.UpdateTexture(win.texture, @ptrCast([*]u8, win.tex_pixels));
-        raylib.c.DrawTexture(win.texture, 0, 0, raylib.c.WHITE);
+        const win_width = @intToFloat(f32, raylib.c.GetRenderWidth());
+        const win_height = @intToFloat(f32, raylib.c.GetRenderHeight());
+
+        const scale = @min(win_width / width, win_height / height);
+        const output_width = width * scale;
+        const output_height = height * scale;
+
+        const dest = raylib.c.Rectangle{
+            .x = (win_width - output_width) / 2.0,
+            .y = (win_height - output_height) / 2.0,
+            .width = output_width,
+            .height = output_height,
+        };
+
+        raylib.c.DrawTexturePro(
+            win.texture,
+            .{ .x = 0, .y = 0, .width = width, .height = height },
+            dest,
+            .{ .x = 0, .y = 0 },
+            0,
+            raylib.c.WHITE,
+        );
 
         raylib.endDrawing();
     }
@@ -61,5 +85,9 @@ pub const Window = struct {
     pub fn getEvent() ?void {
         // return sdl.pollEvent();
         return null;
+    }
+
+    pub fn shouldClose() bool {
+        return raylib.c.WindowShouldClose();
     }
 };

@@ -143,6 +143,8 @@ fn gameloop(game: *Game) !void {
         if (checkFrameTime(game)) {
             try render.renderFrame(game);
         }
+
+        if (Window.shouldClose()) break;
     }
 }
 
