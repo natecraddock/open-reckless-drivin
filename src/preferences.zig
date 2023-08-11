@@ -10,11 +10,11 @@ const Allocator = mem.Allocator;
 /// TODO:
 /// * trailing line comments
 const INIParser = struct {
-    iter: mem.TokenIterator(u8),
+    iter: mem.TokenIterator(u8, .scalar),
     section: ?[]const u8 = null,
 
     pub fn init(buf: []const u8) INIParser {
-        return .{ .iter = mem.tokenize(u8, buf, "\n") };
+        return .{ .iter = mem.tokenizeScalar(u8, buf, '\n') };
     }
 
     pub fn next(self: *INIParser) !?Key {
@@ -49,7 +49,7 @@ const INIParser = struct {
     }
 
     fn parse(line: []const u8) !Key {
-        var iter = mem.tokenize(u8, line, "=");
+        var iter = mem.tokenizeScalar(u8, line, '=');
         const name = iter.next();
         if (name == null) {
             return error.InvalidSyntax;

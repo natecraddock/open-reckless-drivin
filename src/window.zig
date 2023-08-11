@@ -54,10 +54,10 @@ pub const Window = struct {
             win.tex_pixels[i] = pix << 1;
             win.tex_pixels[i] |= 1;
         }
-        raylib.c.UpdateTexture(win.texture, @ptrCast(*anyopaque, win.tex_pixels));
+        raylib.c.UpdateTexture(win.texture, @ptrCast(win.tex_pixels));
 
-        const win_width = @intToFloat(f32, raylib.c.GetRenderWidth());
-        const win_height = @intToFloat(f32, raylib.c.GetRenderHeight());
+        const win_width: f32 = @floatFromInt(raylib.c.GetRenderWidth());
+        const win_height: f32 = @floatFromInt(raylib.c.GetRenderHeight());
 
         const scale = @min(win_width / width, win_height / height);
         const output_width = width * scale;

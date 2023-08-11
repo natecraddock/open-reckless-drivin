@@ -10,7 +10,7 @@ const sine_table = brk: {
     var table: [table_size]f32 = undefined;
     var i: usize = 0;
     while (i < table_size) : (i += 1) {
-        table[i] = @sin(2 * pi * (@intToFloat(f32, i) / @intToFloat(f32, table_size)));
+        table[i] = @sin(2 * pi * (@as(f32, @floatFromInt(i)) / @as(f32, @floatFromInt(table_size))));
     }
     break :brk table;
 };
@@ -18,11 +18,11 @@ const sine_table = brk: {
 const sine_mask: u32 = 0x0000_03ff;
 
 pub inline fn sin(x: f32) f32 {
-    return sine_table[@floatToInt(u16, x * @intToFloat(f32, table_size) / (2.0 * pi)) & sine_mask];
+    return sine_table[@as(u16, @intFromFloat(x * @as(f32, @floatFromInt(table_size)) / (2.0 * pi))) & sine_mask];
 }
 
 pub inline fn cos(x: f32) f32 {
-    return sine_table[@floatToInt(u16, (x + (pi / 2.0)) * @intToFloat(f32, table_size) / (2.0 * pi)) & sine_mask];
+    return sine_table[@as(u16, @intFromFloat((x + (pi / 2.0)) * @as(f32, @floatFromInt(table_size)) / (2.0 * pi))) & sine_mask];
 }
 
 const testing = @import("std").testing;

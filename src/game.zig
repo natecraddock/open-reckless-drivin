@@ -28,13 +28,14 @@ pub const Game = struct {
     player: Player = .{},
     sprites: []?Sprite = undefined,
     level: levels.Level = undefined,
+    time: f32 = 0,
     start_time: u64 = 0,
     frame_count: u64 = 0,
     zoom_vel: f32 = 80.0,
 
     /// Free a sprite's resources if it was created as a special sprite
     pub fn specialSpriteUnused(self: *Game, id: i32) void {
-        const index = @intCast(usize, id - 128);
+        const index: usize = @intCast(id - 128);
         if (index < sprites.num_sprites) return;
         if (self.sprites[index]) |sprite| {
             self.allocator.free(sprite.pixels.full);
@@ -85,7 +86,7 @@ pub fn start(allocator: Allocator) !void {
     var game: Game = .{ .allocator = allocator };
 
     // initialize PRNG
-    random.init(@bitCast(u64, time.timestamp()));
+    random.init(@bitCast(time.timestamp()));
 
     // load packs and other constant game resources
     try initData(allocator);
@@ -106,7 +107,7 @@ pub fn start(allocator: Allocator) !void {
     // TODO: use bool for water?
     var node = try objects.create(allocator, if (game.level.road_info.water == 1) 201 else 128);
     var player = &node.data;
-    player.pos.x = @intToFloat(f32, game.level.header.x_start);
+    player.pos.x = @floatFromInt(game.level.header.x_start);
     player.pos.y = 500.0;
     player.control = .drive_up;
     player.target = 1;
@@ -115,6 +116,7 @@ pub fn start(allocator: Allocator) !void {
     game.level.objects.append(node);
 
     game.start_time = getMicroTime();
+    game.time = 0;
 
     // Finally initialize the window and start the gameloop
     game.window = try Window.init(allocator);
@@ -152,15 +154,15 @@ const frames_per_microsecond = render.fps / 1000000.0;
 
 /// Return the current time in microseconds
 fn getMicroTime() u64 {
-    return @intCast(u64, @divTrunc(time.nanoTimestamp(), 1000));
+    return @intCast(@divTrunc(time.nanoTimestamp(), 1000));
 }
 
 /// Check if a frame should be rendered
 /// TODO: this seems to always return true, and might be a NOP. Return to this
 /// at a later point to investigate...
 fn checkFrameTime(game: *Game) bool {
-    const current_time = getMicroTime() - game.start_time;
-    const optimal_frame_count = @intToFloat(f32, current_time) * frames_per_microsecond;
+    const current_time: f32 = @floatFromInt(getMicroTime() - game.start_time);
+    const optimal_frame_count = current_time * frames_per_microsecond;
 
-    return @intToFloat(f32, game.frame_count) > optimal_frame_count;
+    return @as(f32, @floatFromInt(game.frame_count)) > optimal_frame_count;
 }

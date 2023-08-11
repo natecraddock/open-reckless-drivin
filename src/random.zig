@@ -33,7 +33,7 @@ fn nextRandom() f64 {
         k = 0;
     }
 
-    var y = seeds[@intCast(usize, k)];
+    var y = seeds[@intCast(k)];
     y ^= (y << 7) & 0x2b5b_2500; // s and b, magic vectors
     y ^= (y << 15) & 0xdb8b_0000; // t and c, magic vectors
     y &= 0xffffffff;
@@ -41,7 +41,7 @@ fn nextRandom() f64 {
     y ^= (y >> 16);
     k += 1;
 
-    return @intToFloat(f64, y) / @intToFloat(f64, 0xffff_ffff);
+    return @as(f64, @floatFromInt(y)) / @as(f64, @floatFromInt(0xffff_ffff));
 }
 
 /// Initialize the random number seeds
@@ -61,12 +61,12 @@ pub fn randomFloat(min: f32, max: f32) f32 {
 
 /// Return a random int evenly distributed in the interval [min, max-1]
 pub fn randomInt(min: i32, max: i32) i32 {
-    const min_f = @intToFloat(f64, min);
-    const max_f = @intToFloat(f64, max);
+    const min_f: f64 = @floatFromInt(min);
+    const max_f: f64 = @floatFromInt(max);
 
     var r = nextRandom();
     while (r == 1) r = nextRandom();
-    return @floatToInt(i32, r * (max_f - min_f) + min_f);
+    return @intFromFloat(r * (max_f - min_f) + min_f);
 }
 
 /// Returns true with a probability of p

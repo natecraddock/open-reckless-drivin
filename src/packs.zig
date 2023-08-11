@@ -53,10 +53,10 @@ var packs = std.mem.zeroes([num_packs]?[]align(pack_alignment) const u8);
 
 /// Load and decompress a Pack, preparing it for use later
 pub fn load(allocator: Allocator, pack: Pack) !void {
-    const id = @enumToInt(pack);
+    const id = @intFromEnum(pack);
     if (packs[id] == null) {
         if (resources.getResource("Pack", id + 128)) |resource| {
-            if (id >= @enumToInt(encrypted_pack)) {
+            if (id >= @intFromEnum(encrypted_pack)) {
                 return error.BadDecompression;
             }
             packs[id] = try lzrw.decompressResource(allocator, resource);
@@ -66,10 +66,10 @@ pub fn load(allocator: Allocator, pack: Pack) !void {
 
 /// Load, decrypt, and decompress a Pack, preparing it for use later
 pub fn loadEncrypted(allocator: Allocator, pack: Pack, key: u32) !void {
-    const id = @enumToInt(pack);
+    const id = @intFromEnum(pack);
     if (packs[id] == null) {
         if (resources.getResource("Pack", id + 128)) |resource| {
-            if (id < @enumToInt(encrypted_pack)) {
+            if (id < @intFromEnum(encrypted_pack)) {
                 return error.BadDecryption;
             }
             // Need working (non-const) memory to decrypt the pack in-place
@@ -83,7 +83,7 @@ pub fn loadEncrypted(allocator: Allocator, pack: Pack, key: u32) !void {
 }
 
 pub fn unload(allocator: Allocator, pack: Pack) void {
-    const id = @enumToInt(pack);
+    const id = @intFromEnum(pack);
     if (packs[id]) |p| {
         allocator.free(p);
         packs[id] = null;
@@ -108,14 +108,14 @@ const Header = extern struct {
 /// Sparse packs are not guaranteed to contain all entries with no gaps, so it is not
 /// possible to index directly like an array. Binary search is used to find the entry.
 fn getEntrySparse(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
-    const id = @enumToInt(pack);
+    const id = @intFromEnum(pack);
     if (packs[id] == null) return error.PackNotLoaded;
     const bytes = packs[id].?;
 
     // TODO: remove these pointer casts if possible
-    const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
-    const num_entries = @intCast(usize, bigToNative(i16, header.entry));
-    const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
+    const header: *const Header = @ptrCast(bytes[0..@sizeOf(Header)]);
+    const num_entries: usize = @intCast(bigToNative(i16, header.entry));
+    const entries: [*]const Header = @ptrCast(bytes[@sizeOf(Header)..]);
 
     var key: Header = .{ .entry = entry };
     if (std.sort.binarySearch(Header, key, entries[0..num_entries], {}, Header.compare)) |index| {
@@ -126,28 +126,28 @@ fn getEntrySparse(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
         } else {
             len = bigToNative(u32, entries[index + 1].offset) - offset;
         }
-        return @alignCast(pack_alignment, bytes[offset .. offset + len]);
+        return @alignCast(bytes[offset .. offset + len]);
     } else return error.InvalidPackEntry;
 }
 
 /// Find an entry sequentially in the pack. Unlike sparse packs, these include
 /// sequential headers and thus do not require a binary search.
 fn getEntrySequential(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
-    const id = @enumToInt(pack);
+    const id = @intFromEnum(pack);
     if (packs[id] == null) return error.PackNotLoaded;
     const bytes = packs[id].?;
 
     // TODO: remove these pointer casts if possible
-    const header = @ptrCast(*const Header, bytes[0..@sizeOf(Header)]);
-    const num_entries = @intCast(usize, bigToNative(i16, header.entry));
+    const header: *const Header = @ptrCast(bytes[0..@sizeOf(Header)]);
+    const num_entries: usize = @intCast(bigToNative(i16, header.entry));
 
-    const entries = @ptrCast([*]const Header, bytes[@sizeOf(Header)..]);
+    const entries: [*]const Header = @ptrCast(bytes[@sizeOf(Header)..]);
     const start_entry = bigToNative(i16, entries[0].entry);
 
-    const index = @intCast(usize, entry - start_entry);
+    const index: usize = @intCast(entry - start_entry);
     const offset = bigToNative(u32, entries[index].offset);
     var len: usize = if (index + 1 == num_entries) bytes.len - offset else bigToNative(u32, entries[index + 1].offset) - offset;
-    return @alignCast(pack_alignment, bytes[offset .. offset + len]);
+    return @alignCast(bytes[offset .. offset + len]);
 }
 
 /// Find an entry in the given pack as bytes
@@ -202,7 +202,7 @@ pub fn getEntrySlice(comptime T: type, allocator: Allocator, pack: Pack, entry: 
 pub fn getEntrySliceNoAlloc(comptime T: type, pack: Pack, entry: i16) ![]const T {
     const bytes = try getEntryBytes(pack, entry);
     const len = bytes.len / @sizeOf(T);
-    return @ptrCast([*]const T, bytes)[0..len];
+    return @as([*]const T, @ptrCast(bytes))[0..len];
 }
 
 /// Decrypt the bytes with the given key. Returns a special check value
@@ -214,7 +214,7 @@ pub fn decrypt(bytes: []u8, key: u32) u32 {
     // The first 256 bytes of the pack are an unencrypted header
     var index: usize = 256;
     while (index <= bytes.len - 4) : (index += 4) {
-        var word = @ptrCast(*align(1) u32, bytes[index .. index + 4]);
+        var word: *align(1) u32 = @ptrCast(bytes[index .. index + 4]);
         word.* = bigToNative(u32, word.*) ^ key;
         check +%= word.*;
         word.* = nativeToBig(u32, word.*);
@@ -222,18 +222,18 @@ pub fn decrypt(bytes: []u8, key: u32) u32 {
 
     // Decrypt any bytes beyond a multiple of 4 bytes individually
     if (bytes.len -| index > 0) {
-        bytes[index] ^= @intCast(u8, (key >> 24) & 0xff);
-        check +%= bigToNative(u32, @intCast(u32, bytes[index]) << 24);
+        bytes[index] ^= @intCast((key >> 24) & 0xff);
+        check +%= bigToNative(u32, @as(u32, @intCast(bytes[index])) << 24);
         index += 1;
     }
     if (bytes.len -| index > 0) {
-        bytes[index] ^= @intCast(u8, (key >> 16) & 0xff);
-        check +%= bigToNative(u32, @intCast(u32, bytes[index]) << 16);
+        bytes[index] ^= @intCast((key >> 16) & 0xff);
+        check +%= bigToNative(u32, @as(u32, @intCast(bytes[index])) << 16);
         index += 1;
     }
     if (bytes.len -| index > 0) {
-        bytes[index] ^= @intCast(u8, (key >> 8) & 0xff);
-        check +%= bigToNative(u32, @intCast(u32, bytes[index]) << 8);
+        bytes[index] ^= @intCast((key >> 8) & 0xff);
+        check +%= bigToNative(u32, @as(u32, @intCast(bytes[index])) << 8);
         index += 1;
     }
 
@@ -303,10 +303,10 @@ test "pack decryption check" {
     // level 04 by comparing the resource value to the value
     // computed during decryption of the level.
     const check = resources.getResource("Chck", 128) orelse return error.TestFailure;
-    const check_val = bigToNative(u32, @ptrCast(*align(1) const u32, check).*);
+    const check_val = bigToNative(u32, @as(*align(1) const u32, @ptrCast(check)).*);
 
     // Decrypt level 04 data to compute the decryption check
-    const level_04 = resources.getResource("Pack", @enumToInt(Pack.level_04) + 128) orelse return error.TestFailure;
+    const level_04 = resources.getResource("Pack", @intFromEnum(Pack.level_04) + 128) orelse return error.TestFailure;
     var buf = try testing.allocator.alloc(u8, level_04.len);
     defer testing.allocator.free(buf);
 

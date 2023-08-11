@@ -59,7 +59,7 @@ fn registerNewUser(allocator: Allocator, args: [][:0]u8) !void {
     // combination of the registered player's name and code.
     const key = 0x1e42a71f;
 
-    const name_num = mem.nativeToBig(u32, @ptrCast(*align(1) u32, name_formatted[name_formatted.len - 4 ..]).*);
+    const name_num = mem.nativeToBig(u32, @as(*align(1) u32, @ptrCast(name_formatted[name_formatted.len - 4 ..])).*);
     const code_num = key ^ name_num;
 
     // This seed is used to scramble the code_num. I cannot determine how

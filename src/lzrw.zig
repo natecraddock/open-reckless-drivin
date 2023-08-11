@@ -23,10 +23,10 @@ fn decompress(allocator: Allocator, compressed: []const u8) ![]align(pack_alignm
     var len: u64 = 0;
     c.lzrw3a_compress(
         c.COMPRESS_ACTION_DECOMPRESS,
-        @ptrCast([*c]u8, working_mem),
-        @ptrCast([*c]const u8, compressed),
-        @intCast(u32, compressed.len),
-        @ptrCast([*c]u8, destination_mem),
+        @ptrCast(working_mem),
+        @ptrCast(compressed),
+        @intCast(compressed.len),
+        @ptrCast(destination_mem),
         &len,
     );
 

@@ -14,9 +14,9 @@ const Level = @import("levels.zig").Level;
 const ObjectTypeMap = std.AutoHashMap(i16, ObjectType);
 const Point = @import("point.zig").Point;
 
-const inf = std.math.inf_f32;
+const inf = std.math.inf(f32);
 const max_rot_vel: f32 = 2 * trig.pi * 5;
-const pixels_per_meter: f32 = 9.0;
+pub const pixels_per_meter: f32 = 9.0;
 
 // distance from the player in which the environment is accurately simulated in pixels
 const visibility_distance = 1500;
@@ -45,6 +45,13 @@ pub const ObjectData = struct {
     // TODO: perhaps store a pointer to the player data so all that is easily accessible?
     is_player: bool, // Reckless Drivin' uses a global, but a boolean is much simpler even if it is nearly always false
     // TODO: input tInputData,
+};
+
+pub const ObjectLayers = enum {
+    ground,
+    car,
+    tree,
+    fly,
 };
 
 /// A list of objects
@@ -100,11 +107,11 @@ const ObjectType = extern struct {
         // currently a packed bitflag struct does not have a defined integer
         // layout for deserialization. If that were the case I would use that
         // instead. This function is a workaround
-        var value = @enumToInt(f);
+        var value = @intFromEnum(f);
 
         // This one function is used to manage both flag variables, so check
         // which flag this is intended for
-        if (value < @enumToInt(ObjectTypeFlag.addon_flag)) {
+        if (value < @intFromEnum(ObjectTypeFlag.addon_flag)) {
             // flag1
             return self.flags & value != 0;
         } else {
@@ -185,11 +192,11 @@ pub fn getObjectType(entry: i16) !*ObjectType {
 test "object type flags" {
     // Construct some obtype flags on boundaries
     var obtype: ObjectType = undefined;
-    obtype.flags = @enumToInt(ObjectTypeFlag.wheel_flag) + @enumToInt(ObjectTypeFlag.bonus_flag);
+    obtype.flags = @intFromEnum(ObjectTypeFlag.wheel_flag) + @intFromEnum(ObjectTypeFlag.bonus_flag);
 
     // Note that this is a mess, but we shouldn't ever need to construct
     // ourselves in game code
-    obtype.flags2 = @intCast(u16, (@enumToInt(ObjectTypeFlag.addon_flag) >> 16) + (@enumToInt(ObjectTypeFlag.object_bump_flag) >> 16));
+    obtype.flags2 = @as(u16, @intCast((@intFromEnum(ObjectTypeFlag.addon_flag) >> 16) + (@intFromEnum(ObjectTypeFlag.object_bump_flag) >> 16)));
 
     try std.testing.expect(obtype.flag(.wheel_flag));
     try std.testing.expect(obtype.flag(.bonus_flag));
@@ -261,7 +268,7 @@ pub fn insertObjectGroup(allocator: Allocator, objects: *ObjectList, group: Obje
 
     var index: usize = 0;
     while (index < group.len) : (index += 1) {
-        const prob = probabilities[@intCast(usize, random.randomInt(0, 100))];
+        const prob = probabilities[@intCast(random.randomInt(0, 100))];
         var object = try create(allocator, groups[prob].entry);
         var obdata = &object.data;
 
@@ -307,17 +314,17 @@ fn move(game: *Game, level: *Level, object: *Object) void {
         obdata.pos = Point.add(obdata.pos, Point.scale(obdata.velocity, pixels_per_meter * render.frame_duration));
 
         // Cycle objects that moved off the track
-        if (obdata.pos.y > @intToFloat(f32, level.road_data.len * 2)) {
+        if (obdata.pos.y > @as(f32, @floatFromInt(level.road_data.len * 2))) {
             obdata.pos = .{
-                .x = @intToFloat(f32, level.track_up[0].x),
+                .x = @floatFromInt(level.track_up[0].x),
                 .y = 100,
             };
             if (obdata.control == .drive_up) obdata.target = 0;
             repair(game, obdata);
         } else if (obdata.pos.y < 0.0) {
             obdata.pos = .{
-                .x = @intToFloat(f32, level.track_down[0].x),
-                .y = @intToFloat(f32, level.road_data.len * 2 - 100),
+                .x = @floatFromInt(level.track_down[0].x),
+                .y = @floatFromInt(level.road_data.len * 2 - 100),
             };
             if (obdata.control == .drive_down) obdata.target = 0;
             repair(game, obdata);
@@ -371,10 +378,10 @@ pub const Collision = enum { none, one, two };
 
 fn calcBackCollision(level: *Level, pos: Point) Collision {
     var segments: [4]f32 = undefined;
-    for (level.road_data[@floatToInt(usize, pos.y / 2.0)], 0..) |segment, i| {
-        segments[i] = @intToFloat(f32, segment);
+    for (level.road_data[@intFromFloat(pos.y / 2.0)], 0..) |segment, i| {
+        segments[i] = @floatFromInt(segment);
     }
-    const tolerance = @intToFloat(f32, level.road_info.tolerance);
+    const tolerance: f32 = @floatFromInt(level.road_info.tolerance);
 
     if (segments[0] > pos.x) {
         return if ((segments[0] - pos.x) > tolerance) .two else .one;
@@ -458,11 +465,11 @@ fn animate(game: *Game, level: *Level, object: *Object) void {
     if (obdata.frame_duration <= 0.0) {
         obdata.frame_duration += obtype.frame_duration;
         if ((obdata.frame >= obtype.frame) and
-            (obdata.frame < obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+            (obdata.frame < obtype.frame + @as(i16, @intCast(obtype.num_frames & 0xff)) - 1))
         {
             obdata.frame += 1;
         } else if (obtype.flag(.die_when_anim_ends_flag) and
-            (obdata.frame == obtype.frame + @intCast(i16, obtype.num_frames & 0xff) - 1))
+            (obdata.frame == obtype.frame + @as(i16, @intCast(obtype.num_frames & 0xff)) - 1))
         {
             killObject(game, level, object);
             return;

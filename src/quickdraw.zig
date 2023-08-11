@@ -84,8 +84,8 @@ fn parseDirectBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
 
     const row_bytes = map.row_bytes & 0b0011_1111_1111_1111;
 
-    const width = @intCast(u32, map.right - map.left);
-    const num_pixels = @intCast(u32, map.bottom - map.top) * @intCast(u32, map.right - map.left);
+    const width: u32 = @intCast(map.right - map.left);
+    const num_pixels = @as(u32, @intCast(map.bottom - map.top)) * @as(u32, @intCast(map.right - map.left));
     var pixels = try allocator.alloc(RGB, num_pixels);
 
     // Now read the actual pixel data
@@ -105,10 +105,9 @@ fn parseColorTable(allocator: Allocator, reader: *Reader) ![]RGB {
     const size = (try reader.read(u16)) + 1;
 
     var table = try allocator.alloc(RGB, size);
-    var i: usize = 0;
-    while (i < size) : (i += 1) {
+    for (table) |*entry| {
         try reader.skip(2); // index in table
-        table[i] = .{
+        entry.* = .{
             .r = try reader.read(u16),
             .g = try reader.read(u16),
             .b = try reader.read(u16),
@@ -131,8 +130,8 @@ fn parsePackBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
 
     const row_bytes = map.row_bytes & 0b0011_1111_1111_1111;
 
-    const width = @intCast(u32, map.right - map.left);
-    const num_pixels = @intCast(u32, map.bottom - map.top) * @intCast(u32, map.right - map.left);
+    const width: u32 = @intCast(map.right - map.left);
+    const num_pixels = @as(u32, @intCast(map.bottom - map.top)) * @as(u32, @intCast(map.right - map.left));
     var pixels = try allocator.alloc(RGB, num_pixels);
 
     const height = map.bottom - map.top;
@@ -166,20 +165,20 @@ fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
                 col += 1;
             }) {
                 const data = try reader.read(u16);
-                pixels[col].r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10);
-                pixels[col].g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5);
-                pixels[col].b = @intCast(u8, data & 0b0000_0000_0001_1111);
+                pixels[col].r = @intCast((data & 0b0111_1100_0000_0000) >> 10);
+                pixels[col].g = @intCast((data & 0b0000_0011_1110_0000) >> 5);
+                pixels[col].b = @intCast(data & 0b0000_0000_0001_1111);
             }
         } else if (n == 128) {
             // Ignore
         } else {
             // Repeat the next byte 257 - n times
-            const repeat = 257 - @intCast(u9, n);
+            const repeat = 257 - @as(u9, @intCast(n));
             const data = try reader.read(u16);
             const pixel: RGB = .{
-                .r = @intCast(u8, (data & 0b0111_1100_0000_0000) >> 10),
-                .g = @intCast(u8, (data & 0b0000_0011_1110_0000) >> 5),
-                .b = @intCast(u8, data & 0b0000_0000_0001_1111),
+                .r = @intCast((data & 0b0111_1100_0000_0000) >> 10),
+                .g = @intCast((data & 0b0000_0011_1110_0000) >> 5),
+                .b = @intCast(data & 0b0000_0000_0001_1111),
             };
             var i: usize = 0;
             while (i < repeat) : ({
@@ -213,7 +212,7 @@ fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
             // Ignore
         } else {
             // Repeat the next byte 257 - n times
-            const repeat = 257 - @intCast(u9, n);
+            const repeat = 257 - @as(u9, @intCast(n));
             const index = try reader.read(u8);
             const pixel = color_table[index];
             var i: usize = 0;

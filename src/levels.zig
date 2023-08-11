@@ -144,8 +144,8 @@ pub fn load(allocator: Allocator, level_id: packs.Pack) !Level {
     for (object_positions) |pos| {
         var object = try objects.create(allocator, pos.entry);
         object.data.dir = pos.dir;
-        object.data.pos.x = @intToFloat(f32, pos.x);
-        object.data.pos.y = @intToFloat(f32, pos.y);
+        object.data.pos.x = @floatFromInt(pos.x);
+        object.data.pos.y = @floatFromInt(pos.y);
         level.objects.append(object);
     }
 

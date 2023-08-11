@@ -18,36 +18,41 @@ pub fn build(b: *std.build.Builder) void {
 
     exe.linkLibC();
     exe.linkLibrary(raylib.artifact("raylib"));
-    exe.addIncludePath("src/c/");
-    exe.addCSourceFile("src/c/lzrw.c", &.{
-        // The default is to enable undefined behavior detection in C code. I have
-        // verified that the packs are all decompressed fine, so there is no need
-        // to sanitize. See https://github.com/ziglang/zig/wiki/FAQ#why-do-i-get-illegal-instruction-when-using-with-zig-cc-to-build-c-code
-        // for more details.
-        "-fno-sanitize=undefined",
-    });
-    exe.install();
 
-    const run_cmd = exe.run();
+    exe.addIncludePath(.{ .path = "src/c/" });
+    exe.addCSourceFile(.{
+        .file = .{ .path = "src/c/lzrw.c" },
+        .flags = &.{
+            // The default is to enable undefined behavior detection in C code. I have
+            // verified that the packs are all decompressed fine, so there is no need
+            // to sanitize. See https://github.com/ziglang/zig/wiki/FAQ#why-do-i-get-illegal-instruction-when-using-with-zig-cc-to-build-c-code
+            // for more details.
+            "-fno-sanitize=undefined",
+        },
+    });
+
+    b.installArtifact(exe);
+
+    const run_cmd = b.addRunArtifact(exe);
     run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
+    if (b.args) |args| run_cmd.addArgs(args);
 
     const run_step = b.step("run", "Run Reckless Drivin'");
     run_step.dependOn(&run_cmd.step);
 
-    const exe_tests = b.addTest(.{
+    const tests = b.addTest(.{
         .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
         .optimize = optimize,
     });
-    exe_tests.linkLibC();
-    exe_tests.addIncludePath("src/c/");
-    exe_tests.addCSourceFile("src/c/lzrw.c", &.{
-        "-fno-sanitize=undefined",
+    tests.linkLibC();
+    tests.addIncludePath(.{ .path = "src/c/" });
+    tests.addCSourceFile(.{
+        .file = .{ .path = "src/c/lzrw.c" },
+        .flags = &.{"-fno-sanitize=undefined"},
     });
 
+    const run_tests = b.addRunArtifact(tests);
     const test_step = b.step("test", "Run tests");
-    test_step.dependOn(&exe_tests.step);
+    test_step.dependOn(&run_tests.step);
 }
