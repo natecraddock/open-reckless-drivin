@@ -310,7 +310,7 @@ test "pack decryption check" {
     const buf = try testing.allocator.alloc(u8, level_04.len);
     defer testing.allocator.free(buf);
 
-    std.mem.copy(u8, buf, level_04);
+    @memcpy(buf, level_04);
     const check_actual = decrypt(buf, decryption_key);
 
     try testing.expectEqual(check_val, check_actual);
