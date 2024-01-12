@@ -12,6 +12,7 @@ const window = @import("window.zig");
 const Game = @import("game.zig").Game;
 const Level = levels.Level;
 const ObjectData = objects.ObjectData;
+const Point = @import("point.zig").Point;
 const RoadSegment = levels.RoadSegment;
 const Slope = sprites.Slope;
 const Sprite = sprites.Sprite;
@@ -38,6 +39,7 @@ pub fn renderFrame(game: *Game) !void {
     const pixels = game.window.pixels;
     try drawRoad(pixels, &game.level, x_draw_start, y_draw_start, zoom);
     try drawMarks(pixels, &game.level, x_draw_start, y_draw_start, zoom);
+    try drawTracks(pixels, &game.level, game.frame_count, x_draw_start, y_draw_start, zoom);
 
     // drawSprites(pixels, game, camera, x_draw_start, y_draw_start, zoom);
 
@@ -245,6 +247,7 @@ fn drawMarks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) 
     const fix_zoom: u32 = @intFromFloat(zoom * 65536.0); // CHANGED i32 -> u32
     const size: i32 = @intFromFloat(4.2 * inv_zoom);
 
+    // TODO: gFinishDelay
     const y1_clip: i32 = @intFromFloat(y_draw - window.height * zoom);
 
     const marks = level.marks;
@@ -351,7 +354,121 @@ fn drawMarks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) 
     }
 }
 
+/// Width of the tracks left by cars in pixels
+const track_size = 3.4;
+
+/// Time after which rubber tracks left by cars get removed in frames
+const track_life_time = 14.0 * fps;
+
+/// Time it takes for rubber tracks to fade out in frames
+const track_death_duration = 0.8 * fps;
+
+// gTrackCount changed from i32
+var track_count: u32 = 0;
+
+// gTracks
+const max_tracks = 4096;
+var tracks: [max_tracks]struct {
+    p1: Point,
+    p2: Point,
+    intensity: f32,
+    time: u32,
+} = undefined;
+
+fn drawTracks(pixels: []u16, level: *Level, frame_count: u64, x_draw: f32, y_draw: f32, zoom: f32) !void {
+    const inv_zoom = 1.0 / zoom;
+    const fix_zoom: i32 = @intFromFloat(zoom * 65536.0);
+    const size: i32 = @intFromFloat(track_size * inv_zoom);
+
+    // TODO: gFinishDelay
+    const y1_clip: i32 = @intFromFloat(y_draw - window.height * zoom);
+
+    const textures = try packs.getEntrySliceNoAlloc(u16, .textures_16, level.road_info.tracks);
+
+    for (0..track_count) |i| {
+        const track = &tracks[i];
+        if (track.p2.y <= y_draw + @as(f32, @floatFromInt(size))
+                and track.p1.y > @as(f32, @floatFromInt(y1_clip))
+                and @as(f32, @floatFromInt(track.time)) + track_life_time + track_death_duration > @as(f32, @floatFromInt(frame_count))) {
+            var x2: f32 = (track.p2.x - x_draw) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
+            var x1: f32 = (track.p1.x - x_draw) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
+
+            const intensity: f32 = track.intensity * 3.0 * (if (@as(f32, @floatFromInt(track.time)) + track_life_time > @as(f32, @floatFromInt(frame_count))) 1 else 1 - (@as(f32, @floatFromInt(frame_count - track.time)) - track_life_time) / track_death_duration);
+
+            const texture = textures[@intCast(@as(i32, @intFromFloat(intensity)) * 128 * 128)..];
+
+            if ((x1 > @as(f32, @floatFromInt(-size)) or x2 > @as(f32, @floatFromInt(-size))) and (x1 < window.width or x2 < window.width)) {
+                const y1: f32 = (y_draw - track.p1.y) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
+                const y2: f32 = (y_draw - track.p2.y) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
+
+                const v1: u32 = @intCast(@as(i32, @intFromFloat(track.p1.y)) << 16);
+                const @"u1": i32 = @as(i32, @intFromFloat(track.p1.x)) << 16;
+                const @"u2": i32 = @as(i32, @intFromFloat(track.p2.x)) << 16;
+
+                if (y2 - y1 != 0) {
+                    const dxdy: i32 = @intFromFloat((x2 - x1) / (y2 - y1) * 65536.0);
+                    const dudy: i32 = @intFromFloat(@as(f32, @floatFromInt(@"u2" - @"u1")) / (y2 - y1));
+                    var x: i32 = @intFromFloat(x1 * 65536.0);
+                    var u: i32 = @"u1";
+                    var v: i32 = @intCast(v1);
+
+                    var num_blocks: i32 = @intFromFloat(@ceil(@abs((x2 - x1) / (y2 - y1)) - @as(f32, @floatFromInt(size))));
+                    if (num_blocks < 0) num_blocks = 0;
+                    num_blocks += 1;
+
+                    for (@intFromFloat(y1)..@intFromFloat(y2)) |y| {
+                        var block_u: i32 = u;
+                        var block_x: i32 = x >> 16;
+
+                        // In original code this is i again...
+                        for (0..@intCast(num_blocks)) |j| {
+                            _ = j;
+                            if (block_x >= 0 and block_x < window.width - size and y >= 0 and y < window.height - size) {
+                                drawTextureBlock(pixels, @intCast(block_x), @intCast(y), size, @intCast(fix_zoom), block_u, @intCast(v), texture);
+                            } else {
+                                drawTextureBlockClipped(pixels, block_x, @intCast(y), size, @intCast(fix_zoom), @intCast(block_u), @intCast(v), texture);
+                            }
+
+                            block_u += fix_zoom;
+                            block_x += 1;
+                        }
+
+                        x += dxdy;
+                        u += dudy;
+                        v += fix_zoom;
+                    }
+                } else {
+                    const win_minus_size: f32 = @floatFromInt(window.width - size);
+
+                    if (x2 < 0) x2 = 0;
+                    if (x1 > win_minus_size) x1 = win_minus_size;
+                    if (x1 < x2) {
+                        var u: i32 = @"u1";
+                        if (x1 < 0) x1 = 0;
+                        if (x2 > win_minus_size) x2 = win_minus_size;
+
+                        for (@intFromFloat(x1)..@intFromFloat(x2)) |x| {
+                            u += fix_zoom;
+                            drawTextureBlockClipped(pixels, @intCast(x), @intFromFloat(y1), size, @intCast(fix_zoom), @intCast(u), v1, texture);
+                        }
+                    } else {
+                        var u: i32 = @"u2";
+                        if (x2 < 0) x2 = 0;
+                        if (x1 > win_minus_size) x1 = win_minus_size;
+
+                        for (@intFromFloat(x2)..@intFromFloat(x1)) |x| {
+                            u += fix_zoom;
+                            drawTextureBlockClipped(pixels, @intCast(x), @intFromFloat(y1), size, @intCast(fix_zoom), @intCast(u), v1, texture);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 // TODO: these two could be simplified and sort of merged...
+// TODO: u here should be u32
 fn drawTextureBlock(pixels: []u16, x: u32, y: u32, size: i32, zoom: u32, u: i32, v: u32, texture: []const u16) void {
     var u_mut = u;
     var v_mut = v;
