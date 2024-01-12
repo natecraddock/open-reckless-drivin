@@ -14,7 +14,7 @@ const pack_alignment = @import("packs.zig").pack_alignment;
 fn decompress(allocator: Allocator, compressed: []const u8) ![]align(pack_alignment) u8 {
     // Create a buffer with enough space to store the decompressed bytes
     const identity = c.lzrw_identity();
-    var working_mem = try allocator.alloc(u8, identity.memory);
+    const working_mem = try allocator.alloc(u8, identity.memory);
     defer allocator.free(working_mem);
 
     // Maximum expansion possible is 9 times the length of the compressed data, use 10 for safety

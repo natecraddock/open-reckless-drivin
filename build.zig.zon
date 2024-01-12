@@ -1,10 +1,11 @@
 .{
     .name = "open-reckless-drivin",
     .version = "0.0.0",
+    .paths = .{""},
     .dependencies = .{
         .raylib = .{
-            .url = "https://github.com/raysan5/raylib/archive/0959f6ebf69f44d5bb0225cc94fd187ebedf8be5.tar.gz",
-            .hash = "1220b465cb4815363ae29c36e55800240b9a02850574c1df6709fc0f1c97945a3947",
+            .url = "https://github.com/raysan5/raylib/archive/9d628d1d499f8ad9c0e6fbed69914cecb611d6cd.tar.gz",
+            .hash = "12205d16f4498cc73ff65fe195480f5303435aa5f1ccbb0b52674e9b090f9e68fcd2",
         },
     },
 }

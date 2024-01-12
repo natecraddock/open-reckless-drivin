@@ -35,7 +35,7 @@ pub fn renderFrame(game: *Game) !void {
     const x_draw_start = camera.pos.x - window.width * x_camera_screen_pos * zoom;
     const y_draw_start = camera.pos.y + window.height * y_camera_screen_pos * zoom;
 
-    var pixels = game.window.pixels;
+    const pixels = game.window.pixels;
     try drawRoad(pixels, &game.level, x_draw_start, y_draw_start, zoom);
     try drawMarks(pixels, &game.level, x_draw_start, y_draw_start, zoom);
 
@@ -67,8 +67,8 @@ fn drawRoad(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) !
         const floor_road_line = math.floor(world_y * 0.5);
         var floor_perc = ceil_road_line - world_y * 0.5;
 
-        var ceil_road = level.road_data[@intFromFloat(ceil_road_line)];
-        var floor_road = level.road_data[@intFromFloat(floor_road_line)];
+        const ceil_road = level.road_data[@intFromFloat(ceil_road_line)];
+        const floor_road = level.road_data[@intFromFloat(floor_road_line)];
 
         const is_ceil_split = ceil_road[1] != ceil_road[2];
         const is_floor_split = floor_road[1] != floor_road[2];
@@ -247,7 +247,7 @@ fn drawMarks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) 
 
     const y1_clip: i32 = @intFromFloat(y_draw - window.height * zoom);
 
-    var marks = level.marks;
+    const marks = level.marks;
     var mark_i = blk: {
         var l: u32 = 0;
         var r: u32 = @intCast(level.marks.len);
@@ -271,8 +271,8 @@ fn drawMarks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) 
             var x2 = (marks[mark_i].p2.x - x_draw) * inv_zoom - half_size;
 
             if ((x1 > @as(f32, @floatFromInt(-size)) or x2 > @as(f32, @floatFromInt(-size))) and (x1 < window.width or x2 < window.width)) {
-                var y1 = (y_draw - marks[mark_i].p1.y) * inv_zoom - half_size;
-                var y2 = (y_draw - marks[mark_i].p2.y) * inv_zoom - half_size;
+                const y1 = (y_draw - marks[mark_i].p1.y) * inv_zoom - half_size;
+                const y2 = (y_draw - marks[mark_i].p2.y) * inv_zoom - half_size;
 
                 // TODO: v1 as u32 in original code, i32 here
                 const @"u1" = @as(i32, @intFromFloat(marks[mark_i].p1.x)) << 16;
@@ -287,7 +287,7 @@ fn drawMarks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) 
                     var u = @"u1";
                     var v = v1;
 
-                    var num_blocks = @as(i32, @intFromFloat(math.ceil(math.fabs((x2 - x1) / (y2 - y1)) - @as(f32, @floatFromInt(size)))));
+                    var num_blocks = @as(i32, @intFromFloat(math.ceil(@abs((x2 - x1) / (y2 - y1)) - @as(f32, @floatFromInt(size)))));
                     if (num_blocks < 0) num_blocks = 0;
                     num_blocks += 1;
 

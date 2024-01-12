@@ -19,7 +19,7 @@ pub const Window = struct {
     pub fn init(allocator: Allocator) !Window {
         raylib.initWindow(width, height, "Reckless Drivin'");
 
-        var image: raylib.c.Image = .{
+        const image: raylib.c.Image = .{
             .data = undefined,
             .width = width,
             .height = height,

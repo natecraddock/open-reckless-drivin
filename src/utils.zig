@@ -44,7 +44,7 @@ pub const Reader = struct {
     pub fn readSlice(self: *Reader, comptime T: type, allocator: std.mem.Allocator, len: usize) ![]T {
         if (self.index + len > self.bytes.len) return error.EndOfStream;
 
-        var slice = try allocator.alloc(T, len);
+        const slice = try allocator.alloc(T, len);
         for (slice) |*item| {
             item.* = try self.read(T);
         }

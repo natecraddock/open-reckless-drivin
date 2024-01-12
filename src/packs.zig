@@ -73,9 +73,9 @@ pub fn loadEncrypted(allocator: Allocator, pack: Pack, key: u32) !void {
                 return error.BadDecryption;
             }
             // Need working (non-const) memory to decrypt the pack in-place
-            var buf = try allocator.alloc(u8, resource.len);
+            const buf = try allocator.alloc(u8, resource.len);
             defer allocator.free(buf);
-            std.mem.copy(u8, buf, resource);
+            @memcpy(buf, resource);
             _ = decrypt(buf, key);
             packs[id] = try lzrw.decompressResource(allocator, buf);
         }
@@ -117,7 +117,7 @@ fn getEntrySparse(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 {
     const num_entries: usize = @intCast(bigToNative(i16, header.entry));
     const entries: [*]const Header = @ptrCast(bytes[@sizeOf(Header)..]);
 
-    var key: Header = .{ .entry = entry };
+    const key: Header = .{ .entry = entry };
     if (std.sort.binarySearch(Header, key, entries[0..num_entries], {}, Header.compare)) |index| {
         const offset = bigToNative(u32, entries[index].offset);
         var len: usize = undefined;
@@ -146,7 +146,7 @@ fn getEntrySequential(pack: Pack, entry: i16) ![]align(pack_alignment) const u8 
 
     const index: usize = @intCast(entry - start_entry);
     const offset = bigToNative(u32, entries[index].offset);
-    var len: usize = if (index + 1 == num_entries) bytes.len - offset else bigToNative(u32, entries[index + 1].offset) - offset;
+    const len: usize = if (index + 1 == num_entries) bytes.len - offset else bigToNative(u32, entries[index + 1].offset) - offset;
     return @alignCast(bytes[offset .. offset + len]);
 }
 
@@ -214,7 +214,7 @@ pub fn decrypt(bytes: []u8, key: u32) u32 {
     // The first 256 bytes of the pack are an unencrypted header
     var index: usize = 256;
     while (index <= bytes.len - 4) : (index += 4) {
-        var word: *align(1) u32 = @ptrCast(bytes[index .. index + 4]);
+        const word: *align(1) u32 = @ptrCast(bytes[index .. index + 4]);
         word.* = bigToNative(u32, word.*) ^ key;
         check +%= word.*;
         word.* = nativeToBig(u32, word.*);
@@ -307,7 +307,7 @@ test "pack decryption check" {
 
     // Decrypt level 04 data to compute the decryption check
     const level_04 = resources.getResource("Pack", @intFromEnum(Pack.level_04) + 128) orelse return error.TestFailure;
-    var buf = try testing.allocator.alloc(u8, level_04.len);
+    const buf = try testing.allocator.alloc(u8, level_04.len);
     defer testing.allocator.free(buf);
 
     std.mem.copy(u8, buf, level_04);

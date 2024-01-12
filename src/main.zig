@@ -112,7 +112,7 @@ fn dumpResource(allocator: Allocator, args: [][:0]const u8) !void {
         if (mem.eql(u8, resource_type, "Chck")) {
             _ = try stdout.write(resource);
         } else if (mem.eql(u8, resource_type, "Pack") and id > 142) {
-            var buf = try allocator.dupe(u8, resource);
+            const buf = try allocator.dupe(u8, resource);
             defer allocator.free(buf);
             _ = packs.decrypt(buf, packs.decryption_key);
             const decompressed = try lzrw.decompressResource(allocator, buf);

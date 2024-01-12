@@ -350,7 +350,7 @@ fn move(game: *Game, level: *Level, object: *Object) void {
         }
 
         // TODO: obdata.rot_vel = std.math.clamp(obdata.rot_vel, -max_rot_vel, max_rot_vel);
-        if (std.math.fabs(obdata.rot_vel) > max_rot_vel) {
+        if (@abs(obdata.rot_vel) > max_rot_vel) {
             obdata.rot_vel = if (obdata.rot_vel > 0) max_rot_vel else -max_rot_vel;
         }
     }
@@ -513,7 +513,7 @@ fn sortObjects(player: ObjectData, level: *Level) void {
         sorted = true;
         var ob = level.objects.first;
         while (ob != null and ob.?.next != null) {
-            var next = ob.?.next;
+            const next = ob.?.next;
             if (next.?.data.pos.y < ob.?.data.pos.y) {
                 swap(&level.objects, ob.?, next.?);
                 sorted = false;

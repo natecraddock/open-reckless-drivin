@@ -104,7 +104,7 @@ fn parseColorTable(allocator: Allocator, reader: *Reader) ![]RGB {
     // Size stores one less than the number of entries in the table
     const size = (try reader.read(u16)) + 1;
 
-    var table = try allocator.alloc(RGB, size);
+    const table = try allocator.alloc(RGB, size);
     for (table) |*entry| {
         try reader.skip(2); // index in table
         entry.* = .{
@@ -155,7 +155,7 @@ fn parsePackBitsRect(allocator: Allocator, reader: *Reader) ![]RGB {
 fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
     var col: usize = 0;
     while (col < pixels.len) {
-        var n = try reader.read(u8);
+        const n = try reader.read(u8);
         if (n <= 127) {
             // Interpret the next n+1 bytes literally
             const repeat = n + 1;
@@ -196,7 +196,7 @@ fn unpackRowDirect(reader: *Reader, pixels: []RGB) !void {
 fn unpackRowPacked(reader: *Reader, color_table: []RGB, pixels: []RGB) !void {
     var col: usize = 0;
     while (col < pixels.len) {
-        var n = try reader.read(u8);
+        const n = try reader.read(u8);
         if (n <= 127) {
             // Interpret the next n+1 bytes literally
             const repeat = n + 1;
