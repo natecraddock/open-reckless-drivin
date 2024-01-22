@@ -1,5 +1,6 @@
 //! render.zig: contains all code for drawing pixels to the screen!
 
+const g = @import("g.zig");
 const levels = @import("levels.zig");
 const math = std.math;
 const objects = @import("objects.zig");
@@ -363,18 +364,6 @@ const track_life_time = 14.0 * fps;
 /// Time it takes for rubber tracks to fade out in frames
 const track_death_duration = 0.8 * fps;
 
-// gTrackCount changed from i32
-var track_count: u32 = 0;
-
-// gTracks
-const max_tracks = 4096;
-var tracks: [max_tracks]struct {
-    p1: Point,
-    p2: Point,
-    intensity: f32,
-    time: u32,
-} = undefined;
-
 fn drawTracks(pixels: []u16, level: *Level, frame_count: u64, x_draw: f32, y_draw: f32, zoom: f32) !void {
     const inv_zoom = 1.0 / zoom;
     const fix_zoom: i32 = @intFromFloat(zoom * 65536.0);
@@ -385,8 +374,8 @@ fn drawTracks(pixels: []u16, level: *Level, frame_count: u64, x_draw: f32, y_dra
 
     const textures = try packs.getEntrySliceNoAlloc(u16, .textures_16, level.road_info.tracks);
 
-    for (0..track_count) |i| {
-        const track = &tracks[i];
+    for (0..g.track_count) |i| {
+        const track = &g.tracks[i];
         if (track.p2.y <= y_draw + @as(f32, @floatFromInt(size))
                 and track.p1.y > @as(f32, @floatFromInt(y1_clip))
                 and @as(f32, @floatFromInt(track.time)) + track_life_time + track_death_duration > @as(f32, @floatFromInt(frame_count))) {
