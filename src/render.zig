@@ -5,6 +5,7 @@ const levels = @import("levels.zig");
 const math = std.math;
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
+const particle = @import("particle.zig");
 const sprites = @import("sprites.zig");
 const std = @import("std");
 const trig = @import("trig.zig");
@@ -40,9 +41,10 @@ pub fn renderFrame(game: *Game) !void {
     const pixels = game.window.pixels;
     try drawRoad(pixels, &game.level, x_draw_start, y_draw_start, zoom);
     try drawMarks(pixels, &game.level, x_draw_start, y_draw_start, zoom);
-    try drawTracks(pixels, &game.level, game.frame_count, x_draw_start, y_draw_start, zoom);
-
+    try drawTracks(pixels, &game.level, x_draw_start, y_draw_start, zoom);
+    particle.draw(pixels, x_draw_start, y_draw_start, zoom, false);
     // drawSprites(pixels, game, camera, x_draw_start, y_draw_start, zoom);
+    particle.draw(pixels, x_draw_start, y_draw_start, zoom, true);
 
     // blit the pixels to the screen
     try game.window.render();
@@ -364,7 +366,7 @@ const track_life_time = 14.0 * fps;
 /// Time it takes for rubber tracks to fade out in frames
 const track_death_duration = 0.8 * fps;
 
-fn drawTracks(pixels: []u16, level: *Level, frame_count: u64, x_draw: f32, y_draw: f32, zoom: f32) !void {
+fn drawTracks(pixels: []u16, level: *Level, x_draw: f32, y_draw: f32, zoom: f32) !void {
     const inv_zoom = 1.0 / zoom;
     const fix_zoom: i32 = @intFromFloat(zoom * 65536.0);
     const size: i32 = @intFromFloat(track_size * inv_zoom);
@@ -376,13 +378,11 @@ fn drawTracks(pixels: []u16, level: *Level, frame_count: u64, x_draw: f32, y_dra
 
     for (0..g.track_count) |i| {
         const track = &g.tracks[i];
-        if (track.p2.y <= y_draw + @as(f32, @floatFromInt(size))
-                and track.p1.y > @as(f32, @floatFromInt(y1_clip))
-                and @as(f32, @floatFromInt(track.time)) + track_life_time + track_death_duration > @as(f32, @floatFromInt(frame_count))) {
+        if (track.p2.y <= y_draw + @as(f32, @floatFromInt(size)) and track.p1.y > @as(f32, @floatFromInt(y1_clip)) and @as(f32, @floatFromInt(track.time)) + track_life_time + track_death_duration > @as(f32, @floatFromInt(g.frame_count))) {
             var x2: f32 = (track.p2.x - x_draw) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
             var x1: f32 = (track.p1.x - x_draw) * inv_zoom - @as(f32, @floatFromInt(size)) / 2.0;
 
-            const intensity: f32 = track.intensity * 3.0 * (if (@as(f32, @floatFromInt(track.time)) + track_life_time > @as(f32, @floatFromInt(frame_count))) 1 else 1 - (@as(f32, @floatFromInt(frame_count - track.time)) - track_life_time) / track_death_duration);
+            const intensity: f32 = track.intensity * 3.0 * (if (@as(f32, @floatFromInt(track.time)) + track_life_time > @as(f32, @floatFromInt(g.frame_count))) 1 else 1 - (@as(f32, @floatFromInt(g.frame_count - track.time)) - track_life_time) / track_death_duration);
 
             const texture = textures[@intCast(@as(i32, @intFromFloat(intensity)) * 128 * 128)..];
 

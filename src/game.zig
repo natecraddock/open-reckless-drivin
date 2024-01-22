@@ -2,6 +2,7 @@
 //! Contains code for initialization and cleanup of game resources
 //! and the main game loop.
 
+const g = @import("g.zig");
 const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
@@ -30,7 +31,6 @@ pub const Game = struct {
     level: levels.Level = undefined,
     time: f32 = 0,
     start_time: u64 = 0,
-    frame_count: u64 = 0,
     zoom_vel: f32 = 80.0,
 
     /// Free a sprite's resources if it was created as a special sprite
@@ -133,7 +133,7 @@ fn gameloop(game: *Game) !void {
         // just to see things scrolling about :)
         // game.player.obj.data.pos.y += 15;
 
-        game.frame_count += 1;
+        g.frame_count += 1;
 
         // event handling (move elsewhere later?)
         while (Window.getEvent()) |ev| {
@@ -164,5 +164,5 @@ fn checkFrameTime(game: *Game) bool {
     const current_time: f32 = @floatFromInt(getMicroTime() - game.start_time);
     const optimal_frame_count = current_time * frames_per_microsecond;
 
-    return @as(f32, @floatFromInt(game.frame_count)) > optimal_frame_count;
+    return @as(f32, @floatFromInt(g.frame_count)) > optimal_frame_count;
 }

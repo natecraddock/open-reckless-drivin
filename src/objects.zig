@@ -55,6 +55,7 @@ pub const ObjectLayers = enum {
 };
 
 /// A list of objects
+/// TODO: should make this an intrusive list to match the game better
 pub const ObjectList = std.TailQueue(ObjectData);
 
 /// An object node with pointer to previous and next objects

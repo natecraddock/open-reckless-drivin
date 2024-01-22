@@ -55,6 +55,7 @@ pub fn init(initial_seed: u64) void {
 }
 
 /// Return a random float evenly distributed in the interval [min, max]
+/// TOOD: remove the random prefix, that is so redundant
 pub fn randomFloat(min: f32, max: f32) f32 {
     return nextRandom() * (max - min) + min;
 }

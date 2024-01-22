@@ -7,6 +7,9 @@
 
 const Point = @import("point.zig").Point;
 
+/// gFrameCount
+pub var frame_count: u64 = 0;
+
 /// A segment of track
 ///
 /// tTrackSeg
