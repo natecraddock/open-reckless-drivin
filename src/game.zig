@@ -6,6 +6,7 @@ const g = @import("g.zig");
 const levels = @import("levels.zig");
 const objects = @import("objects.zig");
 const packs = @import("packs.zig");
+const particle = @import("particle.zig");
 const random = @import("random.zig");
 const render = @import("render.zig");
 const sprites = @import("sprites.zig");
@@ -68,6 +69,9 @@ fn initData(allocator: Allocator) !void {
 
     // Initialize object type map
     try objects.initObjectTypes(allocator);
+
+    // Load Color lookup table used for particle effects
+    particle.initClut();
 }
 
 fn deinitData(allocator: Allocator) void {

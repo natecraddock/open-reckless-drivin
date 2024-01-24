@@ -47,6 +47,7 @@ const bigToNative = std.mem.bigToNative;
 /// * PPic 1008 Help 2
 /// * PPic 1009 Credits
 /// * Chck 128 Decryption Validation Bytes
+/// * Cl16 8 16-bit color lookup table
 ///
 /// A note about data alignment: The bytes in the resource file are just bytes,
 /// so there isn't any reason to align the data to a word boundary. This will
@@ -135,6 +136,7 @@ test "getResource" {
     try expect(getResource("PPic", 1008) != null);
     try expect(getResource("PPic", 1009) != null);
     try expect(getResource("Chck", 128) != null);
+    try expect(getResource("Cl16", 8) != null);
 
     // Test a few invalid resources
     try expect(getResource("Pack", 127) == null);

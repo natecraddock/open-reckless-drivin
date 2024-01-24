@@ -1,6 +1,7 @@
 const g = @import("g.zig");
 const random = @import("random.zig");
 const render = @import("render.zig");
+const resources = @import("resources.zig");
 const std = @import("std");
 const window = @import("window.zig");
 
@@ -22,7 +23,7 @@ const Emitter = struct {
     top: bool,
 
     start_frame: u32,
-    // color: u16,
+    color: u16,
     pos: Point,
 
     particles: [max_particles * 4]Point = undefined,
@@ -33,8 +34,13 @@ const Emitter = struct {
 /// gParticleFX
 var emitters: [max_emitters]Emitter = undefined;
 
+pub fn initClut() void {
+    const data = resources.getResource("Cl16", 8).?;
+    const len = data.len / @sizeOf(u16);
+    g.clut = @as([*]const u16, @alignCast(@ptrCast(data)))[0..len];
+}
+
 pub fn new(pos: Point, v: Point, num: i32, color: u8, top: bool, spread: f32) void {
-    _ = color;
     // Find an empty slot
     var slot: u32 = 0;
     while (slot < max_emitters and emitters[slot].active) : (slot += 1) {}
@@ -46,8 +52,7 @@ pub fn new(pos: Point, v: Point, num: i32, color: u8, top: bool, spread: f32) vo
         .num_particles = num,
         .start_frame = g.frame_count,
         .pos = pos,
-        // TODO: figure out the color look up table
-        // .color = clut[color],
+        .color = std.mem.bigToNative(g.clut[color]),
     };
 
     const num_particles = @min(max_particles, num * 4);
@@ -57,7 +62,6 @@ pub fn new(pos: Point, v: Point, num: i32, color: u8, top: bool, spread: f32) vo
 }
 
 pub fn draw(pixels: []u16, x_draw: f32, y_draw: f32, zoom: f32, top: bool) void {
-    _ = pixels;
     const inv_zoom = 1.0 / zoom;
 
     var slot: u32 = 0;
@@ -85,10 +89,10 @@ pub fn draw(pixels: []u16, x_draw: f32, y_draw: f32, zoom: f32, top: bool) void 
                 .y = emitter.particles[i].y * epdt + emitter.particles[i].y,
             });
 
-            const x = (pos.x - x_draw) * inv_zoom;
-            const y = (y_draw - pos.y) * inv_zoom;
+            const x: i32 = @intFromFloat((pos.x - x_draw) * inv_zoom);
+            const y: i32 = @intFromFloat((y_draw - pos.y) * inv_zoom);
             if (x > 0 and y > 0 and x < window.width and y < window.height) {
-                // pixels[y * window.row_bytes + x * 2] = emitter.color;
+                pixels[@intCast(y * window.row_bytes + x * 2)] = emitter.color;
             }
         }
     }

@@ -7,6 +7,12 @@
 
 const Point = @import("point.zig").Point;
 
+/// Color Lookup Table
+/// Stores data from the resource fork. Data is stored big-endian and must be flipped when used
+///
+/// g16BitClut
+pub var clut: []const u16 = undefined;
+
 /// gFrameCount
 pub var frame_count: u64 = 0;
 
